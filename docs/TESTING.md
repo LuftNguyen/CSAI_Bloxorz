@@ -97,29 +97,30 @@ A* h=0 tương đương UCS; admissibility/consistency heuristic; timeout/node l
 thực của từng thuật toán; benchmark và luật nâng cao chưa có. Khi solver thật
 được tích hợp, thêm kiểm thử các điều kiện nghiệm thu §13 của contract.
 
-## Tạo remote và chia nhánh
+## Remote nhóm và chia nhánh
 
-Hiện chỉ có local main và upstream; chưa có repository nhóm/origin.
-Tạo repository **trống** trên GitHub bằng tài khoản nhóm, chọn tên và visibility
-theo quyết định của nhóm, không khởi tạo README/license/gitignore. Sau khi có URL:
+Repository nhóm Public: https://github.com/LuftNguyen/CSAI_Bloxorz.
+Repo được tạo trống, không khởi tạo README/license/gitignore, sau đó nhận
+lịch sử local main. `origin` là repo nhóm; `upstream` là repo nguồn.
+Nếu cần cấu hình một bản local khác chưa có origin:
 
 ```powershell
-git remote add origin https://github.com/TEAM/REPOSITORY.git
+git remote add origin https://github.com/LuftNguyen/CSAI_Bloxorz.git
 git remote -v
 git status
 git log --oneline -3
 git push -u origin main
 ```
 
-Thay TEAM/REPOSITORY bằng URL thực. Nếu remote đã có commit, fetch và review
+Nếu remote đã có commit, fetch và review
 trước khi tích hợp; không force-push hoặc dùng chuỗi lệnh trên để ghi đè.
 URL trong lệnh Git phải là URL thuần như ví dụ, không bọc cú pháp link Markdown.
 
 Sau khi main được review, kiểm tra GUI và push, từng thành viên chạy:
 
 ```powershell
-git clone https://github.com/TEAM/REPOSITORY.git
-cd REPOSITORY
+git clone https://github.com/LuftNguyen/CSAI_Bloxorz.git
+cd CSAI_Bloxorz
 git switch main
 git pull --ff-only origin main
 git switch -c feature/bfs

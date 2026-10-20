@@ -7,7 +7,8 @@ cũ thay thế. Chưa bổ sung luật nâng cao.
 Nguồn: [24127352/Bloxorz---CS-AI](https://github.com/24127352/Bloxorz---CS-AI),
 commit [5571989db4ba9b4b8017b8c9486e955d551ff269](https://github.com/24127352/Bloxorz---CS-AI/commit/5571989db4ba9b4b8017b8c9486e955d551ff269).
 Giữ lịch sử Git nguồn, remote `upstream`, nhánh tích hợp `main`.
-Repository nhóm chưa tạo; chưa có `origin`, chưa push.
+Repository nhóm Public: [LuftNguyen/CSAI_Bloxorz](https://github.com/LuftNguyen/CSAI_Bloxorz).
+Remote `origin` trỏ tới repository nhóm; `upstream` giữ repository nguồn.
 
 Dùng lại Block/Direction, Board, State, Problem, GameController, bộ đọc màn,
 11 màn JSON, GUI/menu và cơ chế phát lại. `search/solver.py`,
