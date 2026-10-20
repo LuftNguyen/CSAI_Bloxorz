@@ -46,7 +46,9 @@ R để restart. Solver nhóm hiển thị chưa triển khai cho đến khi đ�
 
 ## Tài liệu và phân công
 
-- [Contract nguyên văn](docs/CONTRACT.md), bản chuẩn [PDF gốc](CSAI_Project.pdf).
+- **Contract gốc:** [CSAI_Project.pdf](CSAI_Project.pdf).
+- **Bản trích:** [CONTRACT.md](docs/CONTRACT.md).
+- **Hướng dẫn đọc bố cục:** [CONTRACT_LAYOUT.md](docs/CONTRACT_LAYOUT.md).
 - [Đối chiếu nguồn, sửa tối thiểu và TODO](docs/BASELINE.md).
 - [Cài đặt, test, checklist GUI, tạo remote và nhánh](docs/TESTING.md).
 - Người 1: `search/bfs.py`; người 2: `search/dfs.py`; người 3: `search/ucs.py`;
@@ -55,6 +57,11 @@ R để restart. Solver nhóm hiển thị chưa triển khai cho đến khi đ�
   Mọi solver có `solve(problem, limits, heuristic=None) -> SearchResult`.
   Runner đo toàn bộ solve bằng perf_counter/tracemalloc, trả RunResult;
   lỗi chương trình/dữ liệu truyền lên dạng exception.
+
+`State` vẫn có thể thay đổi. Sau khi lưu trạng thái vào `set` hoặc dùng làm khóa
+`dict`, không sửa `state.block`, `state.board` hoặc các danh sách/từ điển mà
+equality/hash sử dụng, kể cả dữ liệu lồng bên trong. Sinh trạng thái con trên
+bản sao độc lập bằng `State.copy()` hoặc qua `Problem.result()`.
 
 Cần chỉ định người duyệt giao diện chung. DFS thường không cần giới hạn độ sâu;
 chỉ quy định thêm nếu chọn DFS giới hạn độ sâu hoặc IDS, giữ giao diện hiện tại.

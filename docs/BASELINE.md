@@ -55,8 +55,11 @@ trích xuất gây mơ hồ; không có thay đổi nội dung hay giao diện c
   không tham gia một bước tìm kiếm. Không sửa state đã nằm trong set/dict.
 - Hash hiện gồm toàn bộ tiles, bridgeState, bridgeGroups và kích thước. Dữ liệu
   tĩnh của màn trong khóa có thể làm tra set/dict tốn hơn; chưa tối ưu khi chưa
-  có benchmark. Phải giữ nguyên mọi dữ liệu tham gia equality/hash suốt thời
-  gian state nằm trong set/dict; thao tác trên bản copy để sinh trạng thái con.
+  có benchmark. State vẫn là đối tượng có thể thay đổi: sau khi lưu vào `set`
+  hoặc dùng làm khóa `dict`, không sửa `state.block`, `state.board` hoặc các
+  danh sách/từ điển mà equality/hash sử dụng, kể cả dữ liệu lồng bên trong.
+  Quy tắc này áp dụng cả khi sửa qua một tham chiếu khác tới cùng dữ liệu.
+  Thao tác trên bản copy độc lập để sinh trạng thái con.
 - Heuristic Manhattan cũ tự ghi admissible nhưng chưa được kiểm chứng; không dùng
   làm mặc định. Solver cũ có khác biệt đếm node, chi phí và quản lý tracemalloc;
   không dùng số liệu cũ làm kết quả thực nghiệm nhóm.
