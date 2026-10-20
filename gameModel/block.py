@@ -39,10 +39,10 @@ class Block:
 
     def __eq__(self, other):
         if not isinstance(other, Block): return False
-        return (self.r, self.c, self.dr, self.dc) == (other.r, other.c, other.dr, other.dc)
+        return (self.r, self.c, self.dr, self.dc, self.orientation) == (other.r, other.c, other.dr, other.dc, other.orientation)
 
     def __hash__(self):
-        return hash((self.r, self.c, self.dr, self.dc))
+        return hash((self.r, self.c, self.dr, self.dc, self.orientation))
 
     
     def resultingState(self, dir: Direction) -> "Block":

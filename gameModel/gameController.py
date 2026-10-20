@@ -76,6 +76,7 @@ class GameController:
     def isWinningState(self):
         return (
             self.block.orientation == Orientation.STANDING
+            and self.block.dr == 0 and self.block.dc == 0
             and self.board.getTile(
                 self.block.r,
                 self.block.c
@@ -95,6 +96,11 @@ class GameController:
 
         # Activate buttons after moving
         self.activateSwitches()
+
+        # A switch may remove support under the block, as in Problem.result().
+        if not self.isValidBlockPosition(self.block):
+            self.isGameOver = True
+            return False
 
         if self.isWinningState():
             self.hasWon = True

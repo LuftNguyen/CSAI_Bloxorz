@@ -5,8 +5,9 @@ from gameModel.board import Tile, TILE_COST
 
 class Problem:
 
-    def __init__(self, initialState):
+    def __init__(self, initialState, *, unit_cost=False):
         self.initial = initialState
+        self.unit_cost = unit_cost
 
     def goal_test(self, state):
 
@@ -14,6 +15,7 @@ class Problem:
 
         return (
             block.orientation == Orientation.STANDING
+            and block.dr == 0 and block.dc == 0
             and state.board.getTile(block.r, block.c) == Tile.GOAL
         )
 
@@ -80,6 +82,9 @@ class Problem:
         return nextState
 
     def step_cost(self, state, action, nextState):
+
+        if self.unit_cost:
+            return 1.0
 
         block = nextState.block
 

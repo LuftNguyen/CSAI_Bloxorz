@@ -37,15 +37,19 @@ class InputHandler:
 
     def processKeyDirection(self, key: str) -> Direction:
         # 1. Ignore release events
-        cleanKey = key.replace(' up', '')
+        if key.endswith(' up'):
+            return None
+        cleanKey = key
 
         if cleanKey in self.keyMap:
-            return self.keyMap[cleanKey]
+            value = self.keyMap[cleanKey]
+            return value if isinstance(value, Direction) else None
 
         return None
 
     def processKeyUtility(self, key: str) -> Utility:
         if key in self.keyMap:
-            return self.keyMap[key]
+            value = self.keyMap[key]
+            return value if isinstance(value, Utility) else None
 
         return None

@@ -27,6 +27,9 @@ class State:
             self.block == other.block
             and
             self.board.tiles == other.board.tiles
+            and self.board.bridgeState == other.board.bridgeState
+            and self.board.bridgeGroups == other.board.bridgeGroups
+            and (self.board.rows, self.board.cols) == (other.board.rows, other.board.cols)
         )
 
     def __hash__(self):
@@ -36,7 +39,11 @@ class State:
         return hash(
             (
                 self.block,
-                boardState
+                boardState,
+                self.board.rows,
+                self.board.cols,
+                frozenset(self.board.bridgeState.items()),
+                frozenset((key, tuple(value)) for key, value in self.board.bridgeGroups.items()),
             )
         )
 
