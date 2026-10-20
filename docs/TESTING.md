@@ -30,7 +30,8 @@ Chưa chạy game bằng cửa sổ hoặc đánh dấu checklist thủ công b�
 
 ## Kết quả mong đợi
 
-- Unittest: 14 phương thức test OK: 12 chuyển tư thế, sao chép sâu cả dữ liệu lồng,
+- Unittest: 15 phương thức test OK khi đã cài dependency GUI; nếu chưa cài,
+  14 test nền pass và 1 test nối input GUI được skip. Bao gồm 12 chuyển tư thế, sao chép sâu cả dữ liệu lồng,
   nhánh độc lập, bridgeState khác khi tiles giống, equality/hash, goal đầy đủ,
   rơi sau switch, chi phí, replay/controller/reset, loader 11 màn, input,
   registry và đo runner (kể cả exception, trace có sẵn và gọi lồng).
@@ -60,6 +61,12 @@ Các tên test trong `tests/test_foundation.py`, cũng hiển thị khi chạy v
 | RunnerTests | test_errors_cleanup_and_invalid_limits |
 | RunnerTests | test_existing_trace_is_preserved_and_nested_run_rejected |
 | RunnerTests | test_headless_does_not_import_ursina |
+| GuiInputTests (test_gui_input.py) | test_dispatcher_preserved_and_entity_receives_press_once |
+
+Sau sửa lỗi nhận phím: 15 test pass trong venv. Test GUI dùng mock, không mở
+cửa sổ: xác nhận giữ nguyên Ursina.input, đăng ký Entity.input, phím nhấn di
+chuyển một lần, nhả phím không di chuyển và P/R không kích hoạt hai lần.
+Không gán đè app.input vì làm mất đường phân phối và chuẩn hóa sự kiện Ursina.
 
 ## Checklist thủ công trong GUI (chưa chạy)
 

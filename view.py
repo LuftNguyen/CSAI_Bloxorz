@@ -272,7 +272,6 @@ class BloxorzView:
 
     def handleUrsinaInput(self, key: str):
         """Pass key to InputHandler, then update 3D mesh if state changed."""
-        print(f"KEY: '{key}'")
 
         uti = self.inputHandler.processKeyUtility(key)
         if uti is not None:
@@ -319,8 +318,9 @@ class BloxorzView:
     def run(self):
         """Starts the main Ursina 3D render loop."""
 
-        # Pass the function directly into Ursina's app instance
-        self.app.input = self.handleUrsinaInput
+        # Keep Ursina's dispatcher intact: it normalizes keys and routes events
+        # to menus, mouse handling, and entities on both press and release.
+        self.inputEntity = Entity(input=self.handleUrsinaInput)
         self.app.run()
 
     def solve(self, algorithm):

@@ -48,6 +48,8 @@ class InputHandler:
         return None
 
     def processKeyUtility(self, key: str) -> Utility:
+        if key.endswith(' up'):
+            return None
         if key in self.keyMap:
             value = self.keyMap[key]
             return value if isinstance(value, Utility) else None

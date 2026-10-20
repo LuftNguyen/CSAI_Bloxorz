@@ -140,6 +140,11 @@ class EngineTests(unittest.TestCase):
         self.assertIsNone(handler.processKeyDirection('w up'))
         self.assertIs(handler.processKeyUtility('r'), Utility.RESTART)
         self.assertIsNone(handler.processKeyDirection('r'))
+        self.assertIsNone(handler.processKeyUtility('r up'))
+        self.assertIsNone(handler.processKeyUtility('p up'))
+        self.assertIsNone(handler.processKeyUtility('escape up'))
+        self.assertIs(handler.processKeyDirection('right arrow'), D.RIGHT)
+        self.assertIsNone(handler.processKeyDirection('right arrow up'))
 
 
 class RunnerTests(unittest.TestCase):
