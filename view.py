@@ -7,12 +7,8 @@ from inputHandler import InputHandler, Utility
 from menu import *
 from levels.levelManager import LevelManager
 
-from search.solver import (
-    breadth_first_search,
-    depth_first_graph_search,
-    uniform_cost_search,
-    a_star_search
-)
+from runner import run_search
+from search.contracts import SearchLimits
 from gameModel.problem import Problem
 from gameModel.state import State
 
@@ -46,6 +42,7 @@ class BloxorzView:
             on_solver_callback= self.showSolverMenu
         )
         self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected)
+        self.solverMessage = Text(text="Team solvers: chua trien khai", x=-0.85, y=0.46, scale=0.8)
 
     def startGame(self):
         self.gameStarted = True
@@ -134,6 +131,8 @@ class BloxorzView:
     def restartLevel(self):
         """Resets the game model and refreshes 3D visual representations."""
         print("Restarting level...")
+
+        self.cancelReplay()
 
         # 1. Block inputs during reset state transition
         self.isAnimating = True
@@ -325,95 +324,40 @@ class BloxorzView:
         self.app.run()
 
     def solve(self, algorithm):
-
-        # self.restartLevel()
-
-        self.problem = Problem(
-            State(
-                self.gameModel.board,
-                self.gameModel.block
-            )
-        )
-
-        if algorithm == "dfs":
-            result = depth_first_graph_search(self.problem)
-
-            if result is None:
-                print("No solution")
-                return
-            node = result["solution"]
-
-            print("----------------------")
-            print("Algorithm :", algorithm.upper())
-            print("Search time :", result["search_time"], "seconds")
-            print("Expanded nodes :", result["expanded_nodes"])
-            print("Peak memory :", round(result["peak_memory"], 2), "MB")
-            print("Number of moves :", result["moves"])
-            print("----------------------")
-
-        elif algorithm == "bfs":
-            result = breadth_first_search(self.problem)
-
-            if result is None:
-                print("No solution")
-                return
-            node = result["solution"]
-
-            print("----------------------")
-            print("Algorithm :", algorithm.upper())
-            print("Search time :", result["search_time"], "seconds")
-            print("Expanded nodes :", result["expanded_nodes"])
-            print("Peak memory :", round(result["peak_memory"], 2), "MB")
-            print("Number of moves :", result["moves"])
-            print("----------------------")
-
-        elif algorithm == "ucs":
-            result = uniform_cost_search(self.problem)
-
-            if result is None:
-                print("No solution")
-                return
-            node = result["solution"]
-
-            print("----------------------")
-            print("Algorithm :", algorithm.upper())
-            print("Search time :", result["search_time"], "seconds")
-            print("Expanded nodes :", result["expanded_nodes"])
-            print("Peak memory :", round(result["peak_memory"], 2), "MB")
-            print("Number of moves :", result["moves"])
-            print("----------------------")
-
-        elif algorithm == "astar":
-            result = a_star_search(self.problem)
-
-            if result is None:
-                print("No solution")
-                return
-            node = result["solution"]
-            print("----------------------")
-            print("Algorithm :", algorithm.upper())
-            print("Search time :", result["search_time"], "seconds")
-            print("Expanded nodes :", result["expanded_nodes"])
-            print("Peak memory :", round(result["peak_memory"], 2), "MB")
-            print("Number of moves :", result["moves"])
-            print("----------------------")
-
-        else:
+        """Search an isolated snapshot and replay on the matching live state."""
+        self.isSolving = True
+        self.problem = Problem(State(self.gameModel.board, self.gameModel.block).copy())
+        try:
+            result = run_search(self.problem, algorithm, SearchLimits())
+        except NotImplementedError as exc:
+            self.solverMessage.text = str(exc)
+            print(exc)
             self.isSolving = False
             return
-
-        if result is None:
-            print("No solution")
+        except Exception as exc:
+            self.solverMessage.text = f"Solver error: {exc}"
+            self.isSolving = False
+            raise
+        self.solverMessage.text = f"{algorithm}: {result.search.status}"
+        print(result)
+        if result.search.status != "solved":
             self.isSolving = False
             return
-
-        self.autoSolution = result["solution"].solution()
-
+        self.autoSolution = list(result.search.actions)
         self.autoIndex = 0
+        self._replayCall = invoke(self.playSolution, delay=0.5)
 
-        invoke(self.playSolution, delay=0.5)
+    def cancelReplay(self):
+        if getattr(self, "_replayCall", None):
+            self._replayCall.kill()
+            self._replayCall = None
+        self.autoSolution = []
+        self.autoIndex = 0
+        self.isSolving = False
 
     def playSolution(self):
+        if not self.isSolving:
+            return
 
         if self.autoIndex >= len(self.autoSolution):
             self.isSolving = False
@@ -424,7 +368,10 @@ class BloxorzView:
 
         action = self.autoSolution[self.autoIndex]
 
-        self.gameModel.executeMove(action)
+        if not self.gameModel.executeMove(action):
+            self.solverMessage.text = "Replay error: invalid move"
+            self.isSolving = False
+            return
 
         self.destroyTileEntities()
 
@@ -434,9 +381,10 @@ class BloxorzView:
 
         self.autoIndex += 1
 
-        invoke(self.playSolution, delay=0.4)
+        self._replayCall = invoke(self.playSolution, delay=0.4)
 
     def loadNextLevel(self):
+        self.cancelReplay()
 
         # Load next level
         result = self.levelManager.nextLevel()
