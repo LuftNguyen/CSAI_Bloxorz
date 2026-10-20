@@ -50,6 +50,7 @@ class Board:
         # Bridge system
         self.bridgeGroups = {}
         self.bridgeState = {}
+        self.initialBridgeState = {}
 
     def __repr__(self):
         return f"Board({self.rows}x{self.cols})"
@@ -57,8 +58,8 @@ class Board:
     def reset(self):
         self.tiles = [row[:] for row in self.initialTiles]
 
-        for key in self.bridgeState:
-            self.bridgeState[key] = True
+        # Restore this board's recorded configuration, not a universal default.
+        self.bridgeState = self.initialBridgeState.copy()
 
     def isInBounds(self, r, c):
         return 0 <= r < self.rows and 0 <= c < self.cols
@@ -98,6 +99,8 @@ class Board:
     def addBridge(self, switchPos, bridgeTiles):
         self.bridgeGroups[switchPos] = bridgeTiles
         self.bridgeState[switchPos] = True
+        # The current loader supports only initially enabled bridge groups.
+        self.initialBridgeState[switchPos] = self.bridgeState[switchPos]
 
     def toggleBridge(self, switchPos):
 

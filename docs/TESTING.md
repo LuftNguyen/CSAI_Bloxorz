@@ -18,7 +18,9 @@ cũng chạy được với Python hệ thống mà không cài dependency GUI.
 
 ## Kết quả thực tế của bản nền
 
-Ngày 20/10/2026: cả Python hệ thống và venv Python 3.13.13 đều chạy 13 test OK;
+Ngày 20/10/2026: bản nền ban đầu chạy 13 phương thức test OK trên cả Python
+hệ thống và venv Python 3.13.13. Sau bổ sung kiểm thử reset: 14 phương thức test,
+gồm 27 lượt subtest tường minh (12 chuyển tư thế, 4 solver và 11 màn reset).
 headless kết thúc ở goal, cost=2.0. Cài đủ requirements.txt thành công,
 `pip check` báo `No broken requirements found`. Import `view` thành công;
 compileall của engine/search/loader/GUI thành công. Một kiểm tra có mock không
@@ -28,15 +30,36 @@ Chưa chạy game bằng cửa sổ hoặc đánh dấu checklist thủ công b�
 
 ## Kết quả mong đợi
 
-- Unittest: 13 test OK: 12 chuyển tư thế, sao chép sâu cả dữ liệu lồng,
+- Unittest: 14 phương thức test OK: 12 chuyển tư thế, sao chép sâu cả dữ liệu lồng,
   nhánh độc lập, bridgeState khác khi tiles giống, equality/hash, goal đầy đủ,
   rơi sau switch, chi phí, replay/controller/reset, loader 11 màn, input,
   registry và đo runner (kể cả exception, trace có sẵn và gọi lồng).
+  Số phương thức test không phải số tình huống: ngoài subtest còn có vòng lặp
+  kiểm tra bốn status, ba giới hạn không hợp lệ và reset hai lần mỗi màn.
 - Headless: thứ tự UP DOWN LEFT RIGHT; UP/LEFT trả None; DOWN/RIGHT hợp lệ,
   cost=1; `replay: RIGHT RIGHT; goal=True; cost=2.0`;
   `team solver: BFS chua trien khai (search/bfs.py)` là kết quả đúng của khung.
 - Fake solver trong test chỉ xác minh truyền tham số, bốn status và cấu trúc đo;
   không chứng minh timeout hay thuật toán thực sự hoạt động.
+
+Các tên test trong `tests/test_foundation.py`, cũng hiển thị khi chạy với `-v`:
+
+| Lớp | Phương thức test |
+| --- | --- |
+| EngineTests | test_nested_copy_and_sibling_independence |
+| EngineTests | test_equality_hash_dynamic_bridges_and_orientation |
+| EngineTests | test_all_basic_rolls |
+| EngineTests | test_invalid_moves_and_complete_goal |
+| EngineTests | test_switch_removing_support_matches_controller |
+| EngineTests | test_loader_replay_cost_and_reset |
+| EngineTests | test_level_files_and_end |
+| EngineTests | test_reset_restores_loaded_bridge_configuration |
+| EngineTests | test_keyboard_routes |
+| RunnerTests | test_registry_stubs_never_fallback |
+| RunnerTests | test_runner_passes_contract_and_measures |
+| RunnerTests | test_errors_cleanup_and_invalid_limits |
+| RunnerTests | test_existing_trace_is_preserved_and_nested_run_rejected |
+| RunnerTests | test_headless_does_not_import_ursina |
 
 ## Checklist thủ công trong GUI (chưa chạy)
 
@@ -83,6 +106,7 @@ git push -u origin main
 
 Thay TEAM/REPOSITORY bằng URL thực. Nếu remote đã có commit, fetch và review
 trước khi tích hợp; không force-push hoặc dùng chuỗi lệnh trên để ghi đè.
+URL trong lệnh Git phải là URL thuần như ví dụ, không bọc cú pháp link Markdown.
 
 Sau khi main được review, kiểm tra GUI và push, từng thành viên chạy:
 

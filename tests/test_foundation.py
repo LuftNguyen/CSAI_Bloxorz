@@ -116,6 +116,23 @@ class EngineTests(unittest.TestCase):
         manager.currentLevel = manager.maxLevel
         self.assertIsNone(manager.nextLevel())
 
+    def test_reset_restores_loaded_bridge_configuration(self):
+        for number in range(1, 12):
+            with self.subTest(level=number):
+                board, _ = loadLevelFromJson(ROOT / f'levels/level{number}.json', isDebug=False)
+                initial_tiles = deepcopy(board.tiles)
+                initial_bridges = board.bridgeState.copy()
+                for _ in range(2):
+                    for switch in board.bridgeGroups:
+                        board.toggleBridge(switch)
+                    board.setTile(0, 0, T.FRAGILE)
+                    board.bridgeState[(-1, -1)] = False
+                    board.reset()
+                    self.assertEqual(board.tiles, initial_tiles)
+                    self.assertEqual(board.bridgeState, initial_bridges)
+                    self.assertEqual(board.initialBridgeState, initial_bridges)
+                    self.assertIsNot(board.bridgeState, board.initialBridgeState)
+
     def test_keyboard_routes(self):
         handler = InputHandler()
         self.assertIs(handler.processKeyDirection('w'), D.UP)

@@ -1,14 +1,20 @@
 # Đối chiếu và quyết định triển khai
 
 Nguồn: https://github.com/24127352/Bloxorz---CS-AI tại commit
-`5571989db4ba9b4b8017b8c9486e955d551ff269`. Contract chuẩn là PDF gốc
-`CSAI_Project.pdf`; `CONTRACT.md` chứa nguyên văn văn bản trích bằng
-`pdftotext -layout` (bảng giữ bố cục trang; không phải bản đề xuất sửa).
+`5571989db4ba9b4b8017b8c9486e955d551ff269`. PDF `CSAI_Project.pdf` có tiêu đề
+**CONTRACT V1**, mô tả giao diện triển khai và phân công nhóm; đây là contract
+nhóm đã cung cấp trong yêu cầu, không phải tài liệu đề đồ án riêng.
+`CONTRACT.md` chứa nguyên văn văn bản trích bằng `pdftotext -layout`.
+Bản trích có ngắt trang, tên trường bị xuống dòng trong bảng và thụt dòng mã
+không đồng nhất; không nên sao chép trực tiếp mã từ bản trích để chạy.
+Xem [hướng dẫn đọc bố cục](CONTRACT_LAYOUT.md). PDF là bản đối chiếu khi bố cục
+trích xuất gây mơ hồ; không có thay đổi nội dung hay giao diện contract.
 
 | Thành phần | Quyết định |
 | --- | --- |
 | Direction, Block và quy tắc lăn | Dùng lại, giữ tên/giá trị enum; bổ sung orientation vào equality/hash |
 | Board, bộ đọc JSON | Dùng lại; giữ chi phí TILE_COST hiện có |
+| Board.reset | Khôi phục tiles và bản sao initialBridgeState đã lưu của màn; không gán mọi trạng thái cầu bằng True lúc reset |
 | State.copy | Giữ deepcopy; equality/hash bổ sung bridgeState, bridgeGroups và kích thước board |
 | Problem | Giữ 5 tên giao diện; kiểm tra khối đầy đủ tại đích; thêm tùy chọn unit_cost=False tương thích lời gọi cũ |
 | GameController | Giữ; kiểm tra hỗ trợ sau kích hoạt switch để khớp Problem.result |
@@ -25,8 +31,10 @@ Nguồn: https://github.com/24127352/Bloxorz---CS-AI tại commit
 
 - Không có SearchStatus “chưa triển khai”: khung ném NotImplementedError, runner
   truyền exception, GUI hiển thị thông báo. Không thêm status vào contract.
-- Contract phân công DFS, yêu cầu đầu bài nhắc DFS/IDS. Hiện chỉ tạo DFS;
-  người 2 và người duyệt cần chốt giới hạn độ sâu/IDS trước khi mở rộng giao diện.
+- Contract phân công DFS, yêu cầu đầu bài nhắc DFS/IDS. DFS thường có xử lý
+  trạng thái lặp dùng được trên không gian hữu hạn, không cần giới hạn độ sâu
+  hoặc thay đổi giao diện. Chỉ quy định thêm nếu nhóm chọn DFS giới hạn độ sâu
+  hoặc IDS; đây không phải điều kiện chặn người 2 bắt đầu viết DFS.
 - Chưa nêu nơi khai báo RunResult: đặt tại runner.py, giữ nguyên ba trường.
 - Cấu hình chi phí bằng 1 dùng keyword tùy chọn Problem(..., unit_cost=True),
   không thay tên hàm hay chi phí mặc định. UCS/A* phải dùng cùng Problem.
@@ -36,11 +44,19 @@ Nguồn: https://github.com/24127352/Bloxorz---CS-AI tại commit
 
 - Chưa thêm split, SWITCH, teleport: khi có đặc tả, mở rộng Direction, engine,
   controller, GUI, copy/equality/hash và kiểm thử cùng lúc.
-- Board.reset hiện mặc định mọi bridgeState=True như nguồn. Cần chốt quy ước
-  cầu ban đầu tắt và tương tác nhiều switch trước khi mở rộng loader/reset.
+- Loader hiện chỉ đọc vị trí switch và tiles, không có trường cấu hình cầu mở/tắt
+  ban đầu; addBridge luôn đăng ký trạng thái ban đầu True. Reset nay khôi phục
+  bản đã lưu và tiles ban đầu của từng màn, đã kiểm tra trên 11 màn hiện có.
+  Chưa hỗ trợ cấu hình cầu ban đầu tắt qua JSON. Nếu bổ sung, loader phải lưu
+  đồng thời tiles và initialBridgeState đúng cấu hình sau khi tải xong; không
+  chỉ đổi cờ cầu. Tương tác nhiều switch cần đặc tả và kiểm thử riêng.
 - bridgeMap hiện không được engine đọc; nếu dùng cho luật mới phải đưa thông tin
   ảnh hưởng chuyển trạng thái vào equality/hash. initialTiles phục vụ reset,
   không tham gia một bước tìm kiếm. Không sửa state đã nằm trong set/dict.
+- Hash hiện gồm toàn bộ tiles, bridgeState, bridgeGroups và kích thước. Dữ liệu
+  tĩnh của màn trong khóa có thể làm tra set/dict tốn hơn; chưa tối ưu khi chưa
+  có benchmark. Phải giữ nguyên mọi dữ liệu tham gia equality/hash suốt thời
+  gian state nằm trong set/dict; thao tác trên bản copy để sinh trạng thái con.
 - Heuristic Manhattan cũ tự ghi admissible nhưng chưa được kiểm chứng; không dùng
   làm mặc định. Solver cũ có khác biệt đếm node, chi phí và quản lý tracemalloc;
   không dùng số liệu cũ làm kết quả thực nghiệm nhóm.

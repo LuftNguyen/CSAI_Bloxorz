@@ -56,4 +56,5 @@ R để restart. Solver nhóm hiển thị chưa triển khai cho đến khi đ�
   Runner đo toàn bộ solve bằng perf_counter/tracemalloc, trả RunResult;
   lỗi chương trình/dữ liệu truyền lên dạng exception.
 
-Cần chỉ định người duyệt giao diện chung và chốt DFS/IDS trước khi mở rộng.
+Cần chỉ định người duyệt giao diện chung. DFS thường không cần giới hạn độ sâu;
+chỉ quy định thêm nếu chọn DFS giới hạn độ sâu hoặc IDS, giữ giao diện hiện tại.
