@@ -152,7 +152,7 @@ class RunnerTests(unittest.TestCase):
         self.assertIs(get_solver('A*'), get_solver('astar'))
         with self.assertRaises(ValueError):
             get_solver('missing')
-        for name in ('bfs','dfs','ucs','astar'):
+        for name in ('dfs','ucs','astar'):
             with self.subTest(name=name), self.assertRaises(NotImplementedError):
                 run_search(object(), name, SearchLimits())
             self.assertFalse(tracemalloc.is_tracing())
