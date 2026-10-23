@@ -149,13 +149,41 @@ class EngineTests(unittest.TestCase):
 
 class RunnerTests(unittest.TestCase):
     def test_registry_stubs_never_fallback(self):
-        self.assertIs(get_solver('A*'), get_solver('astar'))
+        from search.astar import solve as astar_solve
+
+        self.assertIs(get_solver("A*"), get_solver("astar"))
+        self.assertIs(get_solver("astar"), astar_solve)
+
         with self.assertRaises(ValueError):
-            get_solver('missing')
-        for name in ('bfs','dfs','ucs','astar'):
-            with self.subTest(name=name), self.assertRaises(NotImplementedError):
-                run_search(object(), name, SearchLimits())
-            self.assertFalse(tracemalloc.is_tracing())
+            get_solver("missing")
+
+        # Ba thuật toán này hiện vẫn là khung.
+        for name in ("bfs", "dfs", "ucs"):
+            with self.subTest(name=name):
+                with self.assertRaises(NotImplementedError):
+                    run_search(object(), name, SearchLimits())
+
+                self.assertFalse(tracemalloc.is_tracing())
+
+        # A* đã triển khai: kiểm tra gọi qua registry và runner.
+        class InitialGoalProblem:
+            initial = "G"
+
+            def goal_test(self, state):
+                return state == "G"
+
+        result = run_search(
+            InitialGoalProblem(),
+            "astar",
+            SearchLimits(),
+        )
+
+        self.assertEqual(result.search.status, "solved")
+        self.assertEqual(result.search.actions, ())
+        self.assertEqual(result.search.total_cost, 0.0)
+        self.assertEqual(result.search.expanded_nodes, 0)
+        self.assertEqual(result.search.generated_nodes, 0)
+        self.assertFalse(tracemalloc.is_tracing())
 
     def test_runner_passes_contract_and_measures(self):
         problem, heuristic = object(), object()
