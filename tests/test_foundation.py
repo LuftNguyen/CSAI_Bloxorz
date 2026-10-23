@@ -149,10 +149,13 @@ class EngineTests(unittest.TestCase):
 
 class RunnerTests(unittest.TestCase):
     def test_registry_stubs_never_fallback(self):
+        from search.ucs import solve as ucs_solve
+
         self.assertIs(get_solver('A*'), get_solver('astar'))
+        self.assertIs(get_solver('ucs'), ucs_solve)
         with self.assertRaises(ValueError):
             get_solver('missing')
-        for name in ('bfs','dfs','ucs','astar'):
+        for name in ('bfs','dfs','astar'):
             with self.subTest(name=name), self.assertRaises(NotImplementedError):
                 run_search(object(), name, SearchLimits())
             self.assertFalse(tracemalloc.is_tracing())
