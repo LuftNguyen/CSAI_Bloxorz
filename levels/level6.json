@@ -3,35 +3,56 @@
   "name": "Stage 6: Fragile Crossing",
   "rows": 12,
   "cols": 12,
-
   "start": {
     "r": 1,
     "c": 1
   },
-
   "bridges": [
     {
-      "switch": [4, 2],
+      "switch": [
+        4,
+        2
+      ],
       "tiles": [
-        [6, 6],
-        [6, 7],
-        [6, 8]
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          6,
+          8
+        ]
       ]
     },
     {
-      "switch": [8, 2],
+      "switch": [
+        8,
+        2
+      ],
       "tiles": [
-        [6, 6],
-        [6, 7],
-        [6, 8]
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          6,
+          8
+        ]
       ]
     }
   ],
-
   "grid": [
     "XXXXXXXXXXXX",
     "XS......XXXX",
-    "X.XXXX..XXXX",
+    "X..XXX..XXXX",
     "X.F..F..XXXX",
     "X.WXXF..XXXX",
     "X.XXXX..XXXX",

@@ -1,0 +1,37 @@
+{
+  "schema_version": 2,
+  "name": "split_control",
+  "rows": 5,
+  "cols": 10,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXX",
+    "XS..TXXXXX",
+    "XXXXXXXXXX",
+    "XG..F..XXX",
+    "XXXXXXXXXX"
+  ],
+  "bridges": [],
+  "switches": [],
+  "splits": [
+    {
+      "position": [
+        1,
+        4
+      ],
+      "targets": [
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          6
+        ]
+      ]
+    }
+  ]
+}

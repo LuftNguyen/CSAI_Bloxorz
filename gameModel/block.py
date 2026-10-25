@@ -3,12 +3,14 @@ from enum import Enum
 class Orientation(Enum):
     STANDING = 1
     LYING = 2
+    SPLIT = 3
 
 class Direction(Enum):
     UP = 1
     DOWN = 2
     LEFT = 3
     RIGHT = 4
+    SWITCH = 5
 
 
 
@@ -28,6 +30,8 @@ class Block:
 
         # Whether the Block is standing or lying flat
         self.orientation = orientation
+        self.cubes = ()
+        self.active = 0
     
     def __repr__(self):
         return f"Block(r = {self.r}, c = {self.c}, orientation = '{self.orientation.name}', dr = '{self.dr}', dc = '{self.dc}')"
@@ -35,14 +39,33 @@ class Block:
     # Returns a copy of the Block so the original instance will not be modified when 
     # Searching for a solution
     def copy(self):
-        return Block(self.r, self.c, self.dr, self.dc, self.orientation)
+        result = Block(self.r, self.c, self.dr, self.dc, self.orientation)
+        result.cubes = tuple(self.cubes)
+        result.active = self.active
+        return result
+
+    def key(self):
+        return (self.r, self.c, self.dr, self.dc, self.orientation, self.cubes, self.active)
+
+    def occupied(self):
+        if self.orientation == Orientation.SPLIT:
+            return list(self.cubes)
+        return [(self.r, self.c)] if not (self.dr or self.dc) else [
+            (self.r, self.c), (self.r + self.dr, self.c + self.dc)]
+
+    @classmethod
+    def split(cls, positions, active=0):
+        result = cls(*positions[active], orientation=Orientation.SPLIT)
+        result.cubes = tuple(tuple(p) for p in positions)
+        result.active = active
+        return result
 
     def __eq__(self, other):
         if not isinstance(other, Block): return False
-        return (self.r, self.c, self.dr, self.dc, self.orientation) == (other.r, other.c, other.dr, other.dc, other.orientation)
+        return self.key() == other.key()
 
     def __hash__(self):
-        return hash((self.r, self.c, self.dr, self.dc, self.orientation))
+        return hash(self.key())
 
     
     def resultingState(self, dir: Direction) -> "Block":
@@ -51,6 +74,15 @@ class Block:
         To be used in search algorithms for the solver
         """
         r, c = self.r, self.c
+        if self.orientation == Orientation.SPLIT:
+            if dir == Direction.SWITCH:
+                return Block.split(self.cubes, 1 - self.active)
+            offsets = {Direction.UP: (-1, 0), Direction.DOWN: (1, 0),
+                       Direction.LEFT: (0, -1), Direction.RIGHT: (0, 1)}
+            dr, dc = offsets[dir]
+            positions = list(self.cubes)
+            positions[self.active] = (r + dr, c + dc)
+            return Block.split(positions, self.active)
         if (self.orientation == Orientation.STANDING):
             match dir:
                 case Direction.UP:    return Block(r - 2, c, 1, 0, Orientation.LYING)
@@ -87,6 +119,8 @@ class Block:
         self.dr = nextBlock.dr
         self.dc = nextBlock.dc
         self.orientation = nextBlock.orientation
+        self.cubes = nextBlock.cubes
+        self.active = nextBlock.active
 
     def moveUp(self):
         self.applyMove(Direction.UP)

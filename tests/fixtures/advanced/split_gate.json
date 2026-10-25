@@ -1,0 +1,65 @@
+{
+  "schema_version": 2,
+  "name": "split_gate",
+  "rows": 5,
+  "cols": 10,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXX",
+    "XS..TXXXXX",
+    "XXXXXXXXXX",
+    "XG.BBw.XXX",
+    "XXXXXXXXXX"
+  ],
+  "bridges": [
+    {
+      "id": "gate",
+      "initial_open": false,
+      "tiles": [
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    }
+  ],
+  "switches": [
+    {
+      "position": [
+        3,
+        5
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "OPEN"
+        }
+      ]
+    }
+  ],
+  "splits": [
+    {
+      "position": [
+        1,
+        4
+      ],
+      "targets": [
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          6
+        ]
+      ]
+    }
+  ]
+}

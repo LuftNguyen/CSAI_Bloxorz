@@ -3,31 +3,48 @@
   "name": "Stage 8: Dual Switch",
   "rows": 12,
   "cols": 12,
-
   "start": {
     "r": 1,
     "c": 1
   },
-
   "bridges": [
     {
-      "switch": [3, 2],
+      "id": "crossbar",
+      "initial_open": true,
       "tiles": [
-        [5, 5],
-        [5, 6],
-        [5, 7]
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          5,
+          7
+        ]
       ]
     },
     {
-      "switch": [8, 8],
+      "id": "side_crossing",
+      "initial_open": true,
       "tiles": [
-        [6, 9],
-        [7, 9],
-        [8, 9]
+        [
+          6,
+          9
+        ],
+        [
+          7,
+          9
+        ],
+        [
+          8,
+          9
+        ]
       ]
     }
   ],
-
   "grid": [
     "XXXXXXXXXXXX",
     "XS........XX",
@@ -41,5 +58,48 @@
     "X........GXX",
     "X........XXX",
     "XXXXXXXXXXXX"
+  ],
+  "schema_version": 2,
+  "switches": [
+    {
+      "position": [
+        3,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "crossbar",
+          "mode": "TOGGLE"
+        }
+      ]
+    },
+    {
+      "position": [
+        3,
+        7
+      ],
+      "effects": [
+        {
+          "bridge": "crossbar",
+          "mode": "TOGGLE"
+        },
+        {
+          "bridge": "side_crossing",
+          "mode": "TOGGLE"
+        }
+      ]
+    },
+    {
+      "position": [
+        8,
+        8
+      ],
+      "effects": [
+        {
+          "bridge": "side_crossing",
+          "mode": "TOGGLE"
+        }
+      ]
+    }
   ]
 }

@@ -10,6 +10,7 @@ class Tile(Enum):
     SOFT_SWITCH = 4
     HEAVY_SWITCH = 5
     BRIDGE = 6
+    SPLIT_SWITCH = 7
 
 #costs for each tile type, used in uniform cost search
 TILE_COST = {
@@ -24,7 +25,8 @@ TILE_COST = {
 
     Tile.BRIDGE: 1,
 
-    Tile.FRAGILE: 5
+    Tile.FRAGILE: 5,
+    Tile.SPLIT_SWITCH: 0.5,
 }
 
 #add switch toggles and bridge tiles to the board class, and add a method to toggle switches and bridges
@@ -51,6 +53,8 @@ class Board:
         self.bridgeGroups = {}
         self.bridgeState = {}
         self.initialBridgeState = {}
+        self.switchEffects = {}
+        self.splitTargets = {}
 
     def __repr__(self):
         return f"Board({self.rows}x{self.cols})"
@@ -99,8 +103,32 @@ class Board:
     def addBridge(self, switchPos, bridgeTiles):
         self.bridgeGroups[switchPos] = bridgeTiles
         self.bridgeState[switchPos] = True
-        # The current loader supports only initially enabled bridge groups.
+        # Legacy schema: groups are initially enabled.
         self.initialBridgeState[switchPos] = self.bridgeState[switchPos]
+        self.switchEffects[switchPos] = ((switchPos, "TOGGLE"),)
+
+    def addBridgeGroup(self, bridge_id, positions, opened):
+        self.bridgeGroups[bridge_id] = [tuple(p) for p in positions]
+        self.bridgeState[bridge_id] = opened
+        self.initialBridgeState[bridge_id] = opened
+        for r, c in positions:
+            self.setTile(r, c, Tile.BRIDGE if opened else Tile.VOID)
+        self.initialTiles = [row[:] for row in self.tiles]
+
+    def applySwitch(self, position):
+        for bridge_id, mode in self.switchEffects.get(position, ()):
+            if mode not in ("TOGGLE", "OPEN", "CLOSE"):
+                raise ValueError(f"Unknown switch mode: {mode}")
+            current = self.bridgeState[bridge_id]
+            self.bridgeState[bridge_id] = not current if mode == "TOGGLE" else mode == "OPEN"
+            tile = Tile.BRIDGE if self.bridgeState[bridge_id] else Tile.VOID
+            for r, c in self.bridgeGroups[bridge_id]:
+                self.setTile(r, c, tile)
+
+    def rules_key(self):
+        return (frozenset((key, tuple(value)) for key, value in self.bridgeGroups.items()),
+                frozenset((key, tuple(value)) for key, value in self.switchEffects.items()),
+                frozenset((key, tuple(value)) for key, value in self.splitTargets.items()))
 
     def toggleBridge(self, switchPos):
 

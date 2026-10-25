@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "name": "optional_gate",
+  "rows": 3,
+  "cols": 12,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXXXX",
+    "XSw.......GX",
+    "XXXBXXXXXXXX"
+  ],
+  "bridges": [
+    {
+      "id": "gate",
+      "initial_open": false,
+      "tiles": [
+        [
+          2,
+          3
+        ]
+      ]
+    }
+  ],
+  "switches": [
+    {
+      "position": [
+        1,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "OPEN"
+        }
+      ]
+    }
+  ],
+  "splits": []
+}

@@ -1,5 +1,16 @@
 # Đối chiếu và quyết định triển khai
 
+Lượt hoàn thiện dữ liệu 24/10/2026 được người dùng cho phép sửa liên kết và
+khoảng đỡ: xem LEVEL_COMPLETION.md. Cả 14 màn/24 công tắc đã có witness thực
+tế; không còn switch trang trí trong bộ màn đang cung cấp. Các ghi nhận bảo
+toàn layout của lượt ban đầu không áp dụng cho các ô đổi được liệt kê mới này.
+
+Cập nhật luật ngày 23/10/2026 trên `feature/new-game-rules`, nền `c237d10`.
+Nguồn sản phẩm mới: `assignment/ASSIGNMENT.pdf` và `assignment/QA.md`;
+`CSAI_Project.pdf` vẫn chỉ là contract nhóm. Lịch sử bản nền ban đầu bên dưới
+được cập nhật để không nhầm phần đã làm với TODO còn lại. Xem trạng thái và
+bằng chứng đầy đủ ở [REQUIREMENTS_STATUS.md](REQUIREMENTS_STATUS.md).
+
 Nguồn: https://github.com/24127352/Bloxorz---CS-AI tại commit
 `5571989db4ba9b4b8017b8c9486e955d551ff269`. PDF `CSAI_Project.pdf` có tiêu đề
 **CONTRACT V1**, mô tả giao diện triển khai và phân công nhóm; đây là contract
@@ -15,14 +26,14 @@ trích xuất gây mơ hồ; không có thay đổi nội dung hay giao diện c
 | Direction, Block và quy tắc lăn | Dùng lại, giữ tên/giá trị enum; bổ sung orientation vào equality/hash |
 | Board, bộ đọc JSON | Dùng lại; giữ chi phí TILE_COST hiện có |
 | Board.reset | Khôi phục tiles và bản sao initialBridgeState đã lưu của màn; không gán mọi trạng thái cầu bằng True lúc reset |
-| State.copy | Giữ deepcopy; equality/hash bổ sung bridgeState, bridgeGroups và kích thước board |
+| State.copy | Giữ deepcopy; equality/hash có cubes/active, bridgeState, bridgeGroups, switchEffects, splitTargets và kích thước board |
 | Problem | Giữ 5 tên giao diện; kiểm tra khối đầy đủ tại đích; thêm tùy chọn unit_cost=False tương thích lời gọi cũ |
-| GameController | Giữ; kiểm tra hỗ trợ sau kích hoạt switch để khớp Problem.result |
+| GameController | Dùng cùng rules.transition với Problem; giữ con thua cho hiệu ứng rơi/vỡ |
 | GUI/menu/phát lại | Giữ; đổi điểm gọi sang runner, snapshot độc lập, hiển thị solver chưa triển khai/lỗi, hủy callback phát lại khi restart/đổi màn |
 | InputHandler | Sửa phân loại Direction/Utility: nguồn trả Direction từ processKeyUtility khiến GUI bỏ mọi bước đi; bỏ sự kiện nhả phím hướng |
-| LevelManager | Sửa trần 12 thành 11 theo tệp thực có; đường dẫn tương đối module |
+| LevelManager | Đường dẫn tương đối module; 11 màn nguồn được hoàn thiện liên kết và thêm 3 demo riêng, trần hiện tại 14 |
 | contracts, registry, runner | Bổ sung; exceptions được truyền lên, không đổi thành unsolvable |
-| BFS/DFS/UCS/A* | Chỉ khung solve(problem, limits, heuristic=None), báo NotImplementedError |
+| BFS/DFS/UCS/A* | Trên nền hiện tại A* đã có; BFS/DFS/UCS vẫn là khung. Lần sửa luật không sửa các solver |
 | heuristic | Chỉ h=0 chuẩn; heuristic khác và kiểm chứng do người 5 phụ trách |
 | search/solver.py, search/bfs/bfsa.py | Giữ nguyên mã tham khảo, GUI/registry mới không gọi |
 | search/problem.py | Bản Problem cũ khác gameModel.problem, giữ để đối chiếu; nhóm chỉ import gameModel.problem.Problem |
@@ -42,14 +53,11 @@ trích xuất gây mơ hồ; không có thay đổi nội dung hay giao diện c
 
 ## TODO luật nâng cao và nguồn tham khảo
 
-- Chưa thêm split, SWITCH, teleport: khi có đặc tả, mở rộng Direction, engine,
-  controller, GUI, copy/equality/hash và kiểm thử cùng lúc.
-- Loader hiện chỉ đọc vị trí switch và tiles, không có trường cấu hình cầu mở/tắt
-  ban đầu; addBridge luôn đăng ký trạng thái ban đầu True. Reset nay khôi phục
-  bản đã lưu và tiles ban đầu của từng màn, đã kiểm tra trên 11 màn hiện có.
-  Chưa hỗ trợ cấu hình cầu ban đầu tắt qua JSON. Nếu bổ sung, loader phải lưu
-  đồng thời tiles và initialBridgeState đúng cấu hình sau khi tải xong; không
-  chỉ đổi cờ cầu. Tương tác nhiều switch cần đặc tả và kiểm thử riêng.
+- Đã thêm split/SWITCH/teleport/ghép theo đề và QA, giữ giá trị bốn hướng cũ.
+  `rules.py` dùng chung cho Problem/Controller; GUI có hai cube, đánh dấu active.
+- Schema 2 hỗ trợ cầu mở/đóng ban đầu, ID cầu dùng chung và TOGGLE/OPEN/CLOSE;
+  schema cũ vẫn tải được. Quy tắc nhiều switch và teleport được ghi riêng tại
+  GAME_RULES.md vì nguồn không xác định đầy đủ thứ tự tương tác.
 - bridgeMap hiện không được engine đọc; nếu dùng cho luật mới phải đưa thông tin
   ảnh hưởng chuyển trạng thái vào equality/hash. initialTiles phục vụ reset,
   không tham gia một bước tìm kiếm. Không sửa state đã nằm trong set/dict.
@@ -76,4 +84,5 @@ RIGHT RIGHT tới đích, cost=2.0. Kiểm thử tự động xem TESTING.md.
 Chưa kiểm tra GUI tương tác thủ công; chưa nghiệm thu phát lại trong cửa sổ.
 Đủ nền giao diện để các thành viên viết solver độc lập, nhưng chưa thể đánh dấu
 toàn bộ checklist trước chia nhánh hoàn tất cho đến khi người dùng kiểm tra GUI.
-Chưa thể xác nhận tính tối ưu, timeout thực tế hoặc hiệu năng của solver chưa viết.
+Đã bổ sung kiểm thử luật và headless A* h=0; offscreen GUI smoke chạy được.
+Chưa thể xác nhận tính tối ưu/hiệu năng toàn bộ benchmark hay solver chưa viết.

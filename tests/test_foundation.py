@@ -92,7 +92,7 @@ class EngineTests(unittest.TestCase):
         game = GameController(board, block)
         problem = Problem(State(board, block).copy())
         state, cost = problem.initial, 0
-        self.assertEqual(problem.actions(state), list(D))
+        self.assertEqual(problem.actions(state), [D.UP, D.DOWN, D.LEFT, D.RIGHT])
         for action in (D.RIGHT, D.RIGHT):
             child = problem.result(state, action)
             cost += problem.step_cost(state, action, child)

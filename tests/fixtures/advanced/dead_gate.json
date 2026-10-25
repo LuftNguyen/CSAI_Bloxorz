@@ -1,0 +1,46 @@
+{
+  "schema_version": 2,
+  "name": "dead_gate",
+  "rows": 3,
+  "cols": 12,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXXXX",
+    "XSw..BBX..GX",
+    "XXXXXXXXXXXX"
+  ],
+  "bridges": [
+    {
+      "id": "gate",
+      "initial_open": false,
+      "tiles": [
+        [
+          1,
+          5
+        ],
+        [
+          1,
+          6
+        ]
+      ]
+    }
+  ],
+  "switches": [
+    {
+      "position": [
+        1,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "OPEN"
+        }
+      ]
+    }
+  ],
+  "splits": []
+}
