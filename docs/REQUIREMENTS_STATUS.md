@@ -1,5 +1,32 @@
 # Trạng thái yêu cầu và bằng chứng — 23/10/2026
 
+## Bổ sung theo yêu cầu mới: fatal CLOSE
+
+Đã hoàn thành 6 công tắc CLOSE gây terminal loss, đếm ngược 5 giây, thông báo
+thua 1 giây và reset. Solver loại bước thua qua Problem.result, không sửa
+thuật toán/heuristic. 82 test pass, 243 subtest, 0 skip; smoke GUI có HUD pass.
+Đây là chức năng bổ sung của nhóm, không phải yêu cầu countdown trong PDF.
+Xem [FATAL_CLOSE.md](FATAL_CLOSE.md).
+
+## Cập nhật chuỗi 10 màn — 25/10/2026
+
+Đã nâng thành phòng/đảo 9×11 đến 13×26; A* h=0 cần 10–26 bước,
+99–2467 node. Các cơ chế vẫn bắt buộc qua 27 truy vấn hạn chế cạn frontier.
+73 test pass, smoke 10 màn qua input GUI offscreen pass; chưa nghiệm thu desktop
+hoặc so sánh hiệu năng các solver. Chi tiết và bản đồ tại [CAMPAIGN.md](CAMPAIGN.md).
+
+| Yêu cầu | Trạng thái | Bằng chứng |
+| --- | --- | --- |
+| 10 màn: 2 cơ bản, 2 fragile, 3 cầu, 3 split | Hoàn thành | LevelManager.maxLevel=10, test_campaign.py |
+| Cơ chế bắt buộc và từng nhóm cầu đều cần thiết | Hoàn thành | 10 solved, 27 truy vấn hạn chế unsolvable, replay đúng sự kiện/goal/cost |
+| Switch có tác dụng thật | Hoàn thành | 37 witness và controller parity/reset |
+| Di chuyển tức thời, GUI phát đủ 10 màn | Offscreen pass | examples.gui_smoke; chưa nghiệm thu desktop |
+| Hồi quy | 73 test pass, 236 subtest, 0 skip | Không sửa solver/heuristic/test A* |
+| Benchmark tất cả solver/heuristic khác zero | Chưa hoàn thành | BFS/DFS/UCS còn stub |
+
+Xem [CAMPAIGN.md](CAMPAIGN.md). Phần dưới là lịch sử trước thiết kế lại;
+số màn/tọa độ/kết quả cũ không mô tả chuỗi đang chơi.
+
 Cập nhật dữ liệu **24/10/2026** theo yêu cầu hoàn thiện mọi liên kết: 14/14
 màn giải được và verify, 24/24 công tắc kích hoạt có tác dụng, tổng 53 test
 pass. Witness có hash dữ liệu tại `levels/validation.json`; danh sách thay đổi

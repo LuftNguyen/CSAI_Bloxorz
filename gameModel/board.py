@@ -55,6 +55,8 @@ class Board:
         self.initialBridgeState = {}
         self.switchEffects = {}
         self.splitTargets = {}
+        self.fatalCloseSwitches = frozenset()
+        self.fatalSwitch = None
 
     def __repr__(self):
         return f"Board({self.rows}x{self.cols})"
@@ -64,6 +66,7 @@ class Board:
 
         # Restore this board's recorded configuration, not a universal default.
         self.bridgeState = self.initialBridgeState.copy()
+        self.fatalSwitch = None
 
     def isInBounds(self, r, c):
         return 0 <= r < self.rows and 0 <= c < self.cols
@@ -116,6 +119,8 @@ class Board:
         self.initialTiles = [row[:] for row in self.tiles]
 
     def applySwitch(self, position):
+        if self.fatalSwitch is not None:
+            return
         for bridge_id, mode in self.switchEffects.get(position, ()):
             if mode not in ("TOGGLE", "OPEN", "CLOSE"):
                 raise ValueError(f"Unknown switch mode: {mode}")
@@ -124,13 +129,19 @@ class Board:
             tile = Tile.BRIDGE if self.bridgeState[bridge_id] else Tile.VOID
             for r, c in self.bridgeGroups[bridge_id]:
                 self.setTile(r, c, tile)
+        if position in self.fatalCloseSwitches:
+            self.fatalSwitch = position
 
     def rules_key(self):
         return (frozenset((key, tuple(value)) for key, value in self.bridgeGroups.items()),
                 frozenset((key, tuple(value)) for key, value in self.switchEffects.items()),
-                frozenset((key, tuple(value)) for key, value in self.splitTargets.items()))
+                frozenset((key, tuple(value)) for key, value in self.splitTargets.items()),
+                self.fatalCloseSwitches)
 
     def toggleBridge(self, switchPos):
+
+        if self.fatalSwitch is not None:
+            return
 
         if switchPos not in self.bridgeGroups:
             return

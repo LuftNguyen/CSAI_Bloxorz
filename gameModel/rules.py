@@ -9,7 +9,7 @@ from gameModel.board import Tile
 
 def winning(state):
     b = state.block
-    return (b.orientation == Orientation.STANDING and b.dr == b.dc == 0
+    return (state.board.fatalSwitch is None and b.orientation == Orientation.STANDING and b.dr == b.dc == 0
             and state.board.getTile(b.r, b.c) == Tile.GOAL)
 
 
@@ -40,6 +40,8 @@ def pressed(state):
 def transition(state, action):
     """Return (isolated successor, valid, loss). SWITCH has no tile interactions."""
     child = state.copy()
+    if state.board.fatalSwitch is not None:
+        return child, False, True
     if not isinstance(action, Direction) or (action == Direction.SWITCH and
                                             state.block.orientation != Orientation.SPLIT):
         return child, False, False
@@ -52,6 +54,8 @@ def transition(state, action):
     activated = pressed(child) - pressed(state)
     for position in sorted(activated):
         child.board.applySwitch(position)
+        if child.board.fatalSwitch is not None:
+            return child, False, True
     if not supported(child):
         return child, False, True
     b = child.block
@@ -63,6 +67,8 @@ def transition(state, action):
         # Arrival presses soft switches once. Cubes cannot trigger heavy/split.
         for destination in sorted(pressed(child)):
             child.board.applySwitch(destination)
+            if child.board.fatalSwitch is not None:
+                return child, False, True
         if not supported(child):
             return child, False, True
     b = child.block

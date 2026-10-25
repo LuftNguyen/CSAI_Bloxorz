@@ -200,8 +200,8 @@ class PresentationOrderingTests(unittest.TestCase):
             mesh.animate_position.assert_not_called()
             mesh.animate_scale.assert_not_called()
 
-    def test_manual_win_is_presented_once_before_delayed_level_change(self):
-        from test_gui_rules import make_view
+    def test_manual_win_falls_then_blackout_before_level_change_once(self):
+        from test_gui_rules import make_view, finish_movement
         from gameModel.block import Direction as D
         v = make_view()
         v.loadNextLevel = Mock()
@@ -213,12 +213,18 @@ class PresentationOrderingTests(unittest.TestCase):
             self.assertTrue(v.gameModel.hasWon)
             self.assertEqual(v.blockMesh.position, (4,0,-1))
             v.renderBoard.assert_called_once()
-            self.assertEqual(invoke.call_args.kwargs['delay'], 2)
+            self.assertEqual(v.blockMesh.animate_y.call_args.args[0], -3.5)
+            self.assertEqual(v.blockMesh.animate_y.call_args.kwargs['duration'], 0.6)
+            self.assertEqual(v._winPhase, 'fall')
             v.finishStep()
             v.updateAnimations()
-            invoke.assert_called_once()
+            invoke.assert_not_called()
             v.loadNextLevel.assert_not_called()
-            invoke.call_args.args[0]()
+            finish_movement(v)
+            self.assertTrue(v.winBlackout.enabled)
+            v.updateAnimations(0.99)
+            v.loadNextLevel.assert_not_called()
+            v.updateAnimations(0.01)
             v.loadNextLevel.assert_called_once()
 
     def test_restart_and_level_change_reject_old_fall_completion_and_timer(self):
@@ -237,7 +243,7 @@ class PresentationOrderingTests(unittest.TestCase):
                     group = v._movement
                     stale_completion = group.callback
                     if change_level:
-                        path = Path(__file__).resolve().parents[1]/'levels/level13.json'
+                        path = Path(__file__).resolve().parents[1]/'tests/fixtures/legacy/level13.json'
                         v.changeLevel(loadLevelFromJson(path, False))
                     else:
                         v.restartLevel()

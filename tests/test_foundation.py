@@ -1,6 +1,7 @@
 from copy import deepcopy
 from pathlib import Path
 import sys
+import subprocess
 import tracemalloc
 import unittest
 from unittest.mock import patch
@@ -88,7 +89,7 @@ class EngineTests(unittest.TestCase):
         self.assertTrue(game.isGameOver)
 
     def test_loader_replay_cost_and_reset(self):
-        board, block = loadLevelFromJson(ROOT / 'levels/level1.json', isDebug=False)
+        board, block = loadLevelFromJson(ROOT / 'tests/fixtures/legacy/level1.json', isDebug=False)
         game = GameController(board, block)
         problem = Problem(State(board, block).copy())
         state, cost = problem.initial, 0
@@ -117,7 +118,7 @@ class EngineTests(unittest.TestCase):
         self.assertIsNone(manager.nextLevel())
 
     def test_reset_restores_loaded_bridge_configuration(self):
-        for number in range(1, 12):
+        for number in range(1, 11):
             with self.subTest(level=number):
                 board, _ = loadLevelFromJson(ROOT / f'levels/level{number}.json', isDebug=False)
                 initial_tiles = deepcopy(board.tiles)
@@ -235,7 +236,14 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse(tracemalloc.is_tracing())
 
     def test_headless_does_not_import_ursina(self):
-        self.assertNotIn('ursina', sys.modules)
+        # GUI tests may have imported Ursina earlier in discovery order. Verify
+        # the real headless entry point in a clean interpreter, not global history.
+        code = ("import runpy, sys; import examples.rules_headless; "
+                "runpy.run_module('examples.headless', run_name='__main__'); "
+                "assert 'ursina' not in sys.modules")
+        result = subprocess.run([sys.executable, '-B', '-c', code], cwd=ROOT,
+                                capture_output=True, text=True, encoding='utf-8', timeout=15)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == '__main__':

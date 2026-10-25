@@ -1,66 +1,136 @@
 {
+  "schema_version": 2,
   "level_id": 6,
-  "name": "Stage 6: Fragile Crossing",
-  "rows": 12,
-  "cols": 12,
+  "name": "6: Heavy island crossing",
+  "rows": 11,
+  "cols": 17,
   "start": {
-    "r": 1,
+    "r": 6,
     "c": 1
   },
+  "grid": [
+    "XXXXXXXXXXXXXXXXX",
+    "X....WXXXXXXXXXXX",
+    "XW....XXX......GX",
+    "X..X..XXX.......X",
+    "X....WXXX...X...X",
+    "X.....BBB...X...X",
+    "XS..w.XXX.......X",
+    "X..w..XXX.......X",
+    "XXXXXXXXX.......X",
+    "XXXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXX"
+  ],
   "bridges": [
     {
-      "switch": [
-        4,
-        2
-      ],
+      "id": "crossing",
+      "initial_open": false,
       "tiles": [
         [
-          6,
+          5,
           6
         ],
         [
-          6,
+          5,
           7
         ],
         [
-          6,
-          8
-        ]
-      ]
-    },
-    {
-      "switch": [
-        8,
-        2
-      ],
-      "tiles": [
-        [
-          6,
-          6
-        ],
-        [
-          6,
-          7
-        ],
-        [
-          6,
+          5,
           8
         ]
       ]
     }
   ],
-  "grid": [
-    "XXXXXXXXXXXX",
-    "XS......XXXX",
-    "X..XXX..XXXX",
-    "X.F..F..XXXX",
-    "X.WXXF..XXXX",
-    "X.XXXX..XXXX",
-    "X.....BBB.XX",
-    "X.XXXX.F..XX",
-    "X.w....F..GX",
-    "X.XXXXXX..XX",
-    "X........XXX",
-    "XXXXXXXXXXXX"
-  ]
+  "switches": [
+    {
+      "position": [
+        1,
+        5
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "TOGGLE"
+        }
+      ]
+    },
+    {
+      "position": [
+        2,
+        1
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        7,
+        3
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        4,
+        5
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "CLOSE"
+        }
+      ],
+      "fatal_close": true
+    },
+    {
+      "position": [
+        6,
+        4
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "CLOSE"
+        }
+      ]
+    }
+  ],
+  "splits": [],
+  "design": {
+    "traps": [
+      {
+        "position": [
+          7,
+          3
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "crossing"
+      },
+      {
+        "position": [
+          4,
+          5
+        ],
+        "kind": "fatal_close",
+        "bridge": "crossing"
+      },
+      {
+        "position": [
+          6,
+          4
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "crossing"
+      }
+    ]
+  }
 }

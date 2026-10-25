@@ -1,5 +1,8 @@
 # Bàn giao phần luật mới — 23/10/2026
 
+> Lịch sử triển khai engine. Chuỗi đang chơi, vị trí màn và bằng chứng mới xem
+> [CAMPAIGN.md](CAMPAIGN.md); bộ hiện hành có 10 màn, không còn chuỗi 14 màn dưới đây.
+
 **Bổ sung hoàn thiện dữ liệu 24/10/2026:** theo yêu cầu tiếp theo, đã nối đủ
 công tắc màn 1/8, sửa khoảng đỡ màn 6/13/14 và metadata màn 2. Có 14 lời giải
 thắng và 24 witness kích hoạt tác dụng thực tế bằng A* h=0; 53 test pass.

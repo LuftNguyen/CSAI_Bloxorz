@@ -1,5 +1,9 @@
 # Trình bày bước đi — 25/10/2026
 
+Cập nhật thắng màn: khối rơi vào goal, cả bàn rơi/co dần theo làn sóng, blackout 1 giây rồi
+next level. Thay thế hành vi giữ pose thắng 2 giây/nhảy replay cũ ở phần dưới.
+Di chuyển thường vẫn tức thời. Xem [WIN_TRANSITION.md](WIN_TRANSITION.md).
+
 ## Hiện tại: di chuyển tức thời, giữ nguyên luật mới
 
 Cập nhật nhịp phát lại theo phản hồi tiếp theo: `view.replayInterval = 0.5`

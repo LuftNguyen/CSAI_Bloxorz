@@ -27,7 +27,7 @@ class CompletedLevelTests(unittest.TestCase):
         cls.records = json.loads((ROOT/'levels/validation.json').read_text(encoding='utf-8'))['levels']
 
     def test_manifest_matches_all_current_levels(self):
-        self.assertEqual([r['level'] for r in self.records], list(range(1, 15)))
+        self.assertEqual([r['level'] for r in self.records], list(range(1, 11)))
         for record in self.records:
             with self.subTest(level=record['level']):
                 data = json.loads((ROOT/f'levels/level{record["level"]}.json').read_text(encoding='utf-8'))
@@ -36,7 +36,7 @@ class CompletedLevelTests(unittest.TestCase):
                                  'Level changed: rerun python -m examples.audit_levels --write')
 
     def test_no_decorative_switch_or_uncontrolled_bridge(self):
-        for number in range(1, 15):
+        for number in range(1, 11):
             with self.subTest(level=number):
                 board, _ = loadLevelFromJson(ROOT/f'levels/level{number}.json', False)
                 bridge_cells = {p for cells in board.bridgeGroups.values() for p in cells}
@@ -85,4 +85,6 @@ class CompletedLevelTests(unittest.TestCase):
                     replay_activation(initial, target, result.actions)
                     self.assertEqual(initial, State(board, block))
                     total += 1
-        self.assertGreaterEqual(total, 24)
+        expected_total = sum(len(r['activations']) for r in self.records)
+        self.assertEqual(total, expected_total)
+        self.assertGreaterEqual(total, 20)

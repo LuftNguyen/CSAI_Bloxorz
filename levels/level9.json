@@ -1,41 +1,174 @@
 {
+  "schema_version": 2,
   "level_id": 9,
-  "name": "Stage 9: Maze of Regret",
-  "rows": 15,
-  "cols": 15,
-
+  "name": "9: Split and the island gate",
+  "rows": 17,
+  "cols": 17,
   "start": {
-    "r": 1,
+    "r": 14,
     "c": 1
   },
-
+  "grid": [
+    "XXXXXXXXXXXXXXXXX",
+    "X.XX.XXXXXX..G.XX",
+    "XXXXXXXXXXX....XX",
+    "XXXXXXXXXXX....XX",
+    "XXXXXXXXXXX....XX",
+    "XXXXXXXXXXXXBXXXX",
+    "XXXXXXXXXXXXBXXXX",
+    "XXXXXXXXXXXXBXXXX",
+    "XXXXXXXX.w...XXXX",
+    "XXXXXXXXw....XXXX",
+    "XXXXXXXXw...wXXXX",
+    "XXXXXXXX....wXXXX",
+    "X...T.XXXXXXXXXXX",
+    "X.....XXXXXXXXXXX",
+    "XS....XXXXXXXXXXX",
+    "X....TXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXX"
+  ],
   "bridges": [
     {
-      "switch": [10,3],
+      "id": "gate",
+      "initial_open": false,
       "tiles": [
-        [7,7],
-        [7,8],
-        [7,9],
-        [7,10]
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          7,
+          12
+        ]
       ]
     }
   ],
-
-  "grid": [
-    "XXXXXXXXXXXXXXX",
-    "XS...........XX",
-    "X.XXXXXXX....XX",
-    "X.....F.......X",
-    "X.XXX.F.XXXX..X",
-    "X.....F....X..X",
-    "X.XXXXXXX..X..X",
-    "X......BBBBX..X",
-    "X.XXXXXXX..X..X",
-    "X.....F....X..X",
-    "X..w..F.......X",
-    "X.XXXXXXX.XX..X",
-    "X...........G.X",
-    "XXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXX"
-  ]
+  "switches": [
+    {
+      "position": [
+        10,
+        8
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        8,
+        9
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        10,
+        12
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "TOGGLE"
+        }
+      ]
+    },
+    {
+      "position": [
+        9,
+        8
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        11,
+        12
+      ],
+      "effects": [
+        {
+          "bridge": "gate",
+          "mode": "CLOSE"
+        }
+      ],
+      "fatal_close": true
+    }
+  ],
+  "splits": [
+    {
+      "position": [
+        12,
+        4
+      ],
+      "targets": [
+        [
+          3,
+          13
+        ],
+        [
+          11,
+          9
+        ]
+      ]
+    },
+    {
+      "position": [
+        15,
+        5
+      ],
+      "targets": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          4
+        ]
+      ]
+    }
+  ],
+  "design": {
+    "traps": [
+      {
+        "position": [
+          8,
+          9
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "gate"
+      },
+      {
+        "position": [
+          11,
+          12
+        ],
+        "kind": "fatal_close",
+        "bridge": "gate"
+      },
+      {
+        "position": [
+          15,
+          5
+        ],
+        "kind": "isolated_cubes"
+      }
+    ]
+  }
 }

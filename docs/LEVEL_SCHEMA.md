@@ -68,7 +68,19 @@ biên và có sàn hoặc nằm trong nhóm cầu. Cho phép ô đặc biệt/ba
 engine kiểm tra hỗ trợ ở thời điểm thực sự teleport. Void vĩnh viễn bị từ chối.
 Reset dùng tiles và trạng thái ban đầu đã lưu, không mặc định tất cả cầu mở.
 
-## Phân loại màn
+## Phân loại màn hiện hành
+
+Schema 2 có cờ tùy chọn `fatal_close: true` trên switch có toàn bộ effects
+CLOSE. Cờ mặc định false, bắt buộc boolean. Đây là bẫy bổ sung theo yêu cầu
+mới: gây thua ngay, GUI đếm 5 giây rồi thông báo/reset; không phải quy định
+đếm ngược trong đề. Xem [FATAL_CLOSE.md](FATAL_CLOSE.md).
+
+LevelManager tải đúng 10 màn: 1–2 cơ bản, 3–4 fragile, 5–7 cầu/công tắc,
+8–10 split và kết hợp. Chi tiết tại [CAMPAIGN.md](CAMPAIGN.md).
+`levels/validation.json` lưu 10 lời giải và 37 activation witness.
+Các fixture cũ cần cho hồi quy nằm tại `tests/fixtures/legacy/`.
+
+## Phân loại màn cũ — lịch sử, không còn là chuỗi GUI
 
 - `level1.json`–`level11.json`: bộ nguồn đã được hoàn thiện liên kết (màn 1,8),
   sửa khoảng đỡ màn 6, reference màn 5 và metadata màn 2. Cả 11 màn đã giải

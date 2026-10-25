@@ -229,7 +229,7 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(b.getTile(1, 2), T.NORMAL)
 
     def test_split_controller_parity_reset_and_switch_cost(self):
-        board, block = loadLevelFromJson(ROOT/'levels/level12.json', False)
+        board, block = loadLevelFromJson(ROOT/'tests/fixtures/legacy/level12.json', False)
         p = Problem(State(board, block).copy())
         controller = GameController(board, block)
         state = p.initial
@@ -250,19 +250,19 @@ class RuleTests(unittest.TestCase):
 
 class LoaderAndReplayTests(unittest.TestCase):
     def test_all_levels_and_legacy_shared_bridge_fix(self):
-        for number in range(1, 15):
+        for number in range(1, 11):
             with self.subTest(level=number):
                 b, _ = loadLevelFromJson(ROOT/f'levels/level{number}.json', False)
                 self.assertEqual(len(b.tiles), b.rows)
-        raw = json.loads((ROOT/'levels/level5.json').read_text())
+        raw = json.loads((ROOT/'tests/fixtures/legacy/level5.json').read_text())
         self.assertEqual(raw['grid'][6][14], 'W')
         self.assertEqual(raw['grid'][6][15], '.')
-        b, _ = loadLevelFromJson(ROOT/'levels/level5.json', False)
+        b, _ = loadLevelFromJson(ROOT/'tests/fixtures/legacy/level5.json', False)
         self.assertEqual(b.switchEffects[(5,5)][0][0], b.switchEffects[(6,14)][0][0])
         self.assertEqual(len(b.bridgeState), 1)
 
     def test_initial_closed_and_repeated_reset(self):
-        b, block = loadLevelFromJson(ROOT/'levels/level13.json', False)
+        b, block = loadLevelFromJson(ROOT/'tests/fixtures/legacy/level13.json', False)
         initial = State(b, block).copy()
         self.assertFalse(b.bridgeState['crossing'])
         self.assertEqual(b.getTile(2, 4), T.VOID)
@@ -273,7 +273,7 @@ class LoaderAndReplayTests(unittest.TestCase):
             self.assertEqual(State(b,block), initial)
 
     def test_loader_rejects_invalid_data(self):
-        valid = json.loads((ROOT/'levels/level14.json').read_text())
+        valid = json.loads((ROOT/'tests/fixtures/legacy/level14.json').read_text())
         invalid = []
         def case(change):
             data = deepcopy(valid)
@@ -297,7 +297,7 @@ class LoaderAndReplayTests(unittest.TestCase):
         for index, data in enumerate(invalid):
             with self.subTest(case=index), self.assertRaises(ValueError):
                 _load(data)
-        split = json.loads((ROOT/'levels/level12.json').read_text())
+        split = json.loads((ROOT/'tests/fixtures/legacy/level12.json').read_text())
         for targets in [[], [[1,1],[1,1]], [[1,1],[99,99]]]:
             with self.subTest(targets=targets), self.assertRaises(ValueError):
                 split['splits'][0]['targets'] = targets
@@ -309,7 +309,7 @@ class LoaderAndReplayTests(unittest.TestCase):
                 loadLevelFromJson(path, False)
 
     def test_verified_solution_and_rejection(self):
-        b, block = loadLevelFromJson(ROOT/'levels/level1.json', False)
+        b, block = loadLevelFromJson(ROOT/'tests/fixtures/legacy/level1.json', False)
         p = Problem(State(b, block))
         initial = p.initial.copy()
         solved = SearchResult('solved', (D.RIGHT,D.RIGHT), 2.0+1e-11, 0, 0)
@@ -320,6 +320,6 @@ class LoaderAndReplayTests(unittest.TestCase):
                 validate_solution(p, SearchResult('solved', actions, cost, 0, 0))
 
     def test_unverified_split_heuristic_guard(self):
-        b, block = loadLevelFromJson(ROOT/'levels/level12.json', False)
+        b, block = loadLevelFromJson(ROOT/'tests/fixtures/legacy/level12.json', False)
         with self.assertRaisesRegex(ValueError, 'unverified'):
             run_search(Problem(State(b,block)), 'astar', SearchLimits(), lambda p,s: 1)

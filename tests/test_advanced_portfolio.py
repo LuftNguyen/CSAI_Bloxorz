@@ -4,16 +4,18 @@ from pathlib import Path
 import unittest
 
 from gameModel.block import Direction as D, Orientation as O
+from gameModel.board import Tile
 from gameModel.problem import Problem
 from gameModel.rules import pressed
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
-from runner import run_search, validate_solution
+from runner import validate_solution
 from search.contracts import SearchLimits
+from search.registry import get_solver
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / 'tests/fixtures/advanced'
-LIMITS = SearchLimits(timeout_seconds=10, max_expanded_nodes=100000)
+LIMITS = SearchLimits(timeout_seconds=60, max_expanded_nodes=100000)
 
 
 def events(state, action, child):
@@ -27,6 +29,8 @@ def events(state, action, child):
         found.add('merge')
     if action == D.SWITCH:
         found.add('control')
+    if any(child.board.getTile(*p) == Tile.FRAGILE for p in child.block.occupied()):
+        found.add('fragile')
     return found
 
 
@@ -42,6 +46,13 @@ class RestrictedProblem(Problem):
         snapshot = initial.copy()
         if 'bridge' in forbidden:
             snapshot.board.switchEffects = {}
+        else:
+            disabled = {e.split(':', 1)[1] for e in forbidden if e.startswith('bridge:')}
+            snapshot.board.switchEffects = {
+                p: tuple((key, mode) for key, mode in effects if key not in disabled)
+                for p, effects in snapshot.board.switchEffects.items()}
+        snapshot.board.fatalCloseSwitches = frozenset(
+            p for p in snapshot.board.fatalCloseSwitches if snapshot.board.switchEffects.get(p))
         super().__init__(snapshot)
         self.forbidden = frozenset(forbidden)
 
@@ -59,7 +70,9 @@ def load(name):
 
 def solve(initial, forbidden=()):
     problem = RestrictedProblem(initial, forbidden)
-    result = run_search(problem, 'astar', LIMITS, heuristic=None).search
+    # Correctness queries do not need runner's tracemalloc overhead. Use the
+    # identical registered solver/interface; profiling is a separate audit.
+    result = get_solver('astar')(problem, LIMITS, heuristic=None)
     if result.status not in ('solved', 'unsolvable'):
         raise AssertionError(f'Inconclusive reachability: {result.status}')
     if result.status == 'solved':

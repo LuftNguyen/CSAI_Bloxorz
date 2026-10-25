@@ -1,41 +1,220 @@
 {
+  "schema_version": 2,
   "level_id": 10,
-  "name": "Stage 10: False Hope",
-  "rows": 15,
-  "cols": 15,
-
+  "name": "10: Twin gates expedition",
+  "rows": 13,
+  "cols": 26,
   "start": {
     "r": 1,
-    "c": 1
+    "c": 20
   },
-
+  "grid": [
+    "XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "X.XX.XXXXXXXXXXXXXXXS...TX",
+    "XXXXXXXXXXXXXXXXXXXX.....X",
+    "XXXXXXXXXXXXXXXXXXXX.....X",
+    "XXXXXXXXXXXXXXXXXXXX...T.X",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "XXXXXXXX..w.XXXXXXXXXXXXXX",
+    "X....XXX.w..BBB....XXXXXXX",
+    "X..F.BBB....XXX.w..XXXXXXX",
+    "X.w..XXX.w..XXX...wXXXXXXX",
+    "XG...XXXXXXXXXX..w.XXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXX"
+  ],
   "bridges": [
     {
-      "switch": [10, 2],
+      "id": "near",
+      "initial_open": false,
       "tiles": [
-        [7, 7],
-        [7, 8],
-        [7, 9],
-        [7, 10]
+        [
+          7,
+          12
+        ],
+        [
+          7,
+          13
+        ],
+        [
+          7,
+          14
+        ]
+      ]
+    },
+    {
+      "id": "far",
+      "initial_open": false,
+      "tiles": [
+        [
+          8,
+          5
+        ],
+        [
+          8,
+          6
+        ],
+        [
+          8,
+          7
+        ]
       ]
     }
   ],
-
-  "grid": [
-    "XXXXXXXXXXXXXXX",
-    "XS...........XX",
-    "X.XXXXXXX....XX",
-    "X.....F....G.XX",
-    "X.XXX.F.XXXX.XX",
-    "X.....F....X.XX",
-    "X.XXXXXXX..X.XX",
-    "X......BBBBX.XX",
-    "X.XXXXXXX..X.XX",
-    "X.....F....X.XX",
-    "X.w...F......XX",
-    "X.XXXXXXX....XX",
-    "X............XX",
-    "XXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXX"
-  ]
+  "switches": [
+    {
+      "position": [
+        10,
+        17
+      ],
+      "effects": [
+        {
+          "bridge": "near",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        9,
+        9
+      ],
+      "effects": [
+        {
+          "bridge": "far",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        8,
+        16
+      ],
+      "effects": [
+        {
+          "bridge": "near",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        6,
+        10
+      ],
+      "effects": [
+        {
+          "bridge": "far",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        9,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "near",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        7,
+        9
+      ],
+      "effects": [
+        {
+          "bridge": "far",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        9,
+        18
+      ],
+      "effects": [
+        {
+          "bridge": "near",
+          "mode": "CLOSE"
+        }
+      ],
+      "fatal_close": true
+    }
+  ],
+  "splits": [
+    {
+      "position": [
+        4,
+        23
+      ],
+      "targets": [
+        [
+          8,
+          3
+        ],
+        [
+          7,
+          18
+        ]
+      ]
+    },
+    {
+      "position": [
+        1,
+        24
+      ],
+      "targets": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          4
+        ]
+      ]
+    }
+  ],
+  "design": {
+    "traps": [
+      {
+        "position": [
+          8,
+          16
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "near"
+      },
+      {
+        "position": [
+          6,
+          10
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "far"
+      },
+      {
+        "position": [
+          9,
+          18
+        ],
+        "kind": "fatal_close",
+        "bridge": "near"
+      },
+      {
+        "position": [
+          1,
+          24
+        ],
+        "kind": "isolated_cubes"
+      }
+    ]
+  }
 }

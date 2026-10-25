@@ -1,82 +1,34 @@
 {
+  "schema_version": 2,
   "level_id": 2,
-  "name": "Stage 2: Final Trial",
-  "rows": 20,
-  "cols": 20,
+  "name": "2: Crosswind galleries",
+  "rows": 15,
+  "cols": 17,
   "start": {
     "r": 1,
-    "c": 1
+    "c": 5
   },
-  "bridges": [
-    {
-      "switch": [
-        5,
-        5
-      ],
-      "tiles": [
-        [
-          10,
-          8
-        ],
-        [
-          10,
-          9
-        ],
-        [
-          10,
-          10
-        ],
-        [
-          10,
-          11
-        ]
-      ]
-    },
-    {
-      "switch": [
-        14,
-        15
-      ],
-      "tiles": [
-        [
-          15,
-          8
-        ],
-        [
-          15,
-          9
-        ],
-        [
-          15,
-          10
-        ],
-        [
-          15,
-          11
-        ]
-      ]
-    }
-  ],
   "grid": [
-    "XXXXXXXXXXXXXXXXXXXX",
-    "XS...............XXX",
-    "X.XXXXXXXXXXXX...XXX",
-    "X.....F..........XXX",
-    "X.XXX.F.XXXXXXX..XXX",
-    "X....wF.........XXXX",
-    "X.XXX.F.XXXXXX..XXXX",
-    "X.....F.........XXXX",
-    "X.XXXXXXXXXXXX..XXXX",
-    "X........F......XXXX",
-    "X.......BBBB....XXXX",
-    "X.XXXXXXFXXXX...XXXX",
-    "X......FF.......XXXX",
-    "X.XXXXXXXXXXXX..XXXX",
-    "X..............WXXXX",
-    "X.......BBBB....XXXX",
-    "X.XXXXXXXXXXXX..GXXX",
-    "X................XXX",
-    "XXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXXXXXX"
-  ]
+    "XXXXXXXXXXXXXXXXX",
+    "XXXXXS......XXXXX",
+    "XXXXX.......XXXXX",
+    "XXXXX....X..XXXXX",
+    "XXXXX..F....XXXXX",
+    "X...X...........X",
+    "X......XXX......X",
+    "X..X...XXX...X..X",
+    "X......XXX......X",
+    "X..........FX..GX",
+    "XXXXX.......XXXXX",
+    "XXXXX..X....XXXXX",
+    "XXXXX.....X.XXXXX",
+    "XXXXX.......XXXXX",
+    "XXXXXXXXXXXXXXXXX"
+  ],
+  "bridges": [],
+  "switches": [],
+  "splits": [],
+  "design": {
+    "traps": []
+  }
 }

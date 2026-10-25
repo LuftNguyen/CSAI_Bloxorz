@@ -13,11 +13,14 @@ Repository nhóm Public: [LuftNguyen/CSAI_Bloxorz](https://github.com/LuftNguyen
 Remote `origin` trỏ tới repository nhóm; `upstream` giữ repository nguồn.
 
 Dùng lại Block/Direction, Board, State, Problem, GameController, bộ đọc màn,
-11 màn JSON nguồn đã hoàn thiện liên kết, GUI/menu và cơ chế phát lại;
-thêm ba demo riêng 12–14. `search/solver.py`,
+GUI/menu và cơ chế phát lại; chuỗi chơi có đúng 10 màn: 2 cơ bản, 2 fragile,
+3 cầu/công tắc và 3 split với bằng chứng cơ chế bắt buộc. `search/solver.py`,
 `search/bfs/bfsa.py`, node và `search/problem.py` cũ là **mã tham khảo của
 nguồn**, không phải thuật toán nhóm tự cài. Heuristic cũ chưa được mặc định
 coi là admissible. Nhóm dùng `gameModel.problem.Problem` làm giao diện chung.
+
+Bộ 10 màn đã mở rộng thành phòng và đảo nối cầu, 10–26 bước với A* h=0;
+xem [bản đồ](docs/CAMPAIGN_MAPS.svg) và [kết quả kiểm chứng](docs/CAMPAIGN.md).
 
 Không tìm thấy LICENSE/COPYING trong cây nguồn tại commit trên; không tự gán
 MIT hay giấy phép khác. README nguồn giữ nguyên tại
@@ -62,7 +65,7 @@ chưa nghiệm thu GUI tương tác thủ công. Đây chưa phải kết quả 
 - [Luật và thứ tự tương tác](docs/GAME_RULES.md), [schema màn](docs/LEVEL_SCHEMA.md).
 - [Yêu cầu và bằng chứng](docs/REQUIREMENTS_STATUS.md), [bàn giao luật mới](docs/RULES_HANDOFF.md).
 - [Các liên kết màn đã hoàn thiện và cách thử](docs/LEVEL_COMPLETION.md):
-  cả 14 màn có lời giải đã verify, 24 công tắc có witness kích hoạt thực tế.
+  tài liệu lịch sử; bộ hiện hành tại [Chuỗi 10 màn](docs/CAMPAIGN.md).
 - Người 1: `search/bfs.py`; người 2: `search/dfs.py`; người 3: `search/ucs.py`;
   người 4: `search/astar.py`; người 5: `search/heuristics.py`, kiểm chứng A*.
 - Giao diện chung: `search/contracts.py`, `search/registry.py`, `runner.py`.

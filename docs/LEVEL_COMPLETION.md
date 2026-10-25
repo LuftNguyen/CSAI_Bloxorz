@@ -1,5 +1,8 @@
 # Hoàn thiện công dụng các ô và liên kết màn — 24/10/2026
 
+> Tài liệu lịch sử của bộ 14 màn. Bộ đang chơi đã được thay bằng
+> [10 màn có cơ chế bắt buộc](CAMPAIGN.md). Tọa độ và số liệu dưới đây thuộc bộ cũ.
+
 Phạm vi này được người dùng cho phép sau phần triển khai luật: hoàn thiện dữ
 liệu màn để công tắc thật sự hoạt động. Không sửa solver/heuristic, không đổi
 contract hay luật engine, không commit/push hoặc thao tác nhánh khác.

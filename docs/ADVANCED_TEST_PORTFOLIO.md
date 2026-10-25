@@ -1,5 +1,45 @@
 # Bộ kiểm thử cơ chế nâng cao — 25/10/2026
 
+Kết quả mới nhất sau bổ sung fatal CLOSE: **82 test pass, 243 subtest, 0 skip**.
+6 nút có `!` gây thua, GUI đếm 5 giây rồi báo thua/reset. Cả 10 màn vẫn giải
+được; 37 witness gồm 6 terminal loss được ghi riêng. Chi tiết:
+[FATAL_CLOSE.md](FATAL_CLOSE.md). Số test thấp hơn phía dưới là lịch sử.
+
+## Bộ đang chơi: 10 màn với cơ chế bắt buộc
+
+Đã nâng độ khó thành phòng/sân nhiều nhánh và đảo có cầu: bàn 9×11 đến 13×26,
+57–115 ô khác X (gồm cầu), 10–26 bước và 99–2467 node A* h=0. Bản đồ tại
+[CAMPAIGN_MAPS.svg](CAMPAIGN_MAPS.svg), bảng chi phí/node tại [CAMPAIGN.md](CAMPAIGN.md).
+Không sửa solver, heuristic, engine hoặc kiểu đặt khối tức thời. Giới hạn audit
+mới 60 giây/query; test đúng/sai gọi solver từ registry không đo tracemalloc,
+manifest vẫn dùng runner. Các kích thước/số liệu bộ hành lang trước là lịch sử.
+
+Theo yêu cầu mới, đã thay chuỗi 14 màn bằng đúng 10 màn GUI:
+
+| Màn | Cơ chế bắt buộc | Full rules | Bỏ cơ chế tương ứng |
+| --- | --- | --- | --- |
+| 1–2 | Cơ bản: lăn, đổi hướng, goal | solved | Không áp dụng |
+| 3–4 | Đi qua fragile ở tư thế an toàn | solved | unsolvable |
+| 5 | Soft OPEN và qua cầu đóng ban đầu | solved | unsolvable |
+| 6 | Heavy TOGGLE và qua cầu đóng ban đầu | solved | unsolvable |
+| 7 | Soft, heavy, hai cầu lần lượt | solved | Tắt riêng từng cầu: unsolvable |
+| 8 | Split/teleport, SWITCH, merge, cube qua F | solved | Tắt từng cơ chế: unsolvable |
+| 9 | Split, SWITCH, soft/cầu, merge | solved | Tắt từng cơ chế: unsolvable |
+| 10 | Split, SWITCH, hai soft/hai cầu, merge và F | solved | Tắt từng cơ chế/cầu: unsolvable |
+
+Chi tiết tại [CAMPAIGN.md](CAMPAIGN.md). Cả 27 truy vấn hạn chế đều cạn frontier.
+73 test pass, 236 lượt subtest, 0 skip. Smoke GUI offscreen đã phát lại đủ 10 màn;
+giữ di chuyển tức thời và replay 0,5 giây. Không sửa engine/solver/heuristic.
+Sáu màn cũ cần cho hồi quy nằm riêng tại tests/fixtures/legacy; các fixture
+advanced âm/tùy chọn vẫn giữ. test_campaign.py bảo vệ cơ chế bắt buộc của màn thật.
+Chỉ đổi giới hạn màn/test theo portfolio mới; không bỏ test bảo vệ contract.
+Manifest, inventory và evidence hiện mô tả bộ mới. Chưa nghiệm thu desktop thủ công,
+chưa benchmark. Không commit/push trong lượt sửa này.
+
+## Lịch sử: audit và portfolio trước khi thay chuỗi chơi
+
+Toàn bộ phần dưới là báo cáo cũ; số 14 màn/68–69 test không còn là kết quả hiện hành.
+
 ## 1. Đánh giá bộ test cũ
 
 Kiểm kê thực thi toàn bộ 14 màn tại [ADVANCED_LEVEL_INVENTORY.md](ADVANCED_LEVEL_INVENTORY.md),

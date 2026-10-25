@@ -21,10 +21,15 @@ def main():
     from levels.levelLoader import loadLevelFromJson
 
     root = Path(__file__).resolve().parents[1]
-    load = lambda n: loadLevelFromJson(root/f'levels/level{n}.json', False)
+    load = lambda n: loadLevelFromJson(root/f'tests/fixtures/legacy/level{n}.json', False)
     board, block = load(1)
     with patch.object(view, 'Ursina', side_effect=lambda: Ursina(window_type='offscreen', development_mode=False)):
         ui = view.BloxorzView(GameController(board,block), Problem(State(board,block).copy()))
+    # Offscreen windows do not emit the onscreen resize event that sizes the
+    # UI lens. Match Window.update_aspect_ratio so captures include real HUDs.
+    from ursina import camera, window
+    camera.ui_lens.set_film_size(camera._ui_size * .5 * window.aspect_ratio,
+                                 camera._ui_size * .5)
     clock = ClockObject.getGlobalClock()
     clock.setMode(ClockObject.MNonRealTime)
     clock.setDt(1/60)
@@ -89,7 +94,7 @@ def main():
             # Heavy CLOSE through its verified witness at a low frame rate.
             clock.setDt(0.1)
             ui.restartLevel()
-            data = json.loads((root/'levels/validation.json').read_text())
+            data = json.loads((root/'tests/fixtures/legacy/validation.json').read_text())
             witness = next(a for row in data['levels'] if row['level']==13
                            for a in row['activations'] if a['position']==[2,2])
             names = {'UP':'up arrow','DOWN':'down arrow','LEFT':'left arrow','RIGHT':'right arrow','SWITCH':'space'}
@@ -165,6 +170,97 @@ def main():
             assert not ui.isSolving and not ui._replayReady
             for method in ordinary_animations:
                 method.assert_not_called()
+            # Play every current campaign stage through the actual GUI input path.
+            manifest = json.loads((root/'levels/validation.json').read_text())
+            for record in manifest['levels']:
+                ui.changeLevel(loadLevelFromJson(root/f'levels/level{record["level"]}.json', False))
+                if record['level'] in (7, 10):
+                    capture(f'campaign_{record["level"]}_initial')
+                for action in record['solution']['actions']:
+                    key(names[action])
+                assert ui.gameModel.hasWon, record['level']
+                assert not ui.gameModel.isGameOver
+            for method in ordinary_animations:
+                method.assert_not_called()
+            print('All 10 current campaign stages: real GUI input replay passed')
+            # Complete a manual win, including visible fall and solid black frame.
+            record = next(r for r in manifest['levels'] if r['level'] == 7)
+            ui.levelManager.currentLevel = 7
+            ui.changeLevel(loadLevelFromJson(root/'levels/level7.json', False))
+            for action in record['solution']['actions']:
+                key(names[action])
+            assert ui._winPhase == 'fall' and ui.isAnimating
+            assert all(tile.enabled for tile in ui.tileEntities)
+            tick(24)
+            assert ui._winPhase == 'fall' and -3.5 < ui.blockMesh.y < -0.1
+            capture('goal_fall')
+            until(lambda: ui._winPhase == 'collapse')
+            poses = [(tile, tile.y, tuple(tile.scale)) for tile in ui.tileEntities]
+            tick(18)
+            assert any(tile.y < y-0.03 for tile, y, _ in poses)
+            assert any(abs(tile.y-y) < 1e-6 for tile, y, _ in poses), 'Wave must be staggered'
+            assert any(tile.scale_x < scale[0]*0.9 for tile, _, scale in poses)
+            capture('board_disappearing_wave')
+            until(lambda: ui._winPhase == 'blackout')
+            assert not ui.blockMesh.enabled and ui.winBlackout.enabled
+            capture('goal_blackout')
+            black_pixels = PNMImage()
+            assert ui.app.win.getScreenshot(black_pixels)
+            assert black_pixels.getAverageGray() < 0.001, 'Blackout must cover HUD and board'
+            tick(30)
+            assert ui.levelManager.currentLevel == 7
+            until(lambda: ui.levelManager.currentLevel == 8)
+            assert not ui.winBlackout.enabled and not ui.isAnimating
+            capture('after_goal_next_level')
+            print('Manual goal fall, staggered falling/shrinking tiles, full black second and next level passed')
+            # Cancel real delayed tile sequences in the middle of the wave.
+            ui.levelManager.currentLevel = 7
+            ui.changeLevel(loadLevelFromJson(root/'levels/level7.json', False))
+            for action in record['solution']['actions']:
+                key(names[action])
+            until(lambda: ui._winPhase == 'collapse')
+            tick(18)
+            ui.restartLevel()
+            restarted = State(ui.gameModel.board, ui.gameModel.block).copy()
+            restored_tiles = [(tile, tuple(tile.position), tuple(tile.scale)) for tile in ui.tileEntities]
+            tick(180)
+            assert ui.levelManager.currentLevel == 7
+            assert State(ui.gameModel.board, ui.gameModel.block) == restarted
+            assert all(tile.enabled and tuple(tile.position) == pos and tuple(tile.scale) == scale
+                       for tile, pos, scale in restored_tiles)
+            assert not ui.winBlackout.enabled and ui._winPhase is None
+            print('Restart during real tile wave cancels delayed transforms and level advance')
+            # Fatal CLOSE: use a generated witness through real input/frame clock.
+            fatal_data = json.loads((root/'levels/level5.json').read_text())
+            fatal_position = next(s['position'] for s in fatal_data['switches'] if s.get('fatal_close'))
+            witness = next(a for row in manifest['levels'] if row['level'] == 5
+                           for a in row['activations'] if a['position'] == fatal_position)
+            ui.changeLevel(loadLevelFromJson(root/'levels/level5.json', False))
+            initial = State(ui.gameModel.board, ui.gameModel.block).copy()
+            for action in witness['actions']:
+                key(names[action])
+            assert ui.gameModel.isGameOver and ui.isAnimating
+            assert ui.gameModel.board.fatalSwitch == tuple(fatal_position)
+            assert ui._fatalRemaining == 5.0 and ui.fatalMessage.enabled
+            key('right arrow')
+            assert ui._fatalRemaining == 5.0
+            capture('fatal_close_countdown')
+            tick(240)  # Still before 5 seconds, including capture frames.
+            assert ui.gameModel.isGameOver and ui._fatalRemaining > 0
+            until(lambda: ui._fatalRemaining is None)
+            assert 'YOU LOSE' in ui.fatalMessage.text and ui.gameModel.isGameOver
+            capture('fatal_close_loss')
+            until(lambda: not ui.gameModel.isGameOver)
+            assert State(ui.gameModel.board, ui.gameModel.block) == initial
+            assert not ui.fatalMessage.enabled and not ui.isAnimating
+            # A manual reset cancels the countdown completely.
+            for action in witness['actions']:
+                key(names[action])
+            ui.restartLevel()
+            tick(420)
+            assert State(ui.gameModel.board, ui.gameModel.block) == initial
+            assert not ui.fatalMessage.enabled and ui._fatalRemaining is None
+            print('Fatal CLOSE: 5-second countdown, loss notice, reset and cancellation passed')
         print('Offscreen instant movement OK: direct final poses, zero position/scale animators, bridge OPEN/CLOSE, fragile/fall/reset, split/SWITCH/merge, A* replay, cancellation')
     finally:
         ui.cancelReplay()

@@ -4,381 +4,32 @@
   "levels": [
     {
       "level": 1,
-      "data_sha256": "20d808fd886190266cc90558eca0e9b5721d8102ba40abafdd1348764757fbe3",
+      "data_sha256": "b47cd8e10b01948c5d42616efb3b45da4223b9ab69520fc36ccdd8c40cafe386",
       "solution": {
         "actions": [
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
           "RIGHT",
           "RIGHT"
         ],
-        "total_cost": 2.0
+        "total_cost": 10.0
       },
-      "activations": [
-        {
-          "position": [
-            3,
-            3
-          ],
-          "actions": [
-            "DOWN",
-            "LEFT",
-            "DOWN",
-            "RIGHT",
-            "UP",
-            "RIGHT"
-          ],
-          "total_cost": 5.5
-        },
-        {
-          "position": [
-            3,
-            4
-          ],
-          "actions": [
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "RIGHT"
-          ],
-          "total_cost": 3.5
-        },
-        {
-          "position": [
-            5,
-            3
-          ],
-          "actions": [
-            "DOWN",
-            "LEFT",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "RIGHT"
-          ],
-          "total_cost": 5.5
-        },
-        {
-          "position": [
-            5,
-            4
-          ],
-          "actions": [
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "LEFT",
-            "DOWN",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "total_cost": 6.5
-        }
-      ]
+      "activations": []
     },
     {
       "level": 2,
-      "data_sha256": "441cc58a8f331d4a6844ca4c8f90197f0635d795d87633875f846d9cc3205095",
-      "solution": {
-        "actions": [
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT"
-        ],
-        "total_cost": 22.0
-      },
-      "activations": [
-        {
-          "position": [
-            5,
-            5
-          ],
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "UP",
-            "LEFT",
-            "LEFT"
-          ],
-          "total_cost": 19.0
-        },
-        {
-          "position": [
-            14,
-            15
-          ],
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "LEFT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN"
-          ],
-          "total_cost": 19.5
-        }
-      ]
-    },
-    {
-      "level": 3,
-      "data_sha256": "fa330d33e80db4ff0af2fbdc6024cabad8192a4b7d1eaee4f59d8d8b647dd01a",
-      "solution": {
-        "actions": [
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "total_cost": 6.0
-      },
-      "activations": []
-    },
-    {
-      "level": 4,
-      "data_sha256": "a4418457620f44292357cf1ff7003f117e4094475323a858b7676dcd58613059",
+      "data_sha256": "6fc9681ef5fa407ceba66ee7017e28ef4d15b0e959850b2013e43ac3db026af5",
       "solution": {
         "actions": [
           "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
           "DOWN",
           "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN"
-        ],
-        "total_cost": 9.0
-      },
-      "activations": []
-    },
-    {
-      "level": 5,
-      "data_sha256": "21818c04e0739996f31286249d4fa9d4d309c743249c75f5721f9a69f14aba2a",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "UP",
-          "UP",
-          "RIGHT",
-          "UP",
-          "RIGHT"
-        ],
-        "total_cost": 16.0
-      },
-      "activations": [
-        {
-          "position": [
-            5,
-            5
-          ],
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "total_cost": 5.0
-        },
-        {
-          "position": [
-            6,
-            14
-          ],
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "UP",
-            "RIGHT",
-            "DOWN"
-          ],
-          "total_cost": 14.5
-        }
-      ]
-    },
-    {
-      "level": 6,
-      "data_sha256": "ede7f1952451112007dfe198d1bb73d26c769d011a99523bad8e9204684363bb",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "LEFT",
-          "UP",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT"
-        ],
-        "total_cost": 23.0
-      },
-      "activations": [
-        {
-          "position": [
-            4,
-            2
-          ],
-          "actions": [
-            "DOWN",
-            "RIGHT",
-            "DOWN"
-          ],
-          "total_cost": 6.5
-        },
-        {
-          "position": [
-            8,
-            2
-          ],
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "LEFT",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "LEFT",
-            "LEFT",
-            "LEFT",
-            "LEFT"
-          ],
-          "total_cost": 23.0
-        }
-      ]
-    },
-    {
-      "level": 7,
-      "data_sha256": "271c93e5551a1bc0437471040b742098220f3d9a6048d0ebefd6bde704ca06f0",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "LEFT",
-          "LEFT",
-          "UP",
-          "LEFT",
-          "DOWN",
-          "LEFT",
-          "UP",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "total_cost": 20.0
-      },
-      "activations": [
-        {
-          "position": [
-            7,
-            2
-          ],
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "LEFT",
-            "LEFT",
-            "LEFT",
-            "LEFT"
-          ],
-          "total_cost": 15.0
-        }
-      ]
-    },
-    {
-      "level": 8,
-      "data_sha256": "d08c834a349adc155cb5dd9419055355efe5b938a2793411e7b66a8c67451fb5",
-      "solution": {
-        "actions": [
-          "DOWN",
           "DOWN",
           "DOWN",
           "RIGHT",
@@ -386,182 +37,128 @@
           "DOWN",
           "RIGHT",
           "DOWN",
-          "DOWN",
           "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "total_cost": 12.0
-      },
-      "activations": [
-        {
-          "position": [
-            3,
-            2
-          ],
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "UP",
-            "LEFT",
-            "UP",
-            "UP",
-            "RIGHT"
-          ],
-          "total_cost": 10.0
-        },
-        {
-          "position": [
-            3,
-            7
-          ],
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "LEFT"
-          ],
-          "total_cost": 7.5
-        },
-        {
-          "position": [
-            8,
-            8
-          ],
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "total_cost": 9.5
-        }
-      ]
-    },
-    {
-      "level": 9,
-      "data_sha256": "3b03ad557bf05fdaf46ce1e997b072c54056b055d096920171a5651ff0c3c26e",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "LEFT",
-          "DOWN"
-        ],
-        "total_cost": 17.0
-      },
-      "activations": [
-        {
-          "position": [
-            10,
-            3
-          ],
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT"
-          ],
-          "total_cost": 7.0
-        }
-      ]
-    },
-    {
-      "level": 10,
-      "data_sha256": "efc8a78752746ec148a9782eb10f7f8160db1d5bb8f567ac238cdf66615d3116",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "UP",
-          "LEFT",
-          "DOWN",
           "DOWN",
           "RIGHT"
         ],
         "total_cost": 13.0
       },
-      "activations": [
-        {
-          "position": [
-            10,
-            2
-          ],
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT"
-          ],
-          "total_cost": 7.0
-        }
-      ]
+      "activations": []
     },
     {
-      "level": 11,
-      "data_sha256": "59dcd4b94c04ce7e75f36c9d2c0728762f0d56bb3977d58f001dd2f3762b94db",
+      "level": 3,
+      "data_sha256": "94126b487ac4e8cac1e87740c44bd2e7c818c7ace67e8d8f3a39d6897c1ccd55",
+      "solution": {
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN"
+        ],
+        "total_cost": 17.0
+      },
+      "activations": []
+    },
+    {
+      "level": 4,
+      "data_sha256": "8eac33bde21e3e8db550a246ef1c9530683fe22cbca25521375f93ef84786e99",
+      "solution": {
+        "actions": [
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "DOWN"
+        ],
+        "total_cost": 34.0
+      },
+      "activations": []
+    },
+    {
+      "level": 5,
+      "data_sha256": "6f52c4800712ede4bd01c43180456892f00a7af903d0575f69d12799c39079c4",
       "solution": {
         "actions": [
           "DOWN",
           "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
           "DOWN",
           "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
           "RIGHT",
           "DOWN",
           "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
+          "DOWN"
         ],
-        "total_cost": 18.0
+        "total_cost": 15.5
       },
       "activations": [
+        {
+          "position": [
+            2,
+            5
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "DOWN",
+            "RIGHT",
+            "UP",
+            "RIGHT",
+            "UP"
+          ],
+          "total_cost": 6.5,
+          "outcome": "loss"
+        },
+        {
+          "position": [
+            4,
+            1
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN"
+          ],
+          "total_cost": 1.5,
+          "outcome": "effect"
+        },
         {
           "position": [
             4,
@@ -573,129 +170,87 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 3.5
+          "total_cost": 3.0,
+          "outcome": "effect"
         },
         {
           "position": [
-            12,
-            13
+            5,
+            2
           ],
           "actions": [
             "DOWN",
             "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
             "RIGHT",
             "RIGHT",
-            "RIGHT",
-            "UP",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
+            "LEFT",
+            "DOWN"
           ],
-          "total_cost": 18.5
-        }
-      ]
-    },
-    {
-      "level": 12,
-      "data_sha256": "47aebda7a32c16cec800dc6a9fa7056f5b3fa9dcad4202171ebdf6eaac22f3db",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "total_cost": 6.5
-      },
-      "activations": [
+          "total_cost": 5.0,
+          "outcome": "effect"
+        },
         {
           "position": [
-            1,
+            5,
             4
           ],
           "actions": [
+            "DOWN",
+            "DOWN",
             "RIGHT",
+            "DOWN",
             "RIGHT"
           ],
-          "total_cost": 2.0
+          "total_cost": 4.0,
+          "outcome": "effect"
         }
       ]
     },
     {
-      "level": 13,
-      "data_sha256": "d8437a6100708612db9c7551f3580817914cc4c86708f7c8d90b105b4e611756",
+      "level": 6,
+      "data_sha256": "660c9386b7e9d2a4cd9ea61d463f7da28d99e37af2ca6641ce9bdf18d5b95eae",
       "solution": {
         "actions": [
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
+          "UP",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
           "RIGHT",
           "RIGHT",
           "RIGHT",
           "RIGHT"
         ],
-        "total_cost": 4.0
+        "total_cost": 19.5
       },
       "activations": [
         {
           "position": [
             1,
-            2
+            5
           ],
           "actions": [
-            "RIGHT"
-          ],
-          "total_cost": 1.0
-        },
-        {
-          "position": [
-            2,
-            2
-          ],
-          "actions": [
-            "DOWN",
+            "RIGHT",
+            "UP",
+            "UP",
             "RIGHT",
             "UP",
             "RIGHT",
-            "DOWN",
-            "LEFT"
+            "UP"
           ],
-          "total_cost": 5.0
-        }
-      ]
-    },
-    {
-      "level": 14,
-      "data_sha256": "50cb59743dea2a66bf2aaaf70d6551c069e6dcd708f9c949c251d18c2c9ae666",
-      "solution": {
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "total_cost": 4.0
-      },
-      "activations": [
-        {
-          "position": [
-            1,
-            2
-          ],
-          "actions": [
-            "RIGHT"
-          ],
-          "total_cost": 1.0
+          "total_cost": 6.5,
+          "outcome": "effect"
         },
         {
           "position": [
@@ -703,24 +258,701 @@
             1
           ],
           "actions": [
-            "DOWN"
+            "RIGHT",
+            "UP",
+            "LEFT",
+            "UP",
+            "UP"
           ],
-          "total_cost": 1.0
+          "total_cost": 4.5,
+          "outcome": "effect"
         },
         {
           "position": [
-            2,
+            4,
+            5
+          ],
+          "actions": [
+            "RIGHT",
+            "DOWN",
+            "RIGHT",
+            "UP",
+            "RIGHT",
+            "UP"
+          ],
+          "total_cost": 5.5,
+          "outcome": "loss"
+        },
+        {
+          "position": [
+            6,
+            4
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "LEFT",
+            "UP",
+            "UP",
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "DOWN",
+            "RIGHT"
+          ],
+          "total_cost": 9.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            7,
+            3
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "LEFT",
+            "UP",
+            "UP",
+            "DOWN",
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 9.5,
+          "outcome": "effect"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "data_sha256": "a7e5b1a20ad9b2adbc81fcc53a83abd2c7bb7f38d4965cedb40751bd7166f157",
+      "solution": {
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP",
+          "RIGHT"
+        ],
+        "total_cost": 24.5
+      },
+      "activations": [
+        {
+          "position": [
+            1,
+            4
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "UP",
+            "UP"
+          ],
+          "total_cost": 5.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            4,
             2
+          ],
+          "actions": [
+            "DOWN",
+            "RIGHT",
+            "DOWN"
+          ],
+          "total_cost": 2.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            4,
+            13
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 9.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            5,
+            2
+          ],
+          "actions": [
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "RIGHT",
+            "DOWN",
+            "LEFT",
+            "DOWN",
+            "LEFT"
+          ],
+          "total_cost": 7.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            6,
+            10
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "LEFT",
+            "LEFT",
+            "DOWN"
+          ],
+          "total_cost": 12.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            7,
+            13
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "DOWN"
+          ],
+          "total_cost": 11.0,
+          "outcome": "loss"
+        },
+        {
+          "position": [
+            8,
+            12
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "LEFT",
+            "DOWN",
+            "RIGHT",
+            "DOWN",
+            "RIGHT"
+          ],
+          "total_cost": 13.5,
+          "outcome": "effect"
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "data_sha256": "69a792363768786f20bd2909c8d9b9480ded2f5198aae239fe975eef23d19533",
+      "solution": {
+        "actions": [
+          "DOWN",
+          "RIGHT",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "SWITCH",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "LEFT"
+        ],
+        "total_cost": 40.0
+      },
+      "activations": [
+        {
+          "position": [
+            1,
+            22
           ],
           "actions": [
             "DOWN",
             "RIGHT",
             "UP",
             "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 5.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            2,
+            19
+          ],
+          "actions": [
+            "DOWN",
+            "RIGHT"
+          ],
+          "total_cost": 2.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            3,
+            20
+          ],
+          "actions": [
+            "DOWN",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 3.0,
+          "outcome": "loss"
+        },
+        {
+          "position": [
+            4,
+            21
+          ],
+          "actions": [
+            "DOWN",
+            "RIGHT",
+            "LEFT",
+            "DOWN",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 6.0,
+          "outcome": "effect"
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "data_sha256": "3731dff9b3cecb47520c6c90bc6e408729790ad9458e769cd6418622e6ddb20f",
+      "solution": {
+        "actions": [
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP",
+          "SWITCH",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP"
+        ],
+        "total_cost": 18.5
+      },
+      "activations": [
+        {
+          "position": [
+            8,
+            9
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "UP",
+            "RIGHT",
+            "SWITCH",
+            "UP",
+            "LEFT",
+            "UP",
+            "UP",
+            "RIGHT"
+          ],
+          "total_cost": 8.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            9,
+            8
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "UP",
+            "RIGHT",
+            "SWITCH",
+            "UP",
+            "UP",
+            "LEFT"
+          ],
+          "total_cost": 7.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            10,
+            8
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "UP",
+            "RIGHT",
+            "SWITCH",
+            "UP",
+            "LEFT"
+          ],
+          "total_cost": 6.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            10,
+            12
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "UP",
+            "RIGHT",
+            "SWITCH",
+            "UP",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 8.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            11,
+            12
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "UP",
+            "RIGHT",
+            "SWITCH",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 7.5,
+          "outcome": "loss"
+        },
+        {
+          "position": [
+            12,
+            4
+          ],
+          "actions": [
+            "RIGHT",
+            "UP",
+            "UP",
+            "RIGHT"
+          ],
+          "total_cost": 4.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            15,
+            5
+          ],
+          "actions": [
+            "UP",
+            "RIGHT",
+            "DOWN",
+            "RIGHT",
+            "DOWN",
+            "RIGHT"
+          ],
+          "total_cost": 6.0,
+          "outcome": "effect"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "data_sha256": "d31f6615eb394e1670e5f17c56bb68bf5e64b47ffe6793ce7ef14cfacf4faecf",
+      "solution": {
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "SWITCH",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "LEFT"
+        ],
+        "total_cost": 29.0
+      },
+      "activations": [
+        {
+          "position": [
+            1,
+            24
+          ],
+          "actions": [
+            "DOWN",
+            "RIGHT",
+            "UP",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 5.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            4,
+            23
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "total_cost": 8.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            6,
+            10
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "LEFT",
+            "SWITCH",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "UP",
+            "RIGHT"
+          ],
+          "total_cost": 20.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            7,
+            9
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "LEFT",
+            "SWITCH",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT"
+          ],
+          "total_cost": 19.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            8,
+            16
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "LEFT",
+            "SWITCH",
+            "DOWN",
+            "LEFT",
+            "LEFT"
+          ],
+          "total_cost": 13.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            9,
+            2
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
             "DOWN",
             "LEFT"
           ],
-          "total_cost": 5.0
+          "total_cost": 9.5,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            9,
+            9
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "DOWN",
+            "LEFT",
+            "SWITCH",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "LEFT",
+            "DOWN",
+            "DOWN",
+            "LEFT",
+            "LEFT"
+          ],
+          "total_cost": 21.0,
+          "outcome": "effect"
+        },
+        {
+          "position": [
+            9,
+            18
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "SWITCH",
+            "DOWN",
+            "DOWN"
+          ],
+          "total_cost": 10.5,
+          "outcome": "loss"
+        },
+        {
+          "position": [
+            10,
+            17
+          ],
+          "actions": [
+            "DOWN",
+            "DOWN",
+            "RIGHT",
+            "RIGHT",
+            "SWITCH",
+            "DOWN",
+            "LEFT",
+            "DOWN",
+            "DOWN"
+          ],
+          "total_cost": 12.5,
+          "outcome": "effect"
         }
       ]
     }

@@ -26,6 +26,8 @@ class GameController:
         # Legacy explicit helper; executeMove uses the shared entry-based rules.
         for position in sorted(pressed(State(self.board, self.block))):
             self.board.applySwitch(position)
+        if self.board.fatalSwitch is not None:
+            self.isGameOver, self.hasWon = True, False
 
     def isWinningState(self):
         return winning(State(self.board, self.block))

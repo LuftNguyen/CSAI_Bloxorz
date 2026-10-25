@@ -89,6 +89,12 @@ def _load(data, debug=False):
                 effects.append((key,mode))
             require(effects, 'switch effects must not be empty')
             board.switchEffects[switch] = tuple(effects)
+            fatal = entry.get('fatal_close', False)
+            require(type(fatal) is bool, 'fatal_close must be boolean')
+            require(not fatal or all(mode == 'CLOSE' for _, mode in effects),
+                    'fatal_close requires only CLOSE effects')
+            if fatal:
+                board.fatalCloseSwitches = board.fatalCloseSwitches | {switch}
         splits = data.get('splits', [])
         require(isinstance(splits, list), 'splits must be a list')
         for entry in splits:

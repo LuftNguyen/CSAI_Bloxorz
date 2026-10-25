@@ -1,12 +1,12 @@
 {
-  "method": "Existing registered A*, h=0, 10s/100000 expanded per query; not benchmark",
-  "restrictions": "bridge: remove effects on copied initial board; split/control/merge: remove event edges",
+  "method": "Existing registered A*, h=0, 60s/100000 expanded per query, without tracemalloc; not benchmark",
+  "restrictions": "bridge/bridge:ID: remove effects on copied initial board; split/control/merge/fragile: remove event edges",
   "levels": [
     {
       "file": "levels/level1.json",
       "dimensions": [
-        6,
-        10
+        9,
+        11
       ],
       "initial": [
         1,
@@ -15,1000 +15,102 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 57,
       "goal": [
-        1,
-        4
+        7,
+        9
       ],
       "special_tiles": {
-        "w": [
-          [
-            5,
-            3
-          ],
-          [
-            5,
-            4
-          ]
-        ],
-        "W": [
-          [
-            3,
-            3
-          ],
-          [
-            3,
-            4
-          ]
-        ],
+        "w": [],
+        "W": [],
         "T": [],
-        "F": [
-          [
-            4,
-            3
-          ],
-          [
-            4,
-            4
-          ]
-        ],
-        "B": [
-          [
-            3,
-            5
-          ],
-          [
-            3,
-            6
-          ],
-          [
-            5,
-            5
-          ],
-          [
-            5,
-            6
-          ]
-        ]
+        "F": [],
+        "B": []
       },
       "full": {
         "status": "solved",
-        "expanded": 8,
+        "expanded": 99,
         "actions": [
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
           "RIGHT",
           "RIGHT"
         ],
-        "cost": 2.0
+        "cost": 10.0
       },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 8,
-          "actions": [
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 2.0
-        }
-      }
+      "restricted": {},
+      "required": [],
+      "observed": []
     },
     {
       "file": "levels/level2.json",
       "dimensions": [
-        20,
-        20
+        15,
+        17
       ],
       "initial": [
         1,
-        1,
+        5,
         0,
         0
       ],
       "orientation": "STANDING",
-      "goal": [
-        16,
-        16
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            5,
-            5
-          ]
-        ],
-        "W": [
-          [
-            14,
-            15
-          ]
-        ],
-        "T": [],
-        "F": [
-          [
-            3,
-            6
-          ],
-          [
-            4,
-            6
-          ],
-          [
-            5,
-            6
-          ],
-          [
-            6,
-            6
-          ],
-          [
-            7,
-            6
-          ],
-          [
-            9,
-            9
-          ],
-          [
-            11,
-            8
-          ],
-          [
-            12,
-            7
-          ],
-          [
-            12,
-            8
-          ]
-        ],
-        "B": [
-          [
-            10,
-            8
-          ],
-          [
-            10,
-            9
-          ],
-          [
-            10,
-            10
-          ],
-          [
-            10,
-            11
-          ],
-          [
-            15,
-            8
-          ],
-          [
-            15,
-            9
-          ],
-          [
-            15,
-            10
-          ],
-          [
-            15,
-            11
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 307,
-        "actions": [
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT"
-        ],
-        "cost": 22.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 299,
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT"
-          ],
-          "cost": 22.0
-        }
-      }
-    },
-    {
-      "file": "levels/level3.json",
-      "dimensions": [
-        8,
-        8
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        4,
-        6
-      ],
-      "special_tiles": {
-        "w": [],
-        "W": [],
-        "T": [],
-        "F": [],
-        "B": []
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 10,
-        "actions": [
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "cost": 6.0
-      },
-      "restricted": {}
-    },
-    {
-      "file": "levels/level4.json",
-      "dimensions": [
-        10,
-        10
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        7,
-        8
-      ],
-      "special_tiles": {
-        "w": [],
-        "W": [],
-        "T": [],
-        "F": [
-          [
-            3,
-            4
-          ],
-          [
-            5,
-            2
-          ],
-          [
-            7,
-            4
-          ]
-        ],
-        "B": []
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 13,
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN"
-        ],
-        "cost": 9.0
-      },
-      "restricted": {}
-    },
-    {
-      "file": "levels/level5.json",
-      "dimensions": [
-        10,
-        20
-      ],
-      "initial": [
-        2,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        1,
-        16
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            5,
-            5
-          ]
-        ],
-        "W": [
-          [
-            6,
-            14
-          ]
-        ],
-        "T": [],
-        "F": [
-          [
-            4,
-            5
-          ],
-          [
-            6,
-            5
-          ]
-        ],
-        "B": [
-          [
-            4,
-            9
-          ],
-          [
-            5,
-            9
-          ],
-          [
-            6,
-            9
-          ],
-          [
-            7,
-            9
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 323,
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "UP",
-          "UP",
-          "RIGHT",
-          "UP",
-          "RIGHT"
-        ],
-        "cost": 16.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 218,
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "UP",
-            "UP",
-            "RIGHT",
-            "UP",
-            "RIGHT"
-          ],
-          "cost": 15.0
-        }
-      }
-    },
-    {
-      "file": "levels/level6.json",
-      "dimensions": [
-        12,
-        12
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        8,
-        10
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            8,
-            2
-          ]
-        ],
-        "W": [
-          [
-            4,
-            2
-          ]
-        ],
-        "T": [],
-        "F": [
-          [
-            3,
-            2
-          ],
-          [
-            3,
-            5
-          ],
-          [
-            4,
-            5
-          ],
-          [
-            7,
-            7
-          ],
-          [
-            8,
-            7
-          ]
-        ],
-        "B": [
-          [
-            6,
-            6
-          ],
-          [
-            6,
-            7
-          ],
-          [
-            6,
-            8
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 133,
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "LEFT",
-          "UP",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT"
-        ],
-        "cost": 23.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 101,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "LEFT",
-            "UP",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "RIGHT"
-          ],
-          "cost": 23.0
-        }
-      }
-    },
-    {
-      "file": "levels/level7.json",
-      "dimensions": [
-        10,
-        12
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        4,
-        9
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            7,
-            2
-          ]
-        ],
-        "W": [],
-        "T": [],
-        "F": [],
-        "B": [
-          [
-            4,
-            5
-          ],
-          [
-            4,
-            6
-          ],
-          [
-            4,
-            7
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 84,
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "LEFT",
-          "LEFT",
-          "UP",
-          "LEFT",
-          "DOWN",
-          "LEFT",
-          "UP",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "cost": 20.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 67,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "LEFT",
-            "LEFT",
-            "UP",
-            "LEFT",
-            "DOWN",
-            "LEFT",
-            "UP",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 20.0
-        }
-      }
-    },
-    {
-      "file": "levels/level8.json",
-      "dimensions": [
-        12,
-        12
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
+      "walkable_initial": 115,
       "goal": [
         9,
-        9
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            3,
-            2
-          ],
-          [
-            8,
-            8
-          ]
-        ],
-        "W": [
-          [
-            3,
-            7
-          ]
-        ],
-        "T": [],
-        "F": [],
-        "B": [
-          [
-            5,
-            5
-          ],
-          [
-            5,
-            6
-          ],
-          [
-            5,
-            7
-          ],
-          [
-            6,
-            9
-          ],
-          [
-            7,
-            9
-          ],
-          [
-            8,
-            9
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 211,
-        "actions": [
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "cost": 12.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 170,
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 12.0
-        }
-      }
-    },
-    {
-      "file": "levels/level9.json",
-      "dimensions": [
-        15,
         15
       ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        12,
-        12
-      ],
       "special_tiles": {
-        "w": [
-          [
-            10,
-            3
-          ]
-        ],
+        "w": [],
         "W": [],
         "T": [],
         "F": [
           [
-            3,
-            6
-          ],
-          [
             4,
-            6
-          ],
-          [
-            5,
-            6
-          ],
-          [
-            9,
-            6
-          ],
-          [
-            10,
-            6
-          ]
-        ],
-        "B": [
-          [
-            7,
             7
           ],
           [
-            7,
-            8
-          ],
-          [
-            7,
-            9
-          ],
-          [
-            7,
-            10
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 192,
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "RIGHT",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "LEFT",
-          "DOWN"
-        ],
-        "cost": 17.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 150,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "LEFT",
-            "DOWN"
-          ],
-          "cost": 17.0
-        }
-      }
-    },
-    {
-      "file": "levels/level10.json",
-      "dimensions": [
-        15,
-        15
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        3,
-        11
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            10,
-            2
-          ]
-        ],
-        "W": [],
-        "T": [],
-        "F": [
-          [
-            3,
-            6
-          ],
-          [
-            4,
-            6
-          ],
-          [
-            5,
-            6
-          ],
-          [
             9,
-            6
-          ],
-          [
-            10,
-            6
+            11
           ]
         ],
-        "B": [
-          [
-            7,
-            7
-          ],
-          [
-            7,
-            8
-          ],
-          [
-            7,
-            9
-          ],
-          [
-            7,
-            10
-          ]
-        ]
+        "B": []
       },
       "full": {
         "status": "solved",
-        "expanded": 102,
+        "expanded": 284,
         "actions": [
           "RIGHT",
+          "DOWN",
           "RIGHT",
-          "RIGHT",
-          "RIGHT",
+          "DOWN",
+          "DOWN",
           "RIGHT",
           "RIGHT",
           "DOWN",
           "RIGHT",
-          "UP",
-          "LEFT",
           "DOWN",
+          "RIGHT",
           "DOWN",
           "RIGHT"
         ],
         "cost": 13.0
       },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 83,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "UP",
-            "LEFT",
-            "DOWN",
-            "DOWN",
-            "RIGHT"
-          ],
-          "cost": 13.0
-        }
-      }
+      "restricted": {},
+      "required": [],
+      "observed": []
     },
     {
-      "file": "levels/level11.json",
+      "file": "levels/level3.json",
       "dimensions": [
-        18,
-        18
+        10,
+        15
       ],
       "initial": [
         1,
@@ -1017,8 +119,184 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 65,
       "goal": [
+        7,
+        13
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [],
+        "F": [
+          [
+            2,
+            10
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 111,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN"
+        ],
+        "cost": 17.0
+      },
+      "restricted": {
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 54,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "fragile"
+      ],
+      "observed": [
+        "fragile"
+      ]
+    },
+    {
+      "file": "levels/level4.json",
+      "dimensions": [
         14,
+        14
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 75,
+      "goal": [
+        12,
+        12
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [],
+        "F": [
+          [
+            2,
+            10
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            6,
+            10
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            9,
+            12
+          ]
+        ],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 168,
+        "actions": [
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "DOWN"
+        ],
+        "cost": 34.0
+      },
+      "restricted": {
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 55,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "fragile"
+      ],
+      "observed": [
+        "fragile"
+      ]
+    },
+    {
+      "file": "levels/level5.json",
+      "dimensions": [
+        10,
+        16
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 59,
+      "goal": [
+        8,
         14
       ],
       "special_tiles": {
@@ -1026,138 +304,200 @@
           [
             4,
             4
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            4
           ]
         ],
         "W": [
           [
-            12,
-            13
+            2,
+            5
+          ],
+          [
+            4,
+            1
           ]
         ],
         "T": [],
-        "F": [
+        "F": [],
+        "B": [
           [
             3,
             6
           ],
           [
-            4,
-            6
+            3,
+            7
           ],
+          [
+            3,
+            8
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 201,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN"
+        ],
+        "cost": 15.5
+      },
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:crossing": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ]
+    },
+    {
+      "file": "levels/level6.json",
+      "dimensions": [
+        11,
+        17
+      ],
+      "initial": [
+        6,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 81,
+      "goal": [
+        2,
+        15
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            6,
+            4
+          ],
+          [
+            7,
+            3
+          ]
+        ],
+        "W": [
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "T": [],
+        "F": [],
+        "B": [
           [
             5,
             6
           ],
           [
-            7,
-            8
-          ],
-          [
-            10,
-            6
-          ],
-          [
-            11,
-            6
-          ],
-          [
-            12,
-            6
-          ]
-        ],
-        "B": [
-          [
-            8,
-            8
-          ],
-          [
-            8,
-            9
-          ],
-          [
-            8,
-            10
-          ],
-          [
-            8,
-            11
-          ],
-          [
-            14,
+            5,
             7
           ],
           [
-            14,
+            5,
             8
-          ],
-          [
-            14,
-            9
-          ],
-          [
-            14,
-            10
           ]
         ]
       },
       "full": {
         "status": "solved",
-        "expanded": 607,
+        "expanded": 279,
         "actions": [
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
-          "DOWN",
           "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
+          "UP",
           "DOWN",
-          "RIGHT",
           "DOWN",
           "RIGHT",
           "RIGHT",
           "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
           "RIGHT",
           "RIGHT",
           "RIGHT",
           "RIGHT"
         ],
-        "cost": 18.0
+        "cost": 19.5
       },
       "restricted": {
         "bridge": {
-          "status": "solved",
-          "expanded": 368,
-          "actions": [
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "DOWN",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 18.0
+          "status": "unsolvable",
+          "expanded": 88,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:crossing": {
+          "status": "unsolvable",
+          "expanded": 88,
+          "actions": [],
+          "cost": null
         }
-      }
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ]
     },
     {
-      "file": "levels/level12.json",
+      "file": "levels/level7.json",
       "dimensions": [
-        3,
-        10
+        11,
+        23
       ],
       "initial": [
         1,
@@ -1166,200 +506,616 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 77,
       "goal": [
         1,
-        7
+        21
       ],
       "special_tiles": {
-        "w": [],
+        "w": [
+          [
+            4,
+            2
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            6,
+            10
+          ]
+        ],
+        "W": [
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            8,
+            12
+          ]
+        ],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            5,
+            14
+          ],
+          [
+            5,
+            15
+          ],
+          [
+            5,
+            16
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 364,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP",
+          "RIGHT"
+        ],
+        "cost": 24.5
+      },
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:first": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:second": {
+          "status": "unsolvable",
+          "expanded": 174,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ]
+    },
+    {
+      "file": "levels/level8.json",
+      "dimensions": [
+        10,
+        24
+      ],
+      "initial": [
+        1,
+        18,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 55,
+      "goal": [
+        8,
+        1
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            2,
+            19
+          ],
+          [
+            3,
+            20
+          ]
+        ],
         "W": [],
         "T": [
           [
             1,
-            4
+            22
+          ],
+          [
+            4,
+            21
           ]
         ],
-        "F": [],
-        "B": []
+        "F": [
+          [
+            6,
+            5
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            6,
+            9
+          ]
+        ],
+        "B": [
+          [
+            7,
+            1
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ]
+        ]
       },
       "full": {
         "status": "solved",
-        "expanded": 28,
+        "expanded": 1188,
         "actions": [
+          "DOWN",
+          "RIGHT",
+          "LEFT",
+          "DOWN",
           "RIGHT",
           "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
+          "SWITCH",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "LEFT"
         ],
-        "cost": 6.5
+        "cost": 40.0
       },
       "restricted": {
         "split": {
           "status": "unsolvable",
-          "expanded": 2,
+          "expanded": 35,
           "actions": [],
           "cost": null
         },
         "control": {
-          "status": "solved",
-          "expanded": 7,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 6.5
+          "status": "unsolvable",
+          "expanded": 110,
+          "actions": [],
+          "cost": null
         },
         "merge": {
           "status": "unsolvable",
-          "expanded": 44,
+          "expanded": 2487,
+          "actions": [],
+          "cost": null
+        },
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 551,
+          "actions": [],
+          "cost": null
+        },
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 51,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:landing": {
+          "status": "unsolvable",
+          "expanded": 51,
           "actions": [],
           "cost": null
         }
-      }
+      },
+      "required": [
+        "split",
+        "control",
+        "merge",
+        "fragile",
+        "bridge"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "fragile",
+        "merge",
+        "split"
+      ]
     },
     {
-      "file": "levels/level13.json",
+      "file": "levels/level9.json",
       "dimensions": [
-        4,
-        10
+        17,
+        17
       ],
       "initial": [
-        1,
+        14,
         1,
         0,
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 58,
       "goal": [
         1,
-        7
+        13
       ],
       "special_tiles": {
         "w": [
           [
-            1,
-            2
-          ]
-        ],
-        "W": [
-          [
-            2,
-            2
-          ]
-        ],
-        "T": [],
-        "F": [],
-        "B": [
-          [
-            2,
-            4
-          ]
-        ]
-      },
-      "full": {
-        "status": "solved",
-        "expanded": 15,
-        "actions": [
-          "RIGHT",
-          "RIGHT",
-          "RIGHT",
-          "RIGHT"
-        ],
-        "cost": 4.0
-      },
-      "restricted": {
-        "bridge": {
-          "status": "solved",
-          "expanded": 11,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 4.0
-        }
-      }
-    },
-    {
-      "file": "levels/level14.json",
-      "dimensions": [
-        4,
-        10
-      ],
-      "initial": [
-        1,
-        1,
-        0,
-        0
-      ],
-      "orientation": "STANDING",
-      "goal": [
-        1,
-        7
-      ],
-      "special_tiles": {
-        "w": [
-          [
-            1,
-            2
+            8,
+            9
           ],
           [
-            2,
-            1
+            9,
+            8
+          ],
+          [
+            10,
+            8
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            11,
+            12
           ]
         ],
-        "W": [
+        "W": [],
+        "T": [
           [
-            2,
-            2
-          ]
-        ],
-        "T": [],
-        "F": [],
-        "B": [
-          [
-            2,
+            12,
             4
           ],
           [
-            2,
+            15,
             5
           ]
+        ],
+        "F": [],
+        "B": [
+          [
+            5,
+            12
+          ],
+          [
+            6,
+            12
+          ],
+          [
+            7,
+            12
+          ]
         ]
       },
       "full": {
         "status": "solved",
-        "expanded": 20,
+        "expanded": 1783,
         "actions": [
           "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP",
+          "SWITCH",
+          "UP",
           "RIGHT",
           "RIGHT",
-          "RIGHT"
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP"
         ],
-        "cost": 4.0
+        "cost": 18.5
       },
       "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 66,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 4291,
+          "actions": [],
+          "cost": null
+        },
         "bridge": {
-          "status": "solved",
-          "expanded": 11,
-          "actions": [
-            "RIGHT",
-            "RIGHT",
-            "RIGHT",
-            "RIGHT"
-          ],
-          "cost": 4.0
+          "status": "unsolvable",
+          "expanded": 691,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:gate": {
+          "status": "unsolvable",
+          "expanded": 691,
+          "actions": [],
+          "cost": null
         }
-      }
+      },
+      "required": [
+        "split",
+        "control",
+        "merge",
+        "bridge"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "merge",
+        "split"
+      ]
+    },
+    {
+      "file": "levels/level10.json",
+      "dimensions": [
+        13,
+        26
+      ],
+      "initial": [
+        1,
+        20,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 70,
+      "goal": [
+        10,
+        1
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            6,
+            10
+          ],
+          [
+            7,
+            9
+          ],
+          [
+            8,
+            16
+          ],
+          [
+            9,
+            2
+          ],
+          [
+            9,
+            9
+          ],
+          [
+            9,
+            18
+          ],
+          [
+            10,
+            17
+          ]
+        ],
+        "W": [],
+        "T": [
+          [
+            1,
+            24
+          ],
+          [
+            4,
+            23
+          ]
+        ],
+        "F": [
+          [
+            8,
+            3
+          ]
+        ],
+        "B": [
+          [
+            7,
+            12
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            7,
+            14
+          ],
+          [
+            8,
+            5
+          ],
+          [
+            8,
+            6
+          ],
+          [
+            8,
+            7
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 2467,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "SWITCH",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "LEFT"
+        ],
+        "cost": 29.0
+      },
+      "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 81,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 13455,
+          "actions": [],
+          "cost": null
+        },
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 563,
+          "actions": [],
+          "cost": null
+        },
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 51,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:near": {
+          "status": "unsolvable",
+          "expanded": 563,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:far": {
+          "status": "unsolvable",
+          "expanded": 1555,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "split",
+        "control",
+        "merge",
+        "bridge",
+        "fragile"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "fragile",
+        "merge",
+        "split"
+      ]
     }
   ],
   "fixtures": [
@@ -1376,6 +1132,7 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 8,
       "goal": [
         1,
         10
@@ -1442,6 +1199,7 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 8,
       "goal": [
         1,
         10
@@ -1508,6 +1266,7 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 10,
       "goal": [
         3,
         1
@@ -1550,6 +1309,7 @@
       ],
       "observed": [
         "control",
+        "fragile",
         "merge",
         "split"
       ],
@@ -1587,6 +1347,7 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 8,
       "goal": [
         3,
         1
@@ -1683,6 +1444,7 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 10,
       "goal": [
         1,
         10
@@ -1750,6 +1512,7 @@
         0
       ],
       "orientation": "STANDING",
+      "walkable_initial": 7,
       "goal": [
         1,
         10

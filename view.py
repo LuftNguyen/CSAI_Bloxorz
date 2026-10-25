@@ -1,4 +1,5 @@
 from ursina import *
+from math import ceil
 from animation_sync import AnimationCompletion
 
 from gameModel.gameController import GameController
@@ -29,6 +30,11 @@ class BloxorzView:
         self._replayReady = False
         self.replayInterval = 0.5  # Pause between replay actions; manual moves stay instant.
         self._replayRemaining = 0.0
+        self._fatalRemaining = None
+        self._fatalNotice = False
+        self._winPhase = None
+        self._blackoutRemaining = None
+        self._winTilePoses = []
 
         self.problem = problem
         self.solution = []
@@ -51,12 +57,16 @@ class BloxorzView:
         )
         self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected)
         self.solverMessage = Text(text="A*: ready (h=0); BFS/DFS/UCS: not implemented", x=-0.85, y=0.46, scale=0.8)
+        self.fatalMessage = Text(text='', origin=(0,0), y=0.25, scale=1.5,
+                                 color=color.red, enabled=False)
+        self.winBlackout = Entity(parent=camera.ui, model='quad', color=color.black,
+                                  scale=99, z=-100, collider='box', enabled=False)
 
     def startGame(self):
         self.gameStarted = True
         self.tileColors = {
             Tile.NORMAL:       color.light_gray,
-            Tile.GOAL:         color.magenta,
+            Tile.GOAL:         color.lime,
             Tile.FRAGILE:      color.orange,
             Tile.SOFT_SWITCH:  color.cyan,
             Tile.HEAVY_SWITCH: color.red,
@@ -65,6 +75,7 @@ class BloxorzView:
         }
 
         self.tileEntities = []
+        self.effectTileEntities = []
         self.renderBoard()
 
         # 3D Block mesh creation
@@ -146,6 +157,7 @@ class BloxorzView:
             for entity in self.tileEntities:
                 destroy(entity)
         self.tileEntities = []
+        self.effectTileEntities = []
 
     def restartLevel(self):
         """Resets the game model and refreshes 3D visual representations."""
@@ -218,12 +230,29 @@ class BloxorzView:
     def renderBoard(self, board=None):
         """Reads gameModel.board grid and spawns 3D floor tiles."""
         board = self.gameModel.board if board is None else board
+        self.effectTileEntities = []
 
         closed = {p for key, positions in board.bridgeGroups.items()
                   if not board.bridgeState[key] for p in positions}
         for r in range(board.rows):
             for c in range(board.cols):
                 tileType = board.getTile(r, c)
+                if tileType == Tile.GOAL:
+                    # One recessed goal, unlike unmarked VOID gaps. The root
+                    # owns its rim/bottom so board redraw removes every part.
+                    goal = Entity(name='goal_hole', position=(c, -0.1, -r))
+                    self.tileEntities.append(goal)
+                    for x, z, width, depth in ((-0.47, 0, 0.04, 0.98),
+                                               (0.47, 0, 0.04, 0.98),
+                                               (0, -0.47, 0.90, 0.04),
+                                               (0, 0.47, 0.90, 0.04)):
+                        Entity(name='goal_rim', parent=goal, model='cube',
+                               position=(x, 0, z), scale=(width, 0.2, depth),
+                               color=color.lime, texture='white_cube')
+                    Entity(name='goal_bottom', parent=goal, model='cube',
+                           position=(0, -0.4, 0), scale=(0.90, 0.08, 0.90),
+                           color=color.dark_gray)
+                    continue
                 if tileType != Tile.VOID or (r, c) in closed:
                     # c = X axis (columns), r = Z axis (rows)
                     tileEntity = Entity(
@@ -234,9 +263,13 @@ class BloxorzView:
                         texture='white_cube'      # Adds built-in subtle edge shadowing
                     )
                     self.tileEntities.append(tileEntity)
+                    if tileType in (Tile.FRAGILE, Tile.SOFT_SWITCH, Tile.HEAVY_SWITCH,
+                                    Tile.SPLIT_SWITCH, Tile.BRIDGE) or (r, c) in closed:
+                        self.effectTileEntities.append(tileEntity)
                     labels = {Tile.SOFT_SWITCH: "o", Tile.HEAVY_SWITCH: "X", Tile.SPLIT_SWITCH: "( )"}
                     if tileType in labels:
-                        marker = Text(text=labels[tileType], parent=tileEntity, origin=(0,0),
+                        label = labels[tileType] + ('!' if (r,c) in board.fatalCloseSwitches else '')
+                        marker = Text(text=label, parent=tileEntity, origin=(0,0),
                                       rotation=(90,0,0), y=0.6, scale=3, color=color.black)
                         # Parent destruction removes the marker too.
 
@@ -331,7 +364,7 @@ class BloxorzView:
 
     def beginMove(self, action):
         """Compute the transition once and immediately present its final pose."""
-        if self.isAnimating or getattr(self, "_presentingMove", False):
+        if self.isAnimating or self.gameModel.hasWon or getattr(self, "_presentingMove", False):
             return False
         self.isAnimating = True
         valid = self.gameModel.executeMove(action)
@@ -373,6 +406,25 @@ class BloxorzView:
         self._movement = AnimationCompletion(handles, complete)
 
     def updateAnimations(self, delta=None):
+        blackout = getattr(self, '_blackoutRemaining', None)
+        if blackout is not None:
+            elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
+            self._blackoutRemaining = max(0.0, blackout - elapsed)
+            if self._blackoutRemaining <= 1e-9:
+                self._blackoutRemaining = None
+                self.loadNextLevel()
+            return
+        remaining = getattr(self, '_fatalRemaining', None)
+        if remaining is not None:
+            elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
+            self._fatalRemaining = max(0.0, remaining - elapsed)
+            if self._fatalRemaining > 1e-9:
+                self.setFatalMessage(f'Permanent CLOSE!\nLoss in {ceil(self._fatalRemaining)} s')
+            else:
+                self._fatalRemaining = None
+                self.setFatalMessage('YOU LOSE\nRestarting...')
+                self.schedule(self.restartLevel, 1.0)
+            return
         movement = getattr(self, "_movement", None)
         if movement is not None:
             movement.poll()  # Only asynchronous effects, currently falling.
@@ -397,12 +449,71 @@ class BloxorzView:
         self.renderBoard()
         if self.gameModel.isGameOver:
             self.isSolving = self._replayReady = False
-            self.animateFall(direction)
-        elif self.gameModel.hasWon and not self.isSolving:
-            self.isAnimating = True
-            self.schedule(self.loadNextLevel, 2)
+            if self.gameModel.board.fatalSwitch is not None:
+                self.isAnimating = True
+                self._fatalRemaining = 5.0
+                self.setFatalMessage('Permanent CLOSE!\nLoss in 5 s')
+            else:
+                self.animateFall(direction)
+        elif self.gameModel.hasWon:
+            self.startWinTransition()
         else:
             self.isAnimating = False
+
+    def setFatalMessage(self, message):
+        self._fatalNotice = True
+        self.solverMessage.text = message.replace('\n', ' ')
+        overlay = getattr(self, 'fatalMessage', None)
+        if overlay is not None:
+            overlay.text, overlay.enabled = message, True
+
+    def startWinTransition(self):
+        if not self.gameModel.hasWon or getattr(self, '_winPhase', None) is not None:
+            return
+        self._winPhase = 'fall'
+        self.isAnimating = True
+        self.isSolving = self._replayReady = False
+        handle = self.blockMesh.animate_y(-3.5, duration=0.6, curve=curve.in_cubic)
+        self.watchAnimations([handle], self.finishWinFall)
+
+    def finishWinFall(self):
+        if getattr(self, '_winPhase', None) != 'fall':
+            return
+        movement = getattr(self, '_movement', None)
+        if movement is not None and not movement.completed:
+            return
+        self._movement = None
+        self.blockMesh.enabled = False
+        self._winPhase = 'collapse'
+        self._winTilePoses = [(tile, tuple(tile.position), tuple(tile.scale), tile.enabled)
+                             for tile in getattr(self, 'tileEntities', [])]
+        visible = [pose for pose in self._winTilePoses if pose[3]]
+        if not visible:
+            self.finishBoardCollapse()
+            return
+        block = self.gameModel.block
+        distances = [abs(p[0]-block.c) + abs(p[2]+block.r) for _, p, _, _ in visible]
+        furthest = max(max(distances), 1.0)
+        handles = []
+        for (tile, position, scale, _), distance in zip(visible, distances):
+            delay = 0.65 * distance / furthest
+            handles.append(tile.animate_y(position[1]-6, duration=0.45, delay=delay, curve=curve.in_quad))
+            handles.append(tile.animate_scale(tuple(v*0.05 for v in scale), duration=0.45,
+                                               delay=delay, curve=curve.in_quad))
+        self.watchAnimations(handles, self.finishBoardCollapse)
+
+    def finishBoardCollapse(self):
+        if getattr(self, '_winPhase', None) != 'collapse':
+            return
+        movement = getattr(self, '_movement', None)
+        if movement is not None and not movement.completed:
+            return
+        self._movement = None
+        for tile, _, _, _ in self._winTilePoses:
+            tile.enabled = False
+        self._winPhase = 'blackout'
+        self._blackoutRemaining = 1.0
+        self.winBlackout.enabled = True
 
     def run(self):
         """Starts the main Ursina 3D render loop."""
@@ -444,11 +555,28 @@ class BloxorzView:
         self._replayCall = self.schedule(self.queueReplay, 0.5)
 
     def cancelReplay(self):
+        was_winning = getattr(self, '_winPhase', None) is not None
+        self._winPhase = self._blackoutRemaining = None
+        blackout = getattr(self, 'winBlackout', None)
+        if blackout is not None:
+            blackout.enabled = False
+        if getattr(self, '_fatalNotice', False):
+            self.solverMessage.text = ''
+        self._fatalNotice = False
+        self._fatalRemaining = None
+        overlay = getattr(self, 'fatalMessage', None)
+        if overlay is not None:
+            overlay.enabled = False
         self._animationGeneration = getattr(self, "_animationGeneration", 0) + 1
         movement = getattr(self, "_movement", None)
         if movement is not None:
             movement.cancel()
         self._movement = None
+        for tile, position, scale, enabled in getattr(self, '_winTilePoses', []):
+            for animation in list(tile.animations):
+                animation.kill()
+            tile.position, tile.scale, tile.enabled = position, scale, enabled
+        self._winTilePoses = []
         self._presentingMove = self._replayReady = False
         self._replayRemaining = 0.0
         calls = list(getattr(self, "_pendingCalls", []))
@@ -466,6 +594,8 @@ class BloxorzView:
         self.autoSolution = []
         self.autoIndex = 0
         self.isSolving = self.isAnimating = False
+        if was_winning:
+            self.updateBlockMesh()
 
     def playSolution(self):
         if not self.isSolving or self.isAnimating:
@@ -475,7 +605,7 @@ class BloxorzView:
             self.isSolving = False
             print("Finished")
             if (self.gameModel.hasWon): 
-                self.loadNextLevel()
+                self.startWinTransition()
             return
 
         action = self.autoSolution[self.autoIndex]
@@ -494,6 +624,7 @@ class BloxorzView:
 
         if result is None:
             print("Finished all levels")
+            self.solverMessage.text = 'All levels completed!'
             self.isAnimating = False
             return
 

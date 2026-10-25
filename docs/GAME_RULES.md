@@ -1,5 +1,15 @@
 # Luật và thứ tự xử lý một bước
 
+## Bẫy permanent CLOSE bổ sung
+
+Switch có `fatal_close: true` chỉ dùng CLOSE, kích hoạt sẽ chốt terminal loss
+và không thể mở lại/đi tiếp trong lượt đó. Soft/heavy vẫn giữ điều kiện trọng
+lượng và entry activation. Solver nhận result=None, GUI giữ successor để đếm
+5 giây, báo thua 1 giây rồi reset. Board.fatalSwitch tham gia equality/hash;
+reset xóa marker. OPEN/CLOSE không có cờ vẫn theo quy tắc phía dưới.
+Đây là yêu cầu mới của người dùng, không phải timeout bắt buộc trong assignment.
+Chi tiết và bằng chứng: [FATAL_CLOSE.md](FATAL_CLOSE.md).
+
 Nguồn sản phẩm: `assignment/ASSIGNMENT.pdf` §§2.1–2.5, 3.1 và
 `assignment/QA.md`. Giao diện tích hợp: `CONTRACT.md` và `CONTRACT_LAYOUT.md`.
 Đề/QA không quy định hết thứ tự đồng thời; các quyết định dưới đây được công

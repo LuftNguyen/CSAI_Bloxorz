@@ -1,105 +1,127 @@
 {
+  "schema_version": 2,
   "level_id": 8,
-  "name": "Stage 8: Dual Switch",
-  "rows": 12,
-  "cols": 12,
+  "name": "8: Split across the fragile channel",
+  "rows": 10,
+  "cols": 24,
   "start": {
     "r": 1,
-    "c": 1
+    "c": 18
   },
+  "grid": [
+    "XXXXXXXXXXXXXXXXXXXXXXXX",
+    "X.XX.XXXXXXXXXXXXXS...TX",
+    "XXXXXXXXXXXXXXXXXX.w...X",
+    "XXXXXXXXXXXXXXXXXX..w..X",
+    "XXXXXXXXXXXXXXXXXX...T.X",
+    "X....XXXXX....XXXXXXXXXX",
+    "X....FFFFF....XXXXXXXXXX",
+    "XBBBBXXXXX....XXXXXXXXXX",
+    "XG...XXXXX....XXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXXX"
+  ],
   "bridges": [
     {
-      "id": "crossbar",
-      "initial_open": true,
+      "id": "landing",
+      "initial_open": false,
       "tiles": [
         [
-          5,
-          5
-        ],
-        [
-          5,
-          6
-        ],
-        [
-          5,
-          7
-        ]
-      ]
-    },
-    {
-      "id": "side_crossing",
-      "initial_open": true,
-      "tiles": [
-        [
-          6,
-          9
+          7,
+          1
         ],
         [
           7,
-          9
+          2
         ],
         [
-          8,
-          9
+          7,
+          3
+        ],
+        [
+          7,
+          4
         ]
       ]
     }
   ],
-  "grid": [
-    "XXXXXXXXXXXX",
-    "XS........XX",
-    "X.XXXXXX..XX",
-    "X.w....W..XX",
-    "X.XXXXXX..XX",
-    "X....BBB..XX",
-    "X........BXX",
-    "X........BXX",
-    "X.......wBXX",
-    "X........GXX",
-    "X........XXX",
-    "XXXXXXXXXXXX"
-  ],
-  "schema_version": 2,
   "switches": [
     {
       "position": [
-        3,
-        2
+        2,
+        19
       ],
       "effects": [
         {
-          "bridge": "crossbar",
-          "mode": "TOGGLE"
+          "bridge": "landing",
+          "mode": "OPEN"
         }
       ]
     },
     {
       "position": [
         3,
-        7
+        20
       ],
       "effects": [
         {
-          "bridge": "crossbar",
-          "mode": "TOGGLE"
-        },
-        {
-          "bridge": "side_crossing",
-          "mode": "TOGGLE"
+          "bridge": "landing",
+          "mode": "CLOSE"
         }
+      ],
+      "fatal_close": true
+    }
+  ],
+  "splits": [
+    {
+      "position": [
+        4,
+        21
+      ],
+      "targets": [
+        [
+          7,
+          2
+        ],
+        [
+          7,
+          12
+        ]
       ]
     },
     {
       "position": [
-        8,
-        8
+        1,
+        22
       ],
-      "effects": [
-        {
-          "bridge": "side_crossing",
-          "mode": "TOGGLE"
-        }
+      "targets": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          4
+        ]
       ]
     }
-  ]
+  ],
+  "design": {
+    "traps": [
+      {
+        "position": [
+          1,
+          22
+        ],
+        "kind": "isolated_cubes"
+      },
+      {
+        "position": [
+          3,
+          20
+        ],
+        "kind": "fatal_close",
+        "bridge": "landing"
+      }
+    ]
+  }
 }

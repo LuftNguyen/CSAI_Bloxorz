@@ -8,6 +8,7 @@ sys.path.insert(0, str(ROOT))
 from test_advanced_portfolio import RestrictedProblem, events, load, replay, solve
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
+from test_campaign import REQUIRED
 
 
 def describe(path):
@@ -20,6 +21,7 @@ def describe(path):
         'file': path.relative_to(ROOT).as_posix(),
         'dimensions': [board.rows, board.cols], 'initial': list(block.key()[:4]),
         'orientation': block.orientation.name,
+        'walkable_initial': sum(t.name != 'VOID' for row in board.tiles for t in row),
         'goal': next([r, c] for r, row in enumerate(data['grid'])
                      for c, tile in enumerate(row) if tile == 'G'),
         'special_tiles': specials,
@@ -32,19 +34,21 @@ def record_result(result):
 
 
 def main():
-    report = {'method': 'Existing registered A*, h=0, 10s/100000 expanded per query; not benchmark',
-              'restrictions': 'bridge: remove effects on copied initial board; split/control/merge: remove event edges',
+    report = {'method': 'Existing registered A*, h=0, 60s/100000 expanded per query, without tracemalloc; not benchmark',
+              'restrictions': 'bridge/bridge:ID: remove effects on copied initial board; split/control/merge/fragile: remove event edges',
               'levels': [], 'fixtures': []}
-    for number in range(1, 15):
+    for number in range(1, 11):
         initial, record = describe(ROOT / f'levels/level{number}.json')
-        _, full = solve(initial)
+        problem, full = solve(initial)
         record['full'] = record_result(full)
         record['restricted'] = {}
-        if initial.board.switchEffects:
-            record['restricted']['bridge'] = record_result(solve(initial, ('bridge',))[1])
-        if initial.board.splitTargets:
-            for event in ('split', 'control', 'merge'):
-                record['restricted'][event] = record_result(solve(initial, (event,))[1])
+        record['required'] = REQUIRED[number]
+        record['observed'] = sorted(replay(problem, full)[0])
+        for event in REQUIRED[number]:
+            record['restricted'][event] = record_result(solve(initial, (event,))[1])
+        for key in initial.board.bridgeGroups:
+            event = 'bridge:' + key
+            record['restricted'][event] = record_result(solve(initial, (event,))[1])
         report['levels'].append(record)
         print(record['file'], full.status,
               {k: v['status'] for k, v in record['restricted'].items()}, flush=True)
@@ -80,10 +84,11 @@ def main():
               'công tắc và không cấm đi qua nó. Đây là chứng minh phụ thuộc tác động cầu nói chung, '
               'không chứng minh từng công tắc riêng đều bắt buộc. Split và teleport là một '
               'chuyển tiếp nguyên tử; không thể tuyên bố đã kiểm tra độc lập hai cơ chế.', '',
-              'Các màn cũ đều được giữ vì demo, GUI, witness/reset và quy trình tài liệu đang dùng. '
-              'Các màn cùng có cơ chế không mặc nhiên tương đương về coverage. Chưa chứng minh '
-              'tương đương trạng thái giữa các màn nên không xóa màn nào. Các màn cầu vẫn solved '
-              'khi bỏ effects chỉ cung cấp coverage tùy chọn cho cơ chế đó.', '']
+              'Chuỗi chơi hiện có đúng 10 màn. Sáu màn cũ cần cho hồi quy hình học/loader '
+              'được giữ riêng trong tests/fixtures/legacy, không nằm trong LevelManager. '
+              'Fragile bị cấm bằng cách bỏ mọi chuyển tiếp hợp lệ có chiếm ô F, '
+              'chứng minh bắt buộc đi qua chứ không yêu cầu làm vỡ ô. Các truy vấn bridge:ID '
+              'chỉ bỏ effects của một nhóm cầu, giữ các công tắc khác hoạt động.', '']
     (ROOT / 'docs/ADVANCED_LEVEL_INVENTORY.md').write_text('\n'.join(lines), encoding='utf-8')
 
 

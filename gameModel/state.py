@@ -31,6 +31,8 @@ class State:
             and self.board.bridgeGroups == other.board.bridgeGroups
             and self.board.switchEffects == other.board.switchEffects
             and self.board.splitTargets == other.board.splitTargets
+            and self.board.fatalCloseSwitches == other.board.fatalCloseSwitches
+            and self.board.fatalSwitch == other.board.fatalSwitch
             and (self.board.rows, self.board.cols) == (other.board.rows, other.board.cols)
         )
 
@@ -46,6 +48,7 @@ class State:
                 self.board.cols,
                 frozenset(self.board.bridgeState.items()),
                 self.board.rules_key(),
+                self.board.fatalSwitch,
             )
         )
 

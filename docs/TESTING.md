@@ -1,5 +1,32 @@
 # Cài đặt và kiểm tra
 
+## Chuyển cảnh thắng màn — kết quả mới nhất
+
+85 test pass, 251 lượt subtest, 0 skip. Goal fall thật, cả bàn rơi/co dần theo làn sóng,
+blackout 1 giây rồi next level; dùng chung manual/replay và hủy được khi reset.
+Smoke đo framebuffer đen và đã xem ảnh rơi/đen/màn mới.
+Xem [WIN_TRANSITION.md](WIN_TRANSITION.md); số test thấp hơn dưới đây là lịch sử.
+
+## Permanent CLOSE gây thua — kết quả mới nhất
+
+82 test pass, 243 lượt subtest, 0 skip. Sáu nút có `!` gây thua ngay trong
+model; GUI đếm 5 giây, báo YOU LOSE 1 giây rồi reset. Smoke frame clock và
+ảnh HUD đã xác nhận. Xem [FATAL_CLOSE.md](FATAL_CLOSE.md). Các số test thấp
+hơn trong phần dưới là lịch sử; solver/heuristic không sửa.
+
+## Bộ 10 màn hiện hành
+
+Đã mở rộng từ hành lang thành phòng/đảo nhiều nhánh: lời giải 10–26 bước,
+99–2467 node A* h=0. Giới hạn audit tăng lên 60 giây/query; test đúng/sai dùng
+solver từ registry không tracemalloc, audit manifest vẫn dùng runner đo bộ nhớ.
+Xem [bản đồ 10 màn](CAMPAIGN_MAPS.svg). 73 test pass; smoke GUI đã xem ảnh màn 7/10.
+
+Xem [CAMPAIGN.md](CAMPAIGN.md): 73 test pass, 236 lượt subtest, 0 skip;
+10 lời giải, 37 witness kích hoạt, 27 truy vấn vô nghiệm chứng minh cơ chế bắt buộc.
+`python -B -m examples.gui_smoke` phát đủ 10 màn qua input GUI offscreen,
+giữ di chuyển tức thời và replay 0,5 giây. Chưa nghiệm thu desktop thủ công.
+Các kết quả 14 màn/24 witness và số test trong phần dưới là lịch sử.
+
 ## Bản di chuyển tức thời 25/10/2026
 
 Theo yêu cầu mới, ordinary move không còn nội suy hay chờ 0.4 giây; các kết

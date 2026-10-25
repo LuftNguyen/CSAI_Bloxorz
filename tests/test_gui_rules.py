@@ -42,7 +42,7 @@ def mesh(enabled=True):
 def make_view(number=1):
     from view import BloxorzView
     v = BloxorzView.__new__(BloxorzView)
-    b, block = loadLevelFromJson(ROOT/f'levels/level{number}.json', False)
+    b, block = loadLevelFromJson(ROOT/f'tests/fixtures/legacy/level{number}.json', False)
     v.gameModel = GameController(b, block)
     v.problem = Problem(State(b,block).copy())
     v.gameStarted = True
@@ -53,6 +53,10 @@ def make_view(number=1):
     v.replayInterval = 0.5
     v._replayRemaining = 0.0
     v._presentingMove = False
+    v._winPhase = v._blackoutRemaining = None
+    v._winTilePoses = []
+    v.winBlackout = SimpleNamespace(enabled=False)
+    v.effectTileEntities = []
     v.blockMesh = mesh()
     v.cubeMeshes = [mesh(False), mesh(False)]
     v.pauseMenu = SimpleNamespace(disable=Mock())
@@ -102,8 +106,16 @@ class GuiRulesTests(unittest.TestCase):
             self.assertEqual(v.autoIndex, 2)
             self.assertTrue(v.gameModel.hasWon)
             self.assertEqual(v.blockMesh.position, (4,0,-1))
+            self.assertTrue(v.isAnimating)
+            self.assertEqual(v._winPhase, 'fall')
             v.updateAnimations(0.5)
             self.assertFalse(v.isSolving)
+            v.loadNextLevel.assert_not_called()
+            finish_movement(v)
+            self.assertTrue(v.winBlackout.enabled)
+            v.updateAnimations(0.99)
+            v.loadNextLevel.assert_not_called()
+            v.updateAnimations(0.01)
             v.loadNextLevel.assert_called_once()
             invoke.assert_not_called()
         v.blockMesh.animate_position.assert_not_called()
@@ -132,7 +144,7 @@ class GuiRulesTests(unittest.TestCase):
         v.gameModel.block = Block.split(((1,1),(1,6)))
         timer = SimpleNamespace(kill=Mock())
         v._pendingCalls = [timer]
-        v.changeLevel(loadLevelFromJson(ROOT/'levels/level13.json', False))
+        v.changeLevel(loadLevelFromJson(ROOT/'tests/fixtures/legacy/level13.json', False))
         timer.kill.assert_called_once()
         self.assertEqual(v.gameModel.block.orientation, O.STANDING)
         self.assertFalse(v.gameModel.board.bridgeState['crossing'])
@@ -166,3 +178,25 @@ class GuiRulesTests(unittest.TestCase):
         with patch('view.Entity'), patch('view.Text') as text:
             BloxorzView.renderBoard(v)
             self.assertTrue(any(call.kwargs['text'] == '( )' for call in text.call_args_list))
+
+    def test_goal_is_one_recessed_green_hole_and_void_stays_empty(self):
+        from view import BloxorzView
+        from ursina import color
+        v = make_view(13)
+        before = State(v.gameModel.board, v.gameModel.block).copy()
+        v.tileEntities = []
+        v.tileColors = {}
+        with patch('view.Entity', side_effect=lambda **kwargs: SimpleNamespace(**kwargs)) as entity, patch('view.Text'):
+            BloxorzView.renderBoard(v)
+        calls = [c.kwargs for c in entity.call_args_list]
+        holes = [c for c in calls if c.get('name') == 'goal_hole']
+        self.assertEqual(len(holes), 1)
+        self.assertEqual(holes[0]['position'], (7, -0.1, -1))
+        self.assertNotIn('model', holes[0])  # No solid tile filling the opening.
+        rims = [c for c in calls if c.get('name') == 'goal_rim']
+        self.assertEqual(len(rims), 4)
+        self.assertTrue(all(c['color'] == color.lime for c in rims))
+        bottom = next(c for c in calls if c.get('name') == 'goal_bottom')
+        self.assertLess(bottom['position'][1], 0)
+        self.assertFalse(any(c.get('position') == (0, -0.1, 0) and 'parent' not in c for c in calls))
+        self.assertEqual(State(v.gameModel.board, v.gameModel.block), before)

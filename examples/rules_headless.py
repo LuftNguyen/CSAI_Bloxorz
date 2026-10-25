@@ -15,13 +15,13 @@ from search.contracts import SearchLimits
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('levels', type=int, nargs='*', default=[1,12,13,14])
+    parser.add_argument('levels', type=int, nargs='*', default=[1,3,5,6,8,9,10])
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     for number in args.levels:
         board, block = loadLevelFromJson(root/f'levels/level{number}.json', False)
         p = Problem(State(board, block).copy())
-        run = run_search(p, 'astar', SearchLimits(timeout_seconds=5, max_expanded_nodes=100000), heuristic=None)
+        run = run_search(p, 'astar', SearchLimits(timeout_seconds=60, max_expanded_nodes=100000), heuristic=None)
         print(f'level={number} status={run.search.status} moves={len(run.search.actions)} cost={run.search.total_cost}')
         if run.search.status != 'solved':
             raise RuntimeError(f'Integration example did not solve level {number}: {run.search.status}')
