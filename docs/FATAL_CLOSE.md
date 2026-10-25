@@ -1,5 +1,9 @@
 # Permanent CLOSE gây thua — 25/10/2026
 
+Cập nhật 26/10: ba split bẫy cũng dùng terminal loss và countdown/reset này.
+Manifest hiện có 9 witness loss và 28 effect; không còn chỉ 6 loss.
+Xem [CAMERA_SPLIT_SPEED.md](CAMERA_SPLIT_SPEED.md).
+
 Theo yêu cầu mới, một số công tắc CLOSE được đánh dấu `fatal_close: true`.
 Đây là luật bẫy bổ sung của nhóm: đề §2.5 có toggle/permanent, nhưng không
 quy định tự động thua hoặc đếm ngược 5 giây. CLOSE không có cờ vẫn giữ hành

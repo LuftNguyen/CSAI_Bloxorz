@@ -103,6 +103,10 @@ def _load(data, debug=False):
             targets = tuple(position(p) for p in entry['targets'])
             require(len(targets) == 2 and targets[0] != targets[1], 'split requires two distinct destinations')
             board.splitTargets[switch] = targets
+            fatal = entry.get('fatal_split', False)
+            require(type(fatal) is bool, 'fatal_split must be boolean')
+            if fatal:
+                board.fatalSplitSwitches = board.fatalSplitSwitches | {switch}
         split_cells = {(r,c) for r,row in enumerate(grid) for c,v in enumerate(row) if v == 'T'}
         require(split_cells == set(board.splitTargets), 'each T requires a split definition')
         switch_cells = {(r,c) for r,row in enumerate(grid) for c,v in enumerate(row) if v in 'wW'}

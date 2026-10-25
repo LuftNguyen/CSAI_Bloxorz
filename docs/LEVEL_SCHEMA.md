@@ -66,6 +66,8 @@ cùng một switch; xung đột giữa switch xử lý theo GAME_RULES.md.
 Mọi T cần đúng một split definition. Targets đúng hai tọa độ khác nhau, trong
 biên và có sàn hoặc nằm trong nhóm cầu. Cho phép ô đặc biệt/ban đầu đóng;
 engine kiểm tra hỗ trợ ở thời điểm thực sự teleport. Void vĩnh viễn bị từ chối.
+Split definition có thể thêm `fatal_split: true` (boolean, mặc định false):
+teleport rồi chốt thua, GUI đếm 5 giây/reset; solver loại bước thua.
 Reset dùng tiles và trạng thái ban đầu đã lưu, không mặc định tất cả cầu mở.
 
 ## Phân loại màn hiện hành

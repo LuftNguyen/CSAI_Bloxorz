@@ -44,7 +44,7 @@ class WinTransitionTests(unittest.TestCase):
                 self.assertFalse(v.winBlackout.enabled)
                 self.assertTrue(visible.enabled and far.enabled)
                 self.assertEqual(visible.animate_y.call_args.kwargs['delay'], 0)
-                self.assertEqual(far.animate_y.call_args.kwargs['delay'], 0.65)
+                self.assertEqual(far.animate_y.call_args.kwargs['delay'], 0.32)
                 collapse = v._movement
                 for h in collapse.handles:
                     h.finished = True

@@ -32,6 +32,7 @@ class State:
             and self.board.switchEffects == other.board.switchEffects
             and self.board.splitTargets == other.board.splitTargets
             and self.board.fatalCloseSwitches == other.board.fatalCloseSwitches
+            and self.board.fatalSplitSwitches == other.board.fatalSplitSwitches
             and self.board.fatalSwitch == other.board.fatalSwitch
             and (self.board.rows, self.board.cols) == (other.board.rows, other.board.cols)
         )

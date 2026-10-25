@@ -2,13 +2,18 @@
 
 Khi thắng: khối rơi vào goal, cả bàn rơi/co dần theo làn sóng, rồi đen 1 giây và tải màn
 mới. Áp dụng cả chơi tay/replay, hủy được khi reset/đổi màn. Kết quả mới nhất:
-85 test pass, 251 lượt subtest, 0 skip. Xem [WIN_TRANSITION.md](WIN_TRANSITION.md).
+88 test pass, 254 lượt subtest, 0 skip. Xem [WIN_TRANSITION.md](WIN_TRANSITION.md).
+
+Cập nhật 26/10: camera fit toàn bàn theo lens và tự căn lại khi đổi tỉ lệ;
+split bẫy cũng đếm 5 giây/báo thua/reset; pha bàn rơi/co rút còn khoảng 0,6–0,7
+giây, ít setter hơn. Xem [CAMERA_SPLIT_SPEED.md](CAMERA_SPLIT_SPEED.md).
 
 ## Cập nhật: CLOSE gây thua, đếm ngược 5 giây
 
 Sáu nút có `!` ở màn 5–10 được khai báo `fatal_close`: đóng cầu, khóa lượt,
 đếm 5 giây, hiện YOU LOSE trong 1 giây rồi reset. Tám CLOSE thường vẫn có thể
-khắc phục; ba split bẫy vẫn như cũ. Solver tự loại bước terminal qua result=None,
+khắc phục; ba split bẫy nay cũng gây terminal loss và dùng cùng countdown/reset.
+Solver tự loại bước terminal qua result=None,
 không sửa thuật toán/heuristic. Engine, metadata State và GUI được mở rộng theo
 yêu cầu mới này. Chi tiết vị trí/schema/kiểm tra tại [FATAL_CLOSE.md](FATAL_CLOSE.md).
 Các số liệu và mô tả bên dưới cần đọc cùng cập nhật này; witness fatal là loss,
@@ -26,8 +31,8 @@ Bố cục 1/2 khác nhau (sân lệch và bốn cánh quanh giếng); bố cụ
 ## Vì sao có hai ô rời ngoài bàn chính?
 
 Ở màn 8–10, hai ô [1,1] và [1,4] là đích của **điểm split bẫy**.
-Khối đứng trên T đó sẽ tách thành hai cube ở hai ô không nối nhau. Trạng thái
-vẫn hợp lệ nhưng không thể ghép hoặc tới goal; R để restart. Đây không phải
+Khối đứng trên T đó sẽ tách thành hai cube ở hai ô không nối nhau, chốt thua,
+đếm 5 giây rồi tự reset; vẫn có thể nhấn R sớm. Đây không phải
 ô sót của loader. Các ô và bẫy được giữ có chủ đích, không thêm ô rời mới.
 
 ## Điều khiển hiện tại
@@ -52,9 +57,9 @@ split đã có, không đổi engine.
 | 5 | 10×16 | 59 | 5 / 0 | 16 / 15,5 | 201 |
 | 6 | 11×17 | 81 | 5 / 0 | 20 / 19,5 | 279 |
 | 7 | 11×23 | 77 | 7 / 0 | 25 / 24,5 | 364 |
-| 8 | 10×24 | 55 | 2 / 2 | 20 / 40 | 1188 |
-| 9 | 17×17 | 58 | 5 / 2 | 19 / 18,5 | 1783 |
-| 10 | 13×26 | 70 | 7 / 2 | 26 / 29 | 2467 |
+| 8 | 10×24 | 55 | 2 / 2 | 20 / 40 | 1184 |
+| 9 | 17×17 | 58 | 5 / 2 | 19 / 18,5 | 1781 |
+| 10 | 13×26 | 70 | 7 / 2 | 26 / 29 | 2465 |
 
 Ô đỡ ban đầu không tính VOID/cầu đóng. Đường đi tối ưu chi phí TILE_COST của
 A* h=0, không khẳng định tối ưu số bước. Điều khiển thay thế có thể làm đường

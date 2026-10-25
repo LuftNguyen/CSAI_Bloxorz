@@ -125,7 +125,7 @@ def main():
             validate_solution(probe, activation)
             replay_activation(initial, target, activation.actions)
             record['activations'].append({'position': list(target), **proof(activation),
-                                          'outcome': 'loss' if target in board.fatalCloseSwitches else 'effect'})
+                                          'outcome': 'loss' if target in board.fatalCloseSwitches | board.fatalSplitSwitches else 'effect'})
             count += 1
         report['levels'].append(record)
         print(f'level={number}: solved moves={len(result.actions)} cost={result.total_cost}; '

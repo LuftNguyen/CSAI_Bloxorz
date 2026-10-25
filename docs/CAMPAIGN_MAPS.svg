@@ -2,7 +2,7 @@
 <rect width="980" height="1830" fill="#142033"/>
 <g font-family="sans-serif" fill="white">
 <text x="20" y="28" font-size="20">Bloxorz: 10 island and courtyard layouts</text>
-<text x="20" y="52" font-size="13">S start | G goal | F fragile | B closed bridge | w soft | W heavy | T split | ! fatal CLOSE</text>
+<text x="20" y="52" font-size="13">S start | G goal | F fragile | B closed bridge | w soft | W heavy | T split | ! fatal trap</text>
 <text x="20" y="90" font-size="15">1: Courtyard</text>
 <rect x="36" y="118" width="15" height="15" fill="#8fbce6"/>
 <text x="38" y="130" font-size="12" fill="white">S</text>
@@ -615,7 +615,7 @@
 <rect x="820" y="1138" width="15" height="15" fill="#d9e2ec"/>
 <rect x="836" y="1138" width="15" height="15" fill="#d9e2ec"/>
 <rect x="852" y="1138" width="15" height="15" fill="#a679dd"/>
-<text x="854" y="1150" font-size="12" fill="white">T</text>
+<text x="854" y="1150" font-size="12" fill="white">T!</text>
 <rect x="788" y="1154" width="15" height="15" fill="#d9e2ec"/>
 <rect x="804" y="1154" width="15" height="15" fill="#3695dd"/>
 <text x="806" y="1166" font-size="12" fill="white">w</text>
@@ -758,7 +758,7 @@
 <rect x="68" y="1702" width="15" height="15" fill="#d9e2ec"/>
 <rect x="84" y="1702" width="15" height="15" fill="#d9e2ec"/>
 <rect x="100" y="1702" width="15" height="15" fill="#a679dd"/>
-<text x="102" y="1714" font-size="12" fill="white">T</text>
+<text x="102" y="1714" font-size="12" fill="white">T!</text>
 <circle cx="235" cy="1517" r="5" fill="none" stroke="#ed74b8" stroke-width="2"/>
 <circle cx="171" cy="1645" r="5" fill="none" stroke="#ed74b8" stroke-width="2"/>
 <circle cx="43" cy="1485" r="5" fill="none" stroke="#ed74b8" stroke-width="2"/>
@@ -772,7 +772,7 @@
 <rect x="852" y="1478" width="15" height="15" fill="#d9e2ec"/>
 <rect x="868" y="1478" width="15" height="15" fill="#d9e2ec"/>
 <rect x="884" y="1478" width="15" height="15" fill="#a679dd"/>
-<text x="886" y="1490" font-size="12" fill="white">T</text>
+<text x="886" y="1490" font-size="12" fill="white">T!</text>
 <rect x="820" y="1494" width="15" height="15" fill="#d9e2ec"/>
 <rect x="836" y="1494" width="15" height="15" fill="#d9e2ec"/>
 <rect x="852" y="1494" width="15" height="15" fill="#d9e2ec"/>

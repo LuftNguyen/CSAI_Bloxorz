@@ -64,6 +64,9 @@ def transition(state, action):
         child.block = Block.split(child.board.splitTargets[position])
         if not supported(child):
             return child, False, True
+        if position in child.board.fatalSplitSwitches:
+            child.board.fatalSwitch = position
+            return child, False, True
         # Arrival presses soft switches once. Cubes cannot trigger heavy/split.
         for destination in sorted(pressed(child)):
             child.board.applySwitch(destination)

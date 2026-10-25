@@ -141,7 +141,8 @@
           1,
           4
         ]
-      ]
+      ],
+      "fatal_split": true
     }
   ],
   "design": {
@@ -167,7 +168,7 @@
           15,
           5
         ],
-        "kind": "isolated_cubes"
+        "kind": "fatal_split"
       }
     ]
   }

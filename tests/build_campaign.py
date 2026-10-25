@@ -42,7 +42,8 @@ class Layout:
 
     def trap_split(self, position, targets):
         self.split(position, targets)
-        self.traps.append(dict(position=position, kind='isolated_cubes'))
+        self.splits[-1]['fatal_split'] = True
+        self.traps.append(dict(position=position, kind='fatal_split'))
         return self
 
     def split(self, position, targets):
@@ -141,10 +142,11 @@ if __name__ == '__main__':
                  '<rect width="980" height="1830" fill="#142033"/>',
                  '<g font-family="sans-serif" fill="white">',
                  '<text x="20" y="28" font-size="20">Bloxorz: 10 island and courtyard layouts</text>',
-                 '<text x="20" y="52" font-size="13">S start | G goal | F fragile | B closed bridge | w soft | W heavy | T split | ! fatal CLOSE</text>']
+                 '<text x="20" y="52" font-size="13">S start | G goal | F fragile | B closed bridge | w soft | W heavy | T split | ! fatal trap</text>']
         for index, layout in enumerate(layouts()):
             data = layout.data()
             fatal = {tuple(s['position']) for s in data['switches'] if s.get('fatal_close')}
+            fatal.update(tuple(s['position']) for s in data['splits'] if s.get('fatal_split'))
             ox, oy = 20 + (index % 2) * 480, 90 + (index // 2) * 340
             parts.append(f'<text x="{ox}" y="{oy}" font-size="15">{escape(data["name"])}</text>')
             for r, row in enumerate(data['grid']):

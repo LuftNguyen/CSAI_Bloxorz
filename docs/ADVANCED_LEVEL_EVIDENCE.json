@@ -715,7 +715,7 @@
       },
       "full": {
         "status": "solved",
-        "expanded": 1188,
+        "expanded": 1184,
         "actions": [
           "DOWN",
           "RIGHT",
@@ -749,31 +749,31 @@
         },
         "control": {
           "status": "unsolvable",
-          "expanded": 110,
+          "expanded": 108,
           "actions": [],
           "cost": null
         },
         "merge": {
           "status": "unsolvable",
-          "expanded": 2487,
+          "expanded": 2483,
           "actions": [],
           "cost": null
         },
         "fragile": {
           "status": "unsolvable",
-          "expanded": 551,
+          "expanded": 547,
           "actions": [],
           "cost": null
         },
         "bridge": {
           "status": "unsolvable",
-          "expanded": 51,
+          "expanded": 49,
           "actions": [],
           "cost": null
         },
         "bridge:landing": {
           "status": "unsolvable",
-          "expanded": 51,
+          "expanded": 49,
           "actions": [],
           "cost": null
         }
@@ -863,7 +863,7 @@
       },
       "full": {
         "status": "solved",
-        "expanded": 1783,
+        "expanded": 1781,
         "actions": [
           "RIGHT",
           "UP",
@@ -896,25 +896,25 @@
         },
         "control": {
           "status": "unsolvable",
-          "expanded": 66,
+          "expanded": 65,
           "actions": [],
           "cost": null
         },
         "merge": {
           "status": "unsolvable",
-          "expanded": 4291,
+          "expanded": 4289,
           "actions": [],
           "cost": null
         },
         "bridge": {
           "status": "unsolvable",
-          "expanded": 691,
+          "expanded": 689,
           "actions": [],
           "cost": null
         },
         "bridge:gate": {
           "status": "unsolvable",
-          "expanded": 691,
+          "expanded": 689,
           "actions": [],
           "cost": null
         }
@@ -1027,7 +1027,7 @@
       },
       "full": {
         "status": "solved",
-        "expanded": 2467,
+        "expanded": 2465,
         "actions": [
           "DOWN",
           "DOWN",
@@ -1067,37 +1067,37 @@
         },
         "control": {
           "status": "unsolvable",
-          "expanded": 81,
+          "expanded": 80,
           "actions": [],
           "cost": null
         },
         "merge": {
           "status": "unsolvable",
-          "expanded": 13455,
+          "expanded": 13453,
           "actions": [],
           "cost": null
         },
         "bridge": {
           "status": "unsolvable",
-          "expanded": 563,
+          "expanded": 561,
           "actions": [],
           "cost": null
         },
         "fragile": {
           "status": "unsolvable",
-          "expanded": 51,
+          "expanded": 49,
           "actions": [],
           "cost": null
         },
         "bridge:near": {
           "status": "unsolvable",
-          "expanded": 563,
+          "expanded": 561,
           "actions": [],
           "cost": null
         },
         "bridge:far": {
           "status": "unsolvable",
-          "expanded": 1555,
+          "expanded": 1553,
           "actions": [],
           "cost": null
         }

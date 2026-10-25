@@ -48,18 +48,18 @@ class CampaignTests(unittest.TestCase):
                     from gameModel.block import Direction
                     actions = tuple(Direction[a] for a in witness['actions'])
                     final = replay_activation(initial, tuple(trap['position']), actions)
-                    if trap['kind'] == 'isolated_cubes':
+                    if trap['kind'] in ('isolated_cubes', 'fatal_split'):
                         self.assertEqual(final.block.orientation, Orientation.SPLIT)
                         self.assertEqual(solve(final)[1].status, 'unsolvable')
                     else:
                         self.assertFalse(final.board.bridgeState[trap['bridge']])
-                    if trap['kind'] == 'fatal_close':
+                    if trap['kind'] in ('fatal_close', 'fatal_split'):
                         self.assertEqual(final.board.fatalSwitch, tuple(trap['position']))
                         self.assertEqual(solve(final)[1].status, 'unsolvable')
                     live = initial.copy()
                     controller = GameController(live.board, live.block)
                     for index, action in enumerate(actions):
-                        fatal_last = trap['kind'] == 'fatal_close' and index == len(actions)-1
+                        fatal_last = trap['kind'] in ('fatal_close', 'fatal_split') and index == len(actions)-1
                         self.assertEqual(controller.executeMove(action), not fatal_last)
                     self.assertEqual(State(controller.board, controller.block), final)
                     controller.reset()

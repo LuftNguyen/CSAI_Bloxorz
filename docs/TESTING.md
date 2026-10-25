@@ -1,5 +1,11 @@
 # Cài đặt và kiểm tra
 
+## Camera, split bẫy và chuyển cảnh nhanh — 26/10/2026
+
+88 test pass, 254 subtest, 0 skip. Smoke kiểm tra 10 màn × 4 tỉ lệ lens và
+resize refit, split bẫy đếm 5 giây/reset, wave nhanh và cancellation trên frame
+thật. Xem [CAMERA_SPLIT_SPEED.md](CAMERA_SPLIT_SPEED.md). Số liệu dưới là lịch sử.
+
 ## Chuyển cảnh thắng màn — kết quả mới nhất
 
 85 test pass, 251 lượt subtest, 0 skip. Goal fall thật, cả bàn rơi/co dần theo làn sóng,

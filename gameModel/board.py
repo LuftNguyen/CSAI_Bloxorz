@@ -56,6 +56,7 @@ class Board:
         self.switchEffects = {}
         self.splitTargets = {}
         self.fatalCloseSwitches = frozenset()
+        self.fatalSplitSwitches = frozenset()
         self.fatalSwitch = None
 
     def __repr__(self):
@@ -136,7 +137,7 @@ class Board:
         return (frozenset((key, tuple(value)) for key, value in self.bridgeGroups.items()),
                 frozenset((key, tuple(value)) for key, value in self.switchEffects.items()),
                 frozenset((key, tuple(value)) for key, value in self.splitTargets.items()),
-                self.fatalCloseSwitches)
+                self.fatalCloseSwitches, self.fatalSplitSwitches)
 
     def toggleBridge(self, switchPos):
 

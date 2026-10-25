@@ -1,5 +1,6 @@
 from ursina import *
 from math import ceil
+from panda3d.core import Point2
 from animation_sync import AnimationCompletion
 
 from gameModel.gameController import GameController
@@ -200,24 +201,33 @@ class BloxorzView:
 
     def setupCamera(self):
         board = self.gameModel.board
-        
-        # 1. Calculate true center X and Z of the board grid
-        centerX = (board.cols - 1) / 2.0
-        centerZ = -(board.rows - 1) / 2.0
-        
-        # 2. Determine the bounding size of the stage
-        maxDim = max(board.cols, board.rows)
-        
-        # 3. Scale distance dynamically:
-        # - Height (Y) grows with grid size
-        # - Pull back along Z into negative space relative to the bottom edge (-board.rows)
-        heightY = maxDim * 1.35
-        distanceZ = -board.rows - (maxDim * 0.75)
-        
-        camera.position = (centerX, heightY, distanceZ)
-        
-        # 4. Point directly at the board center
-        camera.look_at(Vec3(centerX, 0, centerZ))
+        cells = {(r, c) for r, row in enumerate(board.initialTiles)
+                 for c, tile in enumerate(row) if tile != Tile.VOID}
+        cells.update(p for group in board.bridgeGroups.values() for p in group)
+        if not cells:
+            cells = {(board.startR, board.startC)}
+        left, right = min(c for _, c in cells)-0.55, max(c for _, c in cells)+0.55
+        back, front = -max(r for r, _ in cells)-0.55, -min(r for r, _ in cells)+0.55
+        target = Vec3((left+right)/2, 0.75, (back+front)/2)
+        self._cameraBounds = [Vec3(x, y, z) for x in (left, right)
+                              for y in (-0.6, 2.1) for z in (back, front)]
+        distance = max(right-left, front-back, 3)
+        # Fit the actual lens, including standing-block height and HUD margins.
+        # This also handles tall/narrow windows instead of assuming 16:9.
+        for _ in range(80):
+            camera.position = target + Vec3(0, distance, -distance)
+            camera.look_at(target)
+            fits = True
+            for point in self._cameraBounds:
+                projected = Point2()
+                local = camera._cam.get_relative_point(scene, point)
+                if not camera.lens.project(local, projected) or abs(projected.x) > 0.82 or abs(projected.y) > 0.76:
+                    fits = False
+                    break
+            if fits:
+                break
+            distance *= 1.10
+        self._cameraAspect = camera.lens.get_aspect_ratio()
 
     def setupLighting(self):
         # Soft overall fill light so black shadows aren't pitch dark
@@ -268,7 +278,7 @@ class BloxorzView:
                         self.effectTileEntities.append(tileEntity)
                     labels = {Tile.SOFT_SWITCH: "o", Tile.HEAVY_SWITCH: "X", Tile.SPLIT_SWITCH: "( )"}
                     if tileType in labels:
-                        label = labels[tileType] + ('!' if (r,c) in board.fatalCloseSwitches else '')
+                        label = labels[tileType] + ('!' if (r,c) in board.fatalCloseSwitches | board.fatalSplitSwitches else '')
                         marker = Text(text=label, parent=tileEntity, origin=(0,0),
                                       rotation=(90,0,0), y=0.6, scale=3, color=color.black)
                         # Parent destruction removes the marker too.
@@ -406,6 +416,8 @@ class BloxorzView:
         self._movement = AnimationCompletion(handles, complete)
 
     def updateAnimations(self, delta=None):
+        if hasattr(self, '_cameraAspect') and abs(camera.lens.get_aspect_ratio()-self._cameraAspect) > 1e-4:
+            self.setupCamera()
         blackout = getattr(self, '_blackoutRemaining', None)
         if blackout is not None:
             elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
@@ -419,7 +431,7 @@ class BloxorzView:
             elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
             self._fatalRemaining = max(0.0, remaining - elapsed)
             if self._fatalRemaining > 1e-9:
-                self.setFatalMessage(f'Permanent CLOSE!\nLoss in {ceil(self._fatalRemaining)} s')
+                self.setFatalMessage(f'{self._fatalTitle}\nLoss in {ceil(self._fatalRemaining)} s')
             else:
                 self._fatalRemaining = None
                 self.setFatalMessage('YOU LOSE\nRestarting...')
@@ -452,7 +464,9 @@ class BloxorzView:
             if self.gameModel.board.fatalSwitch is not None:
                 self.isAnimating = True
                 self._fatalRemaining = 5.0
-                self.setFatalMessage('Permanent CLOSE!\nLoss in 5 s')
+                self._fatalTitle = ('Split trap!' if self.gameModel.board.fatalSwitch in
+                                    self.gameModel.board.fatalSplitSwitches else 'Permanent CLOSE!')
+                self.setFatalMessage(f'{self._fatalTitle}\nLoss in 5 s')
             else:
                 self.animateFall(direction)
         elif self.gameModel.hasWon:
@@ -496,10 +510,11 @@ class BloxorzView:
         furthest = max(max(distances), 1.0)
         handles = []
         for (tile, position, scale, _), distance in zip(visible, distances):
-            delay = 0.65 * distance / furthest
-            handles.append(tile.animate_y(position[1]-6, duration=0.45, delay=delay, curve=curve.in_quad))
-            handles.append(tile.animate_scale(tuple(v*0.05 for v in scale), duration=0.45,
-                                               delay=delay, curve=curve.in_quad))
+            delay = 0.32 * distance / furthest
+            handles.append(tile.animate_y(position[1]-6, duration=0.28, delay=delay,
+                                          resolution=10, curve=curve.in_quad))
+            handles.append(tile.animate_scale(tuple(v*0.05 for v in scale), duration=0.16,
+                                               delay=delay+0.1, resolution=6, curve=curve.in_quad))
         self.watchAnimations(handles, self.finishBoardCollapse)
 
     def finishBoardCollapse(self):

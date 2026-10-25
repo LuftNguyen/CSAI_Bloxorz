@@ -499,7 +499,7 @@
     },
     {
       "level": 8,
-      "data_sha256": "69a792363768786f20bd2909c8d9b9480ded2f5198aae239fe975eef23d19533",
+      "data_sha256": "cda569eaa4bdb914c4aab7f5775546bc6801921afa874cab38861f60ccbd25d9",
       "solution": {
         "actions": [
           "DOWN",
@@ -539,7 +539,7 @@
             "RIGHT"
           ],
           "total_cost": 5.0,
-          "outcome": "effect"
+          "outcome": "loss"
         },
         {
           "position": [
@@ -586,7 +586,7 @@
     },
     {
       "level": 9,
-      "data_sha256": "3731dff9b3cecb47520c6c90bc6e408729790ad9458e769cd6418622e6ddb20f",
+      "data_sha256": "27bc8dcb586f72c8185a234225360d7d22508518eac750cdd1968bf8245b0704",
       "solution": {
         "actions": [
           "RIGHT",
@@ -732,13 +732,13 @@
             "RIGHT"
           ],
           "total_cost": 6.0,
-          "outcome": "effect"
+          "outcome": "loss"
         }
       ]
     },
     {
       "level": 10,
-      "data_sha256": "d31f6615eb394e1670e5f17c56bb68bf5e64b47ffe6793ce7ef14cfacf4faecf",
+      "data_sha256": "3f6b15f3d02bad2bbcf07f2fedb70fc631eaebe0039265a9d1eca097619aa932",
       "solution": {
         "actions": [
           "DOWN",
@@ -784,7 +784,7 @@
             "RIGHT"
           ],
           "total_cost": 5.0,
-          "outcome": "effect"
+          "outcome": "loss"
         },
         {
           "position": [

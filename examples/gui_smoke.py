@@ -10,7 +10,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--capture-dir', type=Path)
     args = parser.parse_args()
-    from panda3d.core import ClockObject, PNMImage, StringStream, loadPrcFileData
+    from panda3d.core import ClockObject, PNMImage, StringStream, loadPrcFileData, Point2
     loadPrcFileData('', 'audio-library-name null')
     from ursina import Ursina
     import view
@@ -66,6 +66,21 @@ def main():
 
     try:
         ui.startMenu.start_game()
+        native_aspect = camera.lens.get_aspect_ratio()
+        for aspect in (16/9, 4/3, 9/16, 21/9):
+            camera.lens.set_aspect_ratio(aspect)
+            for number in range(1,11):
+                ui.changeLevel(loadLevelFromJson(root/f'levels/level{number}.json', False))
+                for point in ui._cameraBounds:
+                    projected = Point2()
+                    assert camera.lens.project(camera._cam.get_relative_point(view.scene, point), projected)
+                    assert abs(projected.x) <= 0.82 and abs(projected.y) <= 0.76, (number, aspect)
+        camera.lens.set_aspect_ratio(9/16)
+        ui.updateAnimations(0)
+        assert abs(ui._cameraAspect-9/16) < 1e-4
+        camera.lens.set_aspect_ratio(native_aspect)
+        ui.changeLevel(load(1))
+        print('Camera bounds: 10 stages at 4 aspect ratios plus resize refit passed')
         with ExitStack() as stack:
             ordinary_animations = []
             for mesh in [ui.blockMesh] + ui.cubeMeshes:
@@ -261,6 +276,24 @@ def main():
             assert State(ui.gameModel.board, ui.gameModel.block) == initial
             assert not ui.fatalMessage.enabled and ui._fatalRemaining is None
             print('Fatal CLOSE: 5-second countdown, loss notice, reset and cancellation passed')
+            split_data = json.loads((root/'levels/level8.json').read_text())
+            split_position = next(s['position'] for s in split_data['splits'] if s.get('fatal_split'))
+            witness = next(a for row in manifest['levels'] if row['level'] == 8
+                           for a in row['activations'] if a['position'] == split_position)
+            ui.changeLevel(loadLevelFromJson(root/'levels/level8.json', False))
+            initial = State(ui.gameModel.board, ui.gameModel.block).copy()
+            for action in witness['actions']:
+                key(names[action])
+            assert ui.gameModel.isGameOver and ui.gameModel.block.orientation == Orientation.SPLIT
+            assert all(m.enabled for m in ui.cubeMeshes) and not ui.blockMesh.enabled
+            assert 'Split trap!' in ui.fatalMessage.text and ui._fatalRemaining == 5
+            capture('split_trap_countdown')
+            until(lambda: ui._fatalRemaining is None)
+            assert 'YOU LOSE' in ui.fatalMessage.text
+            until(lambda: not ui.gameModel.isGameOver)
+            assert State(ui.gameModel.board, ui.gameModel.block) == initial
+            assert not ui.fatalMessage.enabled
+            print('Split trap: teleported cubes, 5-second countdown, loss and reset passed')
         print('Offscreen instant movement OK: direct final poses, zero position/scale animators, bridge OPEN/CLOSE, fragile/fall/reset, split/SWITCH/merge, A* replay, cancellation')
     finally:
         ui.cancelReplay()

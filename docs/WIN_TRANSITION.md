@@ -6,8 +6,9 @@
    0,6 giây, curve.in_cubic. Không quay khối hoặc nội suy bước di chuyển thường.
 2. Rơi xong mới cho **tất cả ô bàn** rơi và co dần, thay cho ẩn tức thời chỉ
    các ô đặc biệt. Cả sàn thường, cầu, fragile, switch và hốc goal tham gia.
-   Độ trễ 0–0,65 giây theo khoảng cách Manhattan từ goal tạo làn sóng lan ra
-   ngoài; mỗi ô rơi 6 đơn vị và co còn 5% trong 0,45 giây, curve.in_quad.
+   Độ trễ 0–0,32 giây theo khoảng cách Manhattan từ goal tạo làn sóng lan ra
+   ngoài; mỗi ô rơi 6 đơn vị trong 0,28 giây, co còn 5% trong 0,16 giây sau
+   delay thêm 0,1 giây, curve.in_quad. Resolution 10/6 giảm số setter.
 3. AnimationCompletion chờ mọi handle y/scale và setter cuối của ô xa nhất,
    rồi ẩn các Entity. Quad đen phủ toàn bộ board lẫn HUD, giữ **1 giây**
    tính từ lúc toàn bộ làn sóng hoàn tất, không bắt đầu sớm theo timer giả.
@@ -53,4 +54,5 @@ Không sửa engine, solver/heuristic, chi phí hoặc JSON màn trong lượt n
 Giữ kiểu di chuyển thường tức thời và khoảng nghỉ replay 0,5 giây.
 Không commit/push, không đổi nhánh hoặc thao tác stash.
 
-Kết quả toàn suite: **85 test pass, 251 lượt subtest, 0 failure/error/skip**.
+Kết quả sau tối ưu tốc độ/camera và split bẫy: **88 test pass, 254 subtest,
+0 failure/error/skip**. Xem [CAMERA_SPLIT_SPEED.md](CAMERA_SPLIT_SPEED.md).
