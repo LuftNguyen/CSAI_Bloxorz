@@ -2,6 +2,8 @@ from ursina import *
 from math import ceil
 from panda3d.core import Point2
 from animation_sync import AnimationCompletion
+from classic_theme import ClassicTheme, bronze_button, GOLD, MUTED
+from classic_audio import ClassicAudio, sound_events
 
 from gameModel.gameController import GameController
 from gameModel.block import  Orientation, Direction
@@ -18,6 +20,7 @@ from gameModel.state import State
 class BloxorzView:
     def __init__(self, gameModel: GameController, problem):
         self.app = Ursina()
+        self.sound = ClassicAudio()
         self.gameModel = gameModel
         self.inputHandler = InputHandler()
         self.isPaused = False
@@ -44,7 +47,9 @@ class BloxorzView:
         self.algorithmList = ["BFS", "DFS", "UCS", "A*"]
 
         # Visuals & Setup
-        window.color = color.black50
+        window.color = color.hex("#581606")
+        self.theme = ClassicTheme()
+        self.moveCount = 0
         self.setupLighting()
         self.setupCamera()
 
@@ -57,7 +62,8 @@ class BloxorzView:
             on_solver_callback= self.showSolverMenu
         )
         self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected)
-        self.solverMessage = Text(text="A*: ready (h=0); BFS/DFS/UCS: not implemented", x=-0.85, y=0.46, scale=0.8)
+        self.soundButton = bronze_button(self.pauseMenu, 'SOUND: ON', -.285, self.toggleSound)
+        self.solverMessage = Text(text="A*: ready (h=0); BFS/DFS/UCS: not implemented", x=-0.72, y=-0.41, scale=0.6, color=MUTED)
         self.fatalMessage = Text(text='', origin=(0,0), y=0.25, scale=1.5,
                                  color=color.red, enabled=False)
         self.winBlackout = Entity(parent=camera.ui, model='quad', color=color.black,
@@ -65,37 +71,27 @@ class BloxorzView:
 
     def startGame(self):
         self.gameStarted = True
-        self.tileColors = {
-            Tile.NORMAL:       color.light_gray,
-            Tile.GOAL:         color.lime,
-            Tile.FRAGILE:      color.orange,
-            Tile.SOFT_SWITCH:  color.cyan,
-            Tile.HEAVY_SWITCH: color.red,
-            Tile.BRIDGE:       color.brown,
-            Tile.SPLIT_SWITCH: color.violet
-        }
-
         self.tileEntities = []
         self.effectTileEntities = []
         self.renderBoard()
 
-        # 3D Block mesh creation
-        self.blockMesh = Entity(
-            model='cube',
-            color=color.azure,
-            texture='white_cube',   # Sharpens edges
-            origin_y=-0.5  # Pivot at the bottom face of the block
-        )
-        self.cubeMeshes = [Entity(model='cube', texture='white_cube', origin_y=-0.5) for _ in range(2)]
-        self.controlsText = Text(text="WASD / arrows: roll | Space: switch cube | P: pause | R: restart",
-                                 x=-0.85, y=-0.46, scale=0.8)
-        self.newGameButton = Button(text="New Game", scale=(0.15, 0.04), position=(0.72, 0.46), on_click=self.newGame)
-        self.restartButton = Button(text="Restart", scale=(0.15, 0.04), position=(0.72, 0.40), on_click=self.restartLevel)
+        self.blockMesh = self.theme.block()
+        self.cubeMeshes = [self.theme.block() for _ in range(2)]
+        self.controlsText = Text(text="WASD / ARROWS: ROLL | SPACE: SWITCH | P: MENU | R: RESTART",
+                                 origin=(0,0), y=-.475, scale=.55, color=MUTED)
+        self.menuButton = bronze_button(camera.ui, 'MENU', .44, self.togglePause, x=-.67, width=.15)
+        self.newGameButton = bronze_button(camera.ui, 'NEW GAME', .44, self.newGame, x=-.47, width=.21)
+        self.restartButton = bronze_button(camera.ui, 'RESTART', .44, self.restartLevel, x=-.24, width=.21)
+        self.stageText = Text(text='', position=(.60,.45), scale=1.1, color=GOLD)
+        self.movesText = Text(text='', position=(.60,.40), scale=1.05, color=GOLD)
         self.updateBlockMesh()
 
     def newGame(self):
         self.levelManager.currentLevel = 1
         self.changeLevel(self.levelManager.loadLevel())
+
+    def toggleSound(self):
+        self.soundButton.text = 'SOUND: ON' if self.sound.toggle() else 'SOUND: OFF'
 
     def showSolverMenu(self):
         if not self.gameStarted or not self.isPaused:
@@ -174,6 +170,7 @@ class BloxorzView:
         self.isAnimating = True
         
         # 2. Reset underlying logical model (board layout, block coords, flags)
+        self.moveCount = 0
         self.gameModel.reset()
 
         # 3. Clean up old 3D board meshes and re-render fresh tiles
@@ -211,11 +208,11 @@ class BloxorzView:
         target = Vec3((left+right)/2, 0.75, (back+front)/2)
         self._cameraBounds = [Vec3(x, y, z) for x in (left, right)
                               for y in (-0.6, 2.1) for z in (back, front)]
-        distance = max(right-left, front-back, 3)
+        distance = max(right-left, front-back, 3) * .55
         # Fit the actual lens, including standing-block height and HUD margins.
         # This also handles tall/narrow windows instead of assuming 16:9.
         for _ in range(80):
-            camera.position = target + Vec3(0, distance, -distance)
+            camera.position = target + Vec3(-distance*.35, distance, -distance)
             camera.look_at(target)
             fits = True
             for point in self._cameraBounds:
@@ -226,17 +223,26 @@ class BloxorzView:
                     break
             if fits:
                 break
-            distance *= 1.10
+            distance *= 1.03
         self._cameraAspect = camera.lens.get_aspect_ratio()
+        self.theme.fit_background()
 
     def setupLighting(self):
-        # Soft overall fill light so black shadows aren't pitch dark
-        ambient = AmbientLight(color=color.rgba(100, 100, 100, 255))
-        
-        # Main sun light angled down to create clear top & side contrast
-        sun = DirectionalLight(shadows=True)
-        sun.look_at(Vec3(1, -2, -1))  # Angled light source
-    
+        self.ambient = AmbientLight(color=color.hex('#a09a92'))
+        self.sun = DirectionalLight(shadows=True, color=color.hex('#fff0dc'))
+        self.sun.look_at(Vec3(1,-2,-1.3))
+
+    def updateClassicHUD(self):
+        if hasattr(self, 'stageText'):
+            edge = min(window.aspect_ratio/2-.12,.78)
+            self.menuButton.x = -edge+.03
+            self.newGameButton.x = -edge+.23
+            self.restartButton.x = -edge+.46
+            self.stageText.x = self.movesText.x = edge-.12
+            self.solverMessage.x = -edge
+            self.stageText.text = f'STAGE {self.levelManager.currentLevel:02d}'
+            self.movesText.text = f'MOVES {self.moveCount:02d}'
+
     def renderBoard(self, board=None):
         """Reads gameModel.board grid and spawns 3D floor tiles."""
         board = self.gameModel.board if board is None else board
@@ -246,42 +252,15 @@ class BloxorzView:
                   if not board.bridgeState[key] for p in positions}
         for r in range(board.rows):
             for c in range(board.cols):
-                tileType = board.getTile(r, c)
-                if tileType == Tile.GOAL:
-                    # One recessed goal, unlike unmarked VOID gaps. The root
-                    # owns its rim/bottom so board redraw removes every part.
-                    goal = Entity(name='goal_hole', position=(c, -0.1, -r))
-                    self.tileEntities.append(goal)
-                    for x, z, width, depth in ((-0.47, 0, 0.04, 0.98),
-                                               (0.47, 0, 0.04, 0.98),
-                                               (0, -0.47, 0.90, 0.04),
-                                               (0, 0.47, 0.90, 0.04)):
-                        Entity(name='goal_rim', parent=goal, model='cube',
-                               position=(x, 0, z), scale=(width, 0.2, depth),
-                               color=color.lime, texture='white_cube')
-                    Entity(name='goal_bottom', parent=goal, model='cube',
-                           position=(0, -0.4, 0), scale=(0.90, 0.08, 0.90),
-                           color=color.dark_gray)
+                tile = board.getTile(r,c)
+                if tile == Tile.VOID and (r,c) not in closed:
                     continue
-                if tileType != Tile.VOID or (r, c) in closed:
-                    # c = X axis (columns), r = Z axis (rows)
-                    tileEntity = Entity(
-                        model='cube',
-                        color=color.dark_gray if (r,c) in closed else self.tileColors.get(tileType, color.white),
-                        position=(c, -0.3 if (r,c) in closed else -0.1, -r),
-                        scale=(0.92, 0.04 if (r,c) in closed else 0.2, 0.92),
-                        texture='white_cube'      # Adds built-in subtle edge shadowing
-                    )
-                    self.tileEntities.append(tileEntity)
-                    if tileType in (Tile.FRAGILE, Tile.SOFT_SWITCH, Tile.HEAVY_SWITCH,
-                                    Tile.SPLIT_SWITCH, Tile.BRIDGE) or (r, c) in closed:
-                        self.effectTileEntities.append(tileEntity)
-                    labels = {Tile.SOFT_SWITCH: "o", Tile.HEAVY_SWITCH: "X", Tile.SPLIT_SWITCH: "( )"}
-                    if tileType in labels:
-                        label = labels[tileType] + ('!' if (r,c) in board.fatalCloseSwitches | board.fatalSplitSwitches else '')
-                        marker = Text(text=label, parent=tileEntity, origin=(0,0),
-                                      rotation=(90,0,0), y=0.6, scale=3, color=color.black)
-                        # Parent destruction removes the marker too.
+                root = self.theme.tile(board,r,c,closed=(r,c) in closed)
+                shadow = self.theme.shadow(r,c)
+                self.tileEntities.extend([root,shadow])
+                if tile in (Tile.FRAGILE,Tile.SOFT_SWITCH,Tile.HEAVY_SWITCH,
+                            Tile.SPLIT_SWITCH,Tile.BRIDGE) or (r,c) in closed:
+                    self.effectTileEntities.append(root)
 
     def animateFall(self, direction: Direction = None):
         """Start falling only after the arrival and board-effect phase."""
@@ -306,6 +285,7 @@ class BloxorzView:
         Reads gameModel.block state and updates 3D mesh position and scale.
         Accounts for detaching roll math base positions.
         """
+        self.updateClassicHUD()
         currentBlock = self.gameModel.block if block is None else block
         split = currentBlock.orientation == Orientation.SPLIT
         self.blockMesh.enabled = not split
@@ -377,11 +357,16 @@ class BloxorzView:
         if self.isAnimating or self.gameModel.hasWon or getattr(self, "_presentingMove", False):
             return False
         self.isAnimating = True
+        before = State(self.gameModel.board, self.gameModel.block).copy() if hasattr(self, 'sound') else None
         valid = self.gameModel.executeMove(action)
         if not valid and not self.gameModel.isGameOver:
             self.isAnimating = self.isSolving = False
             self.solverMessage.text = "Replay/input error: invalid move"
             return False
+        self.moveCount = getattr(self,"moveCount",0)+1
+        if before is not None:
+            self.sound.play(sound_events(before, State(self.gameModel.board, self.gameModel.block), action,
+                                         won=self.gameModel.hasWon, lost=self.gameModel.isGameOver))
         self._presentingMove = True
         self.finishStep(action)
         return True
@@ -416,6 +401,7 @@ class BloxorzView:
         self._movement = AnimationCompletion(handles, complete)
 
     def updateAnimations(self, delta=None):
+        self.updateClassicHUD()
         if hasattr(self, '_cameraAspect') and abs(camera.lens.get_aspect_ratio()-self._cameraAspect) > 1e-4:
             self.setupCamera()
         blackout = getattr(self, '_blackoutRemaining', None)
@@ -570,6 +556,8 @@ class BloxorzView:
         self._replayCall = self.schedule(self.queueReplay, 0.5)
 
     def cancelReplay(self):
+        if hasattr(self, 'sound'):
+            self.sound.stop()
         was_winning = getattr(self, '_winPhase', None) is not None
         self._winPhase = self._blackoutRemaining = None
         blackout = getattr(self, 'winBlackout', None)
@@ -650,6 +638,7 @@ class BloxorzView:
         self.pauseMenu.disable()
         self.solverMenu.hide()
         board, block = result
+        self.moveCount = 0
 
         # Replace current level
         self.gameModel.board = board

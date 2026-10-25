@@ -57,6 +57,10 @@ def make_view(number=1):
     v._winTilePoses = []
     v.winBlackout = SimpleNamespace(enabled=False)
     v.effectTileEntities = []
+    from classic_theme import ClassicTheme
+    v.theme = ClassicTheme.__new__(ClassicTheme)
+    v.theme.slab = None
+    v.theme.textures = dict.fromkeys(['limestone','fragile_stone','oxidized_metal','soft_shadow'])
     v.blockMesh = mesh()
     v.cubeMeshes = [mesh(False), mesh(False)]
     v.pauseMenu = SimpleNamespace(disable=Mock())
@@ -167,26 +171,28 @@ class GuiRulesTests(unittest.TestCase):
         v = make_view(13)
         v.tileEntities = []
         v.tileColors = {}
-        with patch('view.Entity') as entity, patch('view.Text'):
+        with patch('classic_theme.Entity', side_effect=lambda **kwargs: SimpleNamespace(**kwargs)) as entity, patch('classic_theme.Text'):
             BloxorzView.renderBoard(v)
-            closed = [call.kwargs for call in entity.call_args_list if call.kwargs.get('position') == (4,-0.3,-2)]
+            closed = [call.kwargs for call in entity.call_args_list if call.kwargs.get('position') == (4,-0.1,-2)]
             self.assertEqual(len(closed), 1)
-            self.assertEqual(closed[0]['scale'], (0.92,0.04,0.92))
+            bridge = next(e for e in v.tileEntities if e.position == (4,-.1,-2))
+            self.assertEqual(bridge.y, -.3)
+            self.assertEqual(bridge.scale_y, .2)
         v = make_view(12)
         v.tileEntities = []
         v.tileColors = {}
-        with patch('view.Entity'), patch('view.Text') as text:
+        with patch('classic_theme.Entity') as entity, patch('classic_theme.Text'):
             BloxorzView.renderBoard(v)
-            self.assertTrue(any(call.kwargs['text'] == '( )' for call in text.call_args_list))
+            self.assertTrue(any(call.kwargs.get('scale') == (.22,.06,.50) for call in entity.call_args_list))
 
-    def test_goal_is_one_recessed_green_hole_and_void_stays_empty(self):
+    def test_goal_is_one_recessed_classic_hole_and_void_stays_empty(self):
         from view import BloxorzView
         from ursina import color
         v = make_view(13)
         before = State(v.gameModel.board, v.gameModel.block).copy()
         v.tileEntities = []
         v.tileColors = {}
-        with patch('view.Entity', side_effect=lambda **kwargs: SimpleNamespace(**kwargs)) as entity, patch('view.Text'):
+        with patch('classic_theme.Entity', side_effect=lambda **kwargs: SimpleNamespace(**kwargs)) as entity, patch('classic_theme.Text'):
             BloxorzView.renderBoard(v)
         calls = [c.kwargs for c in entity.call_args_list]
         holes = [c for c in calls if c.get('name') == 'goal_hole']
@@ -195,7 +201,7 @@ class GuiRulesTests(unittest.TestCase):
         self.assertNotIn('model', holes[0])  # No solid tile filling the opening.
         rims = [c for c in calls if c.get('name') == 'goal_rim']
         self.assertEqual(len(rims), 4)
-        self.assertTrue(all(c['color'] == color.lime for c in rims))
+        self.assertTrue(all(c['color'] == color.hex('#b89b60') for c in rims))
         bottom = next(c for c in calls if c.get('name') == 'goal_bottom')
         self.assertLess(bottom['position'][1], 0)
         self.assertFalse(any(c.get('position') == (0, -0.1, 0) and 'parent' not in c for c in calls))
