@@ -143,10 +143,13 @@ class FatalClosePresentationTests(unittest.TestCase):
         return v
 
     def test_five_seconds_then_loss_notice_and_reset_once(self):
+        from test_gui_rules import finish_roll
         v = self.make_fatal_view()
         with patch('view.invoke', return_value=SimpleNamespace(kill=Mock())) as invoke:
             self.assertTrue(v.beginMove(D.RIGHT))
             self.assertTrue(v.gameModel.isGameOver and v.isAnimating)
+            self.assertFalse(v.fatalMessage.enabled)
+            finish_roll(v)
             self.assertIn('5 s', v.fatalMessage.text)
             self.assertFalse(v.beginMove(D.DOWN))
             v.animateFall.assert_not_called()
@@ -166,7 +169,7 @@ class FatalClosePresentationTests(unittest.TestCase):
             self.assertEqual(v.solverMessage.text, '')
 
     def test_restart_and_level_change_cancel_countdown_or_old_notice(self):
-        from test_gui_rules import ROOT
+        from test_gui_rules import ROOT, finish_roll
         from levels.levelLoader import loadLevelFromJson
         for change in (False, True):
             for notice in (False, True):
@@ -175,6 +178,7 @@ class FatalClosePresentationTests(unittest.TestCase):
                     handle = SimpleNamespace(kill=Mock())
                     with patch('view.invoke', return_value=handle) as invoke:
                         v.beginMove(D.RIGHT)
+                        finish_roll(v)
                         if notice:
                             v.updateAnimations(5)
                             stale = invoke.call_args.args[0]

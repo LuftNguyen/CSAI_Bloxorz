@@ -14,6 +14,7 @@ from inputHandler import InputHandler
 class GuiInputTests(unittest.TestCase):
     def test_dispatcher_preserved_and_entity_receives_press_once(self):
         from view import BloxorzView
+        from test_gui_rules import mesh
 
         view = BloxorzView.__new__(BloxorzView)
         original_dispatcher = Mock()
@@ -22,6 +23,7 @@ class GuiInputTests(unittest.TestCase):
         view.inputHandler = InputHandler()
         view.gameStarted = True
         view.isPaused = view.isAnimating = view.isSolving = False
+        view.blockMesh = mesh()
         view.destroyTileEntities = Mock()
         view.renderBoard = Mock()
         view.updateBlockMesh = Mock()
@@ -36,6 +38,8 @@ class GuiInputTests(unittest.TestCase):
             after_press = view.gameModel.block.copy()
             callback('right arrow up')
             self.assertEqual(view.gameModel.block, after_press)
+            view.updateBlockMesh.assert_not_called()
+            view.updateAnimations(.22)
             view.updateBlockMesh.assert_called_once()
             callback('p')
             callback('p up')

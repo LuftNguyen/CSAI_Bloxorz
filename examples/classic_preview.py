@@ -66,7 +66,26 @@ def main():
         ui.startMenu.start_game()
         capture('02_stage_01')
         assert len([e for e in ui.tileEntities if e.name=='goal_hole']) == 1
+        ui.solverButton.on_click()
+        assert ui.solverMenu.enabled and ui.isPaused and not ui.pauseMenu.enabled
         ui.handleUrsinaInput('right arrow')
+        assert State(ui.gameModel.board,ui.gameModel.block) == initial
+        capture('02b_solver_from_hud')
+        ui.solverMenu.cancel_button.on_click()
+        assert not ui.isPaused and not ui.solverMenu.enabled and not ui.pauseMenu.enabled
+        ui.solverButton.on_click()
+        ui.handleUrsinaInput('p')
+        assert not ui.isPaused and not ui.solverMenu.enabled and not ui.pauseMenu.enabled
+        # Each real menu button must route to its matching solver.
+        with patch.object(ui, 'solve') as solve:
+            for label, algorithm in (('BFS','bfs'), ('DFS','dfs'), ('UCS','ucs'), ('A*','astar')):
+                ui.solverButton.on_click()
+                next(e for e in ui.solverMenu.elements if getattr(e, 'text', None) == label).on_click()
+                solve.assert_called_with(algorithm)
+                assert not ui.isPaused and not ui.solverMenu.enabled
+        ui.handleUrsinaInput('right arrow')
+        while ui._roll is not None:
+            tick()
         assert ui.moveCount == 1 and ui.gameModel.block.c == 2
         capture('03_block_lying')
         ui.restartLevel()
@@ -82,10 +101,12 @@ def main():
         ui.pauseMenu.solver()
         assert ui.solverMenu.enabled
         capture('05_solver_menu')
-        ui.solverMenu.hide()
-        ui.isPaused = False
+        ui.solverMenu.cancel_button.on_click()
         choose(1)
-        ui.solve('astar')
+        ui.solverButton.on_click()
+        next(e for e in ui.solverMenu.elements if getattr(e, 'text', None) == 'A*').on_click()
+        ui.solverButton.on_click()  # A running replay cannot open another solver.
+        assert not ui.solverMenu.enabled and not ui.isPaused and ui.isSolving
         for _ in range(600):
             tick()
             if ui.levelManager.currentLevel == 2:
@@ -95,7 +116,14 @@ def main():
         for number in (5,8):
             choose(number, campaign=True)
             capture(f'06_stage_{number:02d}')
-        print('Classic graphics smoke passed: menus, goal hole, input, HUD, reset and A* replay')
+        choose(13)
+        capture('07_bridge_closed')
+        ui.handleUrsinaInput('right arrow')
+        while ui._roll is not None:
+            tick()
+        assert ui.gameModel.board.bridgeState['crossing']
+        capture('08_bridge_open')
+        print('Classic graphics smoke passed: HUD solver, cancel/P, all solver buttons, bridge views, input, reset and A* replay')
     finally:
         ui.cancelReplay()
         ui.app.destroy()

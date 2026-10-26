@@ -1,10 +1,34 @@
-# Trình bày bước đi — 25/10/2026
+# Trình bày bước đi
+
+## Hiện tại: xoay lăn quanh cạnh — 26/10/2026
+
+Khối đứng, khối nằm theo hai trục và cube đang được điều khiển đều lăn 90°
+quanh cạnh theo hướng đi. `view.rollDuration = 0.22` giây; góc xoay được cập
+nhật theo frame delta với easing đầu/cuối. `rolling_animation.py` giữ nguyên
+kích thước mesh trong cú lăn, tính vị trí theo cung tròn. Kích thước khối đứng
+là 0,9 × 1,9 × 0,9, khớp khối nằm sau khi xoay, tránh co/giãn ở cuối bước.
+
+`beginMove` gọi engine một lần rồi giữ hình ảnh bàn/khối cũ trong lúc lăn.
+Khi hoạt ảnh đến đích, `finishStep` chốt pose, render cầu/công tắc, phát âm
+thanh và xử lý split/merge, thắng hoặc rơi. SWITCH chỉ đổi cube điều khiển,
+không thêm chuyển động. Input và menu solver bị chặn khi đang lăn; restart
+và đổi màn hủy cú lăn cùng hiệu ứng chưa phát. Replay đợi tiếp đất rồi mới
+đếm khoảng nghỉ 0,5 giây cho bước tiếp theo.
+
+Test hình học kiểm tra đủ 16 tổ hợp tư thế/hướng bằng transform Ursina thật,
+cùng frame delta 1/60, 0,1 và 1 giây. Test trình bày kiểm tra thứ tự tiếp đất,
+cầu OPEN/CLOSE, split/merge, thắng/thua và hủy giữa cú lăn. Smoke GUI chụp
+`standing_mid_roll` và `horizontal_mid_roll`, phát lại campaign qua input.
+
+Các phần bên dưới là lịch sử của các cách trình bày đã được thay thế.
+
+## Lịch sử: di chuyển tức thời — 25/10/2026
 
 Cập nhật thắng màn: khối rơi vào goal, cả bàn rơi/co dần theo làn sóng, blackout 1 giây rồi
 next level. Thay thế hành vi giữ pose thắng 2 giây/nhảy replay cũ ở phần dưới.
 Di chuyển thường vẫn tức thời. Xem [WIN_TRANSITION.md](WIN_TRANSITION.md).
 
-## Hiện tại: di chuyển tức thời, giữ nguyên luật mới
+### Di chuyển tức thời, giữ nguyên luật mới
 
 Cập nhật nhịp phát lại theo phản hồi tiếp theo: `view.replayInterval = 0.5`
 giây giữa hai action. Khoảng nghỉ chỉ thuộc trình bày replay, không làm chậm

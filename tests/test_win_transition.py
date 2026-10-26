@@ -11,11 +11,12 @@ from levels.levelLoader import loadLevelFromJson
 @unittest.skipUnless(importlib.util.find_spec('ursina'), 'GUI dependencies not installed')
 class WinTransitionTests(unittest.TestCase):
     def test_manual_and_replay_wait_for_final_setter_then_full_black_second(self):
-        from test_gui_rules import make_view, mesh, finish_movement
+        from test_gui_rules import make_view, mesh, finish_movement, finish_roll
         for replay in (False, True):
             with self.subTest(replay=replay):
                 v = make_view()
                 v.beginMove(D.RIGHT)
+                finish_roll(v)
                 visible, far, hidden = mesh(), mesh(), mesh(False)
                 visible.position = (4,-0.1,-1)
                 far.position = (1,-0.1,-1)
@@ -23,6 +24,7 @@ class WinTransitionTests(unittest.TestCase):
                 v.isSolving = replay
                 v.loadNextLevel = Mock()
                 v.beginMove(D.RIGHT)
+                finish_roll(v)
                 state = State(v.gameModel.board, v.gameModel.block).copy()
                 self.assertTrue(v.isAnimating)
                 self.assertFalse(v.isSolving or v._replayReady)
@@ -66,16 +68,18 @@ class WinTransitionTests(unittest.TestCase):
                 self.assertEqual(State(v.gameModel.board, v.gameModel.block), state)
 
     def test_restart_or_change_during_fall_or_blackout_cancels_old_callbacks(self):
-        from test_gui_rules import ROOT, make_view, finish_movement, mesh
+        from test_gui_rules import ROOT, make_view, finish_movement, mesh, finish_roll
         for change in (False, True):
             for phase in ('fall', 'collapse', 'blackout'):
                 with self.subTest(change=change, phase=phase):
                     v = make_view()
                     v.beginMove(D.RIGHT)
+                    finish_roll(v)
                     tile = mesh()
                     original_position, original_scale = tile.position, tile.scale
                     v.tileEntities = [tile]
                     v.beginMove(D.RIGHT)
+                    finish_roll(v)
                     if phase != 'fall':
                         finish_movement(v)
                     group = v._movement
@@ -102,12 +106,14 @@ class WinTransitionTests(unittest.TestCase):
                     self.assertFalse(v.isAnimating)
 
     def test_final_level_returns_to_visible_completion_without_loading_eleven(self):
-        from test_gui_rules import make_view, finish_movement
+        from test_gui_rules import make_view, finish_movement, finish_roll
         v = make_view()
         v.levelManager.currentLevel = v.levelManager.maxLevel
         v.levelManager.loadLevel = Mock(side_effect=AssertionError('Must not load a nonexistent level'))
         v.beginMove(D.RIGHT)
+        finish_roll(v)
         v.beginMove(D.RIGHT)
+        finish_roll(v)
         finish_movement(v)
         v.updateAnimations(1)
         self.assertEqual(v.levelManager.currentLevel, 10)
