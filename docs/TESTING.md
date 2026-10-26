@@ -1,5 +1,14 @@
 # Cài đặt và kiểm tra
 
+## Baseline tích hợp thành viên — 26/10/2026
+
+BFS/DFS/UCS/A* đã triển khai. Test registry hiện là
+`test_registry_uses_member_solvers_without_fallback`; không kỳ vọng stub nữa.
+Test UCS dùng fixture màn cũ, test tích hợp mới replay bốn solver trên campaign.
+Heuristic giữ nguyên cả mã/test: discovery toàn suite còn lỗi đã biết tại phần
+heuristic, không được hiểu các số pass lịch sử dưới đây là kết quả toàn main.
+Xem [INTEGRATION.md](INTEGRATION.md) trước khi chạy và bàn giao.
+
 ## Camera, split bẫy và chuyển cảnh nhanh — 26/10/2026
 
 88 test pass, 254 subtest, 0 skip. Smoke kiểm tra 10 màn × 4 tỉ lệ lens và

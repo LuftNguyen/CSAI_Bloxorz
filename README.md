@@ -1,8 +1,10 @@
 # Đồ án Bloxorz — nền tích hợp thuật toán
 
 Nhóm 5 người tự phát triển BFS, DFS/IDS, UCS, A*, heuristic và thực nghiệm.
-Trên nhánh đang hoàn thiện luật, A* đã có; BFS/DFS/UCS vẫn là khung và báo rõ
-chưa triển khai, không gọi solver cũ thay thế. Engine hỗ trợ fragile, cầu và
+BFS/DFS/UCS/A* đã tích hợp từ các nhánh thành viên, không dùng solver cũ thay thế.
+Heuristic của thành viên đã merge nguyên trạng nhưng chưa bật; GUI dùng h=0.
+Các lỗi tương thích heuristic còn mở tại [INTEGRATION.md](docs/INTEGRATION.md).
+Engine hỗ trợ fragile, cầu và
 soft/heavy/split, teleport, SWITCH và ghép; xem trạng thái nghiệm thu thực tế
 trong [REQUIREMENTS_STATUS.md](docs/REQUIREMENTS_STATUS.md).
 

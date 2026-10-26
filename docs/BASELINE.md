@@ -1,5 +1,9 @@
 # Đối chiếu và quyết định triển khai
 
+Baseline main local ngày 26/10/2026 đã merge BFS/DFS/UCS/A* và heuristic từ
+nhánh thành viên. Mã thuật toán giữ nguyên; heuristic chưa bật/nghiệm thu.
+Trạng thái hiện tại tại [INTEGRATION.md](INTEGRATION.md); phần dưới là lịch sử.
+
 Lượt hoàn thiện dữ liệu 24/10/2026 được người dùng cho phép sửa liên kết và
 khoảng đỡ: xem LEVEL_COMPLETION.md. Cả 14 màn/24 công tắc đã có witness thực
 tế; không còn switch trang trí trong bộ màn đang cung cấp. Các ghi nhận bảo

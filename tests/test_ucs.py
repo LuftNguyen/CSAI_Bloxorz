@@ -466,7 +466,8 @@ class UCSEngineTests(unittest.TestCase):
         self.assertEqual(problem.initial, before)
 
     def test_level_one_loaded_solution_replays(self):
-        path = Path(__file__).resolve().parents[1] / "levels/level1.json"
+        # This regression asserts the original two-move fixture, not campaign 1.
+        path = Path(__file__).resolve().parents[1] / "tests/fixtures/legacy/level1.json"
         board, block = loadLevelFromJson(path, isDebug=False)
         problem = Problem(State(board, block).copy())
         result = solve(problem, SearchLimits())

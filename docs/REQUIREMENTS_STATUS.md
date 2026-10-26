@@ -1,5 +1,12 @@
 # Trạng thái yêu cầu và bằng chứng — 23/10/2026
 
+## Baseline thành viên đã tích hợp — 26/10/2026
+
+BFS/DFS/UCS/A* đã có từ nhánh tác giả; không còn là stub trên main local.
+Heuristic merge nguyên trạng, chưa nghiệm thu và chưa bật trong GUI (h=0).
+Các lỗi tương thích và kết quả mới xem [INTEGRATION.md](INTEGRATION.md).
+Các bảng dưới giữ lịch sử, không dùng trạng thái stub cũ để đánh giá bản tích hợp.
+
 ## Bổ sung theo yêu cầu mới: fatal CLOSE
 
 Đã hoàn thành 6 công tắc CLOSE gây terminal loss, đếm ngược 5 giây, thông báo
@@ -22,7 +29,7 @@ hoặc so sánh hiệu năng các solver. Chi tiết và bản đồ tại [CAMP
 | Switch có tác dụng thật | Hoàn thành | 37 witness và controller parity/reset |
 | Di chuyển tức thời, GUI phát đủ 10 màn | Offscreen pass | examples.gui_smoke; chưa nghiệm thu desktop |
 | Hồi quy | 73 test pass, 236 subtest, 0 skip | Không sửa solver/heuristic/test A* |
-| Benchmark tất cả solver/heuristic khác zero | Chưa hoàn thành | BFS/DFS/UCS còn stub |
+| Benchmark tất cả solver/heuristic khác zero | Chưa hoàn thành | Solver đã tích hợp; heuristic chưa nghiệm thu; kiểm tra đúng/sai không phải benchmark |
 
 Xem [CAMPAIGN.md](CAMPAIGN.md). Phần dưới là lịch sử trước thiết kế lại;
 số màn/tọa độ/kết quả cũ không mô tả chuỗi đang chơi.
