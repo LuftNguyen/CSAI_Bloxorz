@@ -62,14 +62,16 @@ class SplitTrapEngineTests(unittest.TestCase):
 @unittest.skipUnless(importlib.util.find_spec('ursina'), 'GUI dependencies not installed')
 class SplitTrapPresentationTests(unittest.TestCase):
     def test_two_cubes_visible_and_same_five_second_loss_flow(self):
-        from test_gui_rules import make_view
+        from test_gui_rules import make_view, finish_roll
         v = make_view()
         b, block = _load(data())
         v.gameModel = GameController(b,block)
         v.fatalMessage = SimpleNamespace(text='',enabled=False)
         with patch('view.invoke', return_value=SimpleNamespace(kill=Mock())) as invoke:
             v.beginMove(D.RIGHT)
+            finish_roll(v)
             v.beginMove(D.RIGHT)
+            finish_roll(v)
             self.assertEqual(v.gameModel.block.orientation, O.SPLIT)
             self.assertTrue(all(m.enabled for m in v.cubeMeshes))
             self.assertFalse(v.blockMesh.enabled)

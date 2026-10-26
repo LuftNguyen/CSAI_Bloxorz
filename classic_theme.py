@@ -70,7 +70,7 @@ class ClassicTheme:
         self.background.scale = (360*tan(radians(fov.x)/2)*1.03,
                                  360*tan(radians(fov.y)/2)*1.03, 1)
 
-    def tile(self, board, r, c, *, closed=False):
+    def tile(self, board, r, c):
         tile = board.getTile(r,c)
         if tile == Tile.GOAL:
             root = Entity(position=(c,-.1,-r), name='goal_hole')
@@ -86,11 +86,6 @@ class ClassicTheme:
         root = Entity(model=deepcopy(self.slab),position=(c,-.1,-r),scale=(.96,1,.96),
                       texture=texture,color=color.rgba(shade,shade,shade,1),shader=lit_with_shadows_shader,
                       double_sided=True)
-        if closed:
-            root.y = -.3
-            root.scale_y = .2
-            root.color = color.hex('#443b32')
-            return root
         if tile == Tile.BRIDGE:
             root.color = color.hex('#91856d')
         if tile == Tile.SOFT_SWITCH:

@@ -70,8 +70,8 @@ class InstalledUrsinaCompletionTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec('ursina'), 'GUI dependencies not installed')
 class PresentationOrderingTests(unittest.TestCase):
-    def test_consecutive_instant_replay_keeps_switch_visuals_consistent(self):
-        from test_gui_rules import make_view
+    def test_consecutive_rolling_replay_keeps_switch_visuals_consistent(self):
+        from test_gui_rules import make_view, finish_roll
         from gameModel.block import Direction as D
         from gameModel.state import State
         v = make_view()
@@ -85,6 +85,9 @@ class PresentationOrderingTests(unittest.TestCase):
             for index in range(4):
                 v.updateAnimations(0.5)
                 self.assertEqual(v.autoIndex, index + 1)
+                self.assertTrue(v.isAnimating)
+                self.assertEqual(len(shown), index)
+                finish_roll(v)
                 self.assertFalse(v.isAnimating)
                 self.assertIsNone(v._movement)
                 self.assertEqual(execute.call_count, index + 1)
@@ -96,8 +99,8 @@ class PresentationOrderingTests(unittest.TestCase):
         v.blockMesh.animate_position.assert_not_called()
         v.blockMesh.animate_scale.assert_not_called()
 
-    def test_manual_open_and_heavy_close_present_final_pose_immediately_once(self):
-        from test_gui_rules import make_view
+    def test_manual_open_and_heavy_close_present_effects_after_landing_once(self):
+        from test_gui_rules import make_view, finish_roll
         from gameModel.block import Block, Direction as D, Orientation as O
         for closing in (False, True):
             with self.subTest(closing=closing):
@@ -116,6 +119,13 @@ class PresentationOrderingTests(unittest.TestCase):
                 v.renderBoard.side_effect = render
                 execute = v.gameModel.executeMove = Mock(wraps=v.gameModel.executeMove)
                 self.assertTrue(v.beginMove(D.LEFT if closing else D.RIGHT))
+                self.assertEqual(events, [])
+                v.updateAnimations(v.rollDuration / 2)
+                self.assertEqual(events, [])
+                self.assertFalse(v.beginMove(D.DOWN))
+                v.finishStep()  # A caller cannot skip the remaining roll.
+                self.assertEqual(events, [])
+                finish_roll(v)
                 self.assertEqual(events, ['pose','board'])
                 self.assertFalse(v.isAnimating)
                 self.assertIsNone(v._movement)
@@ -126,7 +136,7 @@ class PresentationOrderingTests(unittest.TestCase):
                 v.blockMesh.animate_scale.assert_not_called()
 
     def test_fragile_and_void_fall_start_from_final_pose_after_board_update(self):
-        from test_gui_rules import make_view
+        from test_gui_rules import make_view, finish_roll
         from gameModel.block import Block, Direction as D, Orientation as O
         from gameModel.board import Tile
         for fragile in (False, True):
@@ -146,6 +156,9 @@ class PresentationOrderingTests(unittest.TestCase):
                 v.animateFall = Mock(side_effect=fall)
                 v.beginMove(D.RIGHT if fragile else D.LEFT)
                 self.assertTrue(v.gameModel.isGameOver)
+                self.assertEqual(events, [])
+                v.animateFall.assert_not_called()
+                finish_roll(v)
                 self.assertEqual(events, ['board','fall'])
                 v.finishStep()
                 v.animateFall.assert_called_once()
@@ -153,11 +166,12 @@ class PresentationOrderingTests(unittest.TestCase):
                 v.blockMesh.animate_scale.assert_not_called()
 
     def test_fall_restart_waits_for_all_fall_handles(self):
-        from test_gui_rules import make_view, finish_movement
+        from test_gui_rules import make_view, finish_movement, finish_roll
         from gameModel.block import Direction as D
         v = make_view()
         with patch('view.invoke', return_value=SimpleNamespace(kill=Mock())) as invoke:
             v.beginMove(D.LEFT)
+            finish_roll(v)
             fall = v._movement
             self.assertTrue(v.isAnimating)
             self.assertFalse(v.beginMove(D.RIGHT))
@@ -173,14 +187,18 @@ class PresentationOrderingTests(unittest.TestCase):
             v.finishStep()
             invoke.assert_called_once()
 
-    def test_split_switch_and_merge_show_final_mesh_without_intermediate_pose(self):
-        from test_gui_rules import make_view
+    def test_split_and_merge_wait_for_landing_while_switch_stays_instant(self):
+        from test_gui_rules import make_view, finish_roll
         from gameModel.block import Block, Direction as D, Orientation as O
         v = make_view(12)
         v.beginMove(D.RIGHT)
+        finish_roll(v)
         self.assertFalse(v.isAnimating)
         v.beginMove(D.RIGHT)
         self.assertEqual(v.gameModel.block.orientation, O.SPLIT)
+        self.assertTrue(v.blockMesh.enabled)
+        self.assertFalse(any(m.enabled for m in v.cubeMeshes))
+        finish_roll(v)
         self.assertFalse(v.blockMesh.enabled)
         self.assertTrue(all(m.enabled for m in v.cubeMeshes))
         self.assertEqual([m.position for m in v.cubeMeshes], [(1,0,-1),(6,0,-1)])
@@ -193,6 +211,12 @@ class PresentationOrderingTests(unittest.TestCase):
         v.updateBlockMesh()
         v.beginMove(D.RIGHT)
         self.assertEqual(v.gameModel.block.orientation, O.LYING)
+        self.assertFalse(v.blockMesh.enabled)
+        self.assertTrue(all(m.enabled for m in v.cubeMeshes))
+        inactive_position = v.cubeMeshes[1].position
+        v.updateAnimations(v.rollDuration / 2)
+        self.assertEqual(v.cubeMeshes[1].position, inactive_position)
+        finish_roll(v)
         self.assertTrue(v.blockMesh.enabled)
         self.assertEqual(v.blockMesh.position, (2.5,0,-1))
         self.assertFalse(any(m.enabled for m in v.cubeMeshes))
@@ -201,15 +225,18 @@ class PresentationOrderingTests(unittest.TestCase):
             mesh.animate_scale.assert_not_called()
 
     def test_manual_win_falls_then_blackout_before_level_change_once(self):
-        from test_gui_rules import make_view, finish_movement
+        from test_gui_rules import make_view, finish_movement, finish_roll
         from gameModel.block import Direction as D
         v = make_view()
         v.loadNextLevel = Mock()
         with patch('view.invoke', return_value=SimpleNamespace(kill=Mock())) as invoke:
             v.beginMove(D.RIGHT)
+            finish_roll(v)
             invoke.assert_not_called()
             v.renderBoard.reset_mock()
             v.beginMove(D.RIGHT)
+            self.assertIsNone(v._winPhase)
+            finish_roll(v)
             self.assertTrue(v.gameModel.hasWon)
             self.assertEqual(v.blockMesh.position, (4,0,-1))
             v.renderBoard.assert_called_once()
@@ -228,7 +255,7 @@ class PresentationOrderingTests(unittest.TestCase):
             v.loadNextLevel.assert_called_once()
 
     def test_restart_and_level_change_reject_old_fall_completion_and_timer(self):
-        from test_gui_rules import make_view
+        from test_gui_rules import make_view, finish_roll
         from gameModel.block import Direction as D
         from levels.levelLoader import loadLevelFromJson
         from pathlib import Path
@@ -240,6 +267,7 @@ class PresentationOrderingTests(unittest.TestCase):
                     v.schedule(delayed, 2)
                     stale_timer = invoke.call_args.args[0]
                     v.beginMove(D.LEFT)
+                    finish_roll(v)
                     group = v._movement
                     stale_completion = group.callback
                     if change_level:
@@ -269,9 +297,34 @@ class PresentationOrderingTests(unittest.TestCase):
         v.queueReplay()
         v.updateAnimations()
         self.assertEqual(execute.call_count, 1)
-        self.assertTrue(v._replayReady)
+        self.assertIsNotNone(v._roll)
         v.restartLevel()
         v.updateAnimations()
         self.assertEqual(execute.call_count, 1)
         self.assertEqual((v.gameModel.block.r,v.gameModel.block.c), (1,1))
         self.assertFalse(v.isAnimating or v.isSolving or v._replayReady)
+
+    def test_restart_and_level_change_cancel_a_half_finished_roll(self):
+        from test_gui_rules import ROOT, make_view
+        from gameModel.block import Direction as D
+        from levels.levelLoader import loadLevelFromJson
+        for change in (False, True):
+            with self.subTest(change=change):
+                v = make_view(13)
+                v.beginMove(D.RIGHT)
+                roll = v._roll
+                v.updateAnimations(v.rollDuration / 2)
+                self.assertNotEqual(v.blockMesh.rotation, (0,0,0))
+                if change:
+                    v.changeLevel(loadLevelFromJson(ROOT/'levels/level1.json', False))
+                else:
+                    v.restartLevel()
+                pose = (v.blockMesh.position, v.blockMesh.rotation, v.blockMesh.scale)
+                renders = v.renderBoard.call_count
+                self.assertFalse(roll.advance(10))
+                v.updateAnimations(10)
+                self.assertEqual((v.blockMesh.position, v.blockMesh.rotation, v.blockMesh.scale), pose)
+                self.assertEqual(v.renderBoard.call_count, renders)
+                self.assertEqual(v.blockMesh.rotation, (0,0,0))
+                self.assertIsNone(v._roll)
+                self.assertFalse(v.isAnimating or v.isSolving)
