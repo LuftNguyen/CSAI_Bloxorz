@@ -149,42 +149,26 @@ class EngineTests(unittest.TestCase):
 
 
 class RunnerTests(unittest.TestCase):
-    def test_registry_stubs_never_fallback(self):
-        from search.astar import solve as astar_solve
-
-        self.assertIs(get_solver("A*"), get_solver("astar"))
-        self.assertIs(get_solver("astar"), astar_solve)
-
+    def test_registry_uses_member_solvers_without_fallback(self):
+        from search import bfs, dfs, ucs, astar
+        self.assertIs(get_solver('A*'), get_solver('astar'))
         with self.assertRaises(ValueError):
-            get_solver("missing")
+            get_solver('missing')
 
-        # Ba thuật toán này hiện vẫn là khung.
-        for name in ("bfs", "dfs", "ucs"):
-            with self.subTest(name=name):
-                with self.assertRaises(NotImplementedError):
-                    run_search(object(), name, SearchLimits())
-
-                self.assertFalse(tracemalloc.is_tracing())
-
-        # A* đã triển khai: kiểm tra gọi qua registry và runner.
         class InitialGoalProblem:
-            initial = "G"
-
+            initial = 'G'
             def goal_test(self, state):
-                return state == "G"
+                return state == 'G'
 
-        result = run_search(
-            InitialGoalProblem(),
-            "astar",
-            SearchLimits(),
-        )
-
-        self.assertEqual(result.search.status, "solved")
-        self.assertEqual(result.search.actions, ())
-        self.assertEqual(result.search.total_cost, 0.0)
-        self.assertEqual(result.search.expanded_nodes, 0)
-        self.assertEqual(result.search.generated_nodes, 0)
-        self.assertFalse(tracemalloc.is_tracing())
+        for name, module in (('bfs',bfs),('dfs',dfs),('ucs',ucs),('astar',astar)):
+            with self.subTest(algorithm=name):
+                self.assertIs(get_solver(name), module.solve)
+                result = run_search(InitialGoalProblem(),name,SearchLimits()).search
+                self.assertEqual(result.status,'solved')
+                self.assertEqual(result.actions,())
+                self.assertEqual(result.total_cost,0.0)
+                self.assertEqual((result.expanded_nodes,result.generated_nodes),(0,0))
+                self.assertFalse(tracemalloc.is_tracing())
 
     def test_runner_passes_contract_and_measures(self):
         problem, heuristic = object(), object()
