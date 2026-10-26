@@ -10,7 +10,7 @@ from search.contracts import SearchLimits
 
 
 def main():
-    board, block = loadLevelFromJson(Path(__file__).resolve().parents[1] / "levels/level1.json", isDebug=False)
+    board, block = loadLevelFromJson(Path(__file__).resolve().parents[1] / "tests/fixtures/legacy/level1.json", isDebug=False)
     problem = Problem(State(board, block).copy())
     print("initial:", problem.initial)
     print("actions:", [a.name for a in problem.actions(problem.initial)])
@@ -20,7 +20,7 @@ def main():
     state = problem.initial
     controller = GameController(board, block)
     cost = 0.0
-    # A fixed two-move fixture verified against the Stage 1 geometry.
+    # A fixed two-move fixture verified against the legacy fixture geometry.
     for action in (Direction.RIGHT, Direction.RIGHT):
         child = problem.result(state, action)
         assert child is not None

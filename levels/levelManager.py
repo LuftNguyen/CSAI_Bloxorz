@@ -6,7 +6,7 @@ class LevelManager:
 
     def __init__(self):
         self.currentLevel = 1
-        self.maxLevel = 11  # The source repository provides levels 1 through 11.
+        self.maxLevel = 10  # Balanced basic, fragile, bridge and split campaign.
 
 
     def loadLevel(self):

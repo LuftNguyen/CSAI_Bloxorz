@@ -1,45 +1,127 @@
 {
+  "schema_version": 2,
   "level_id": 5,
-  "name": "Stage 5: Broken Crossing",
+  "name": "5: Soft island crossing",
   "rows": 10,
-  "cols": 20,
-
+  "cols": 16,
   "start": {
-    "r": 2,
+    "r": 1,
     "c": 1
   },
-
+  "grid": [
+    "XXXXXXXXXXXXXXXX",
+    "XS....XXXXXXXXXX",
+    "X..X.WXXXXXXXXXX",
+    "X.....BBB......X",
+    "XW..w.XXX......X",
+    "X.w.w.XXX......X",
+    "XXXXXXXXX...X..X",
+    "XXXXXXXXX......X",
+    "XXXXXXXXX.....GX",
+    "XXXXXXXXXXXXXXXX"
+  ],
   "bridges": [
     {
-      "switch": [5, 5],
+      "id": "crossing",
+      "initial_open": false,
       "tiles": [
-        [4, 9],
-        [5, 9],
-        [6, 9],
-        [7, 9]
-      ]
-    },
-    {
-      "switch": [6, 15],
-      "tiles": [
-        [4, 9],
-        [5, 9],
-        [6, 9],
-        [7, 9]
+        [
+          3,
+          6
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          3,
+          8
+        ]
       ]
     }
   ],
-
-  "grid": [
-    "XXXXXXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXX....GXXX",
-    "XS........XXX....XXX",
-    "X.XXXXXX..XXX....XXX",
-    "X....F...BXXX....XXX",
-    "X....w...B.......XXX",
-    "X....F...B....W..XXX",
-    "X........B.......XXX",
-    "XXXXXXXXXXXX....XXXX",
-    "XXXXXXXXXXXXXXXXXXXX"
-  ]
+  "switches": [
+    {
+      "position": [
+        5,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        2,
+        5
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "CLOSE"
+        }
+      ],
+      "fatal_close": true
+    },
+    {
+      "position": [
+        5,
+        4
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "TOGGLE"
+        }
+      ]
+    },
+    {
+      "position": [
+        4,
+        1
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        4,
+        4
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "CLOSE"
+        }
+      ]
+    }
+  ],
+  "splits": [],
+  "design": {
+    "traps": [
+      {
+        "position": [
+          2,
+          5
+        ],
+        "kind": "fatal_close",
+        "bridge": "crossing"
+      },
+      {
+        "position": [
+          4,
+          4
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "crossing"
+      }
+    ]
+  }
 }

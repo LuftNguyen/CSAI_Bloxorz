@@ -36,5 +36,5 @@ for action in problem.actions(state):
 ```
 
 Chữ ký solver và các dataclass trong §§6–7 có thể đối chiếu trực tiếp tại
-`search/contracts.py` và các khung `search/{bfs,dfs,ucs,astar}.py`.
+`search/contracts.py` và các module `search/{bfs,dfs,ucs,astar}.py`.
 RunResult giữ ba trường trong §11, khai báo ở `runner.py`.

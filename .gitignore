@@ -17,3 +17,7 @@ dist/
 *.egg-info/
 .env
 .env.*
+Panda3D-*/
+
+# Panda3D runtime model cache (offscreen/GUI)
+/Panda3D-*/

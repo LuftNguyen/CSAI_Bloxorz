@@ -1,0 +1,86 @@
+{
+  "schema_version": 2,
+  "name": "Demo: toggle and permanent controls",
+  "rows": 4,
+  "cols": 10,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXX",
+    "XSw....G.X",
+    "XwW.BB...X",
+    "X..XXXXXXX"
+  ],
+  "bridges": [
+    {
+      "id": "a",
+      "initial_open": true,
+      "tiles": [
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "id": "b",
+      "initial_open": false,
+      "tiles": [
+        [
+          2,
+          5
+        ]
+      ]
+    }
+  ],
+  "switches": [
+    {
+      "position": [
+        1,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "a",
+          "mode": "TOGGLE"
+        },
+        {
+          "bridge": "b",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        2,
+        1
+      ],
+      "effects": [
+        {
+          "bridge": "a",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        2,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "a",
+          "mode": "OPEN"
+        },
+        {
+          "bridge": "b",
+          "mode": "CLOSE"
+        }
+      ]
+    }
+  ],
+  "level_id": 14,
+  "purpose": "demo, not benchmark"
+}

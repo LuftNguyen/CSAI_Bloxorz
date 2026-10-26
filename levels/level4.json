@@ -1,24 +1,33 @@
 {
+  "schema_version": 2,
   "level_id": 4,
-  "name": "Twisted Corridor",
-  "rows": 10,
-  "cols": 10,
-
+  "name": "4: Two fragile turns",
+  "rows": 14,
+  "cols": 14,
   "start": {
     "r": 1,
     "c": 1
   },
-
   "grid": [
-    "XXXXXXXXXX",
-    "XS.......X",
-    "XXX.XXX..X",
-    "X...F.X..X",
-    "X.XXX.X..X",
-    "X.F...X..X",
-    "X.XXX.XX.X",
-    "X...F...GX",
-    "XXXXXXXXXX",
-    "XXXXXXXXXX"
-  ]
+    "XXXXXXXXXXXXXX",
+    "XS....XX.....X",
+    "X..X..XX..F..X",
+    "X.....FF.....X",
+    "XX....XX.....X",
+    "X.....XX.....X",
+    "XXXXXXXXXXFXXX",
+    "XXXXXXXXXXFXXX",
+    "XXXXXXXX.....X",
+    "XXXXXXXX.X..FX",
+    "XXXXXXXX.X...X",
+    "XXXXXXXX.....X",
+    "XXXXXXXX....GX",
+    "XXXXXXXXXXXXXX"
+  ],
+  "bridges": [],
+  "switches": [],
+  "splits": [],
+  "design": {
+    "traps": []
+  }
 }

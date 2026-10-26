@@ -1,0 +1,1559 @@
+{
+  "method": "Existing registered A*, h=0, 60s/100000 expanded per query, without tracemalloc; not benchmark",
+  "restrictions": "bridge/bridge:ID: remove effects on copied initial board; split/control/merge/fragile: remove event edges",
+  "levels": [
+    {
+      "file": "levels/level1.json",
+      "dimensions": [
+        9,
+        11
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 57,
+      "goal": [
+        7,
+        9
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [],
+        "F": [],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 99,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "cost": 10.0
+      },
+      "restricted": {},
+      "required": [],
+      "observed": []
+    },
+    {
+      "file": "levels/level2.json",
+      "dimensions": [
+        15,
+        17
+      ],
+      "initial": [
+        1,
+        5,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 115,
+      "goal": [
+        9,
+        15
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [],
+        "F": [
+          [
+            4,
+            7
+          ],
+          [
+            9,
+            11
+          ]
+        ],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 284,
+        "actions": [
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT"
+        ],
+        "cost": 13.0
+      },
+      "restricted": {},
+      "required": [],
+      "observed": []
+    },
+    {
+      "file": "levels/level3.json",
+      "dimensions": [
+        10,
+        15
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 65,
+      "goal": [
+        7,
+        13
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [],
+        "F": [
+          [
+            2,
+            10
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ]
+        ],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 111,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN"
+        ],
+        "cost": 17.0
+      },
+      "restricted": {
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 54,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "fragile"
+      ],
+      "observed": [
+        "fragile"
+      ]
+    },
+    {
+      "file": "levels/level4.json",
+      "dimensions": [
+        14,
+        14
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 75,
+      "goal": [
+        12,
+        12
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [],
+        "F": [
+          [
+            2,
+            10
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            6,
+            10
+          ],
+          [
+            7,
+            10
+          ],
+          [
+            9,
+            12
+          ]
+        ],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 168,
+        "actions": [
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "DOWN"
+        ],
+        "cost": 34.0
+      },
+      "restricted": {
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 55,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "fragile"
+      ],
+      "observed": [
+        "fragile"
+      ]
+    },
+    {
+      "file": "levels/level5.json",
+      "dimensions": [
+        10,
+        16
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 59,
+      "goal": [
+        8,
+        14
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            4,
+            4
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            4
+          ]
+        ],
+        "W": [
+          [
+            2,
+            5
+          ],
+          [
+            4,
+            1
+          ]
+        ],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 201,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN"
+        ],
+        "cost": 15.5
+      },
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:crossing": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ]
+    },
+    {
+      "file": "levels/level6.json",
+      "dimensions": [
+        11,
+        17
+      ],
+      "initial": [
+        6,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 81,
+      "goal": [
+        2,
+        15
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            6,
+            4
+          ],
+          [
+            7,
+            3
+          ]
+        ],
+        "W": [
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            4,
+            5
+          ]
+        ],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            5,
+            6
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            5,
+            8
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 279,
+        "actions": [
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
+          "UP",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "cost": 19.5
+      },
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 88,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:crossing": {
+          "status": "unsolvable",
+          "expanded": 88,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ]
+    },
+    {
+      "file": "levels/level7.json",
+      "dimensions": [
+        11,
+        23
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 77,
+      "goal": [
+        1,
+        21
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            4,
+            2
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            6,
+            10
+          ]
+        ],
+        "W": [
+          [
+            1,
+            4
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            8,
+            12
+          ]
+        ],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            5,
+            14
+          ],
+          [
+            5,
+            15
+          ],
+          [
+            5,
+            16
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 364,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP",
+          "RIGHT"
+        ],
+        "cost": 24.5
+      },
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:first": {
+          "status": "unsolvable",
+          "expanded": 60,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:second": {
+          "status": "unsolvable",
+          "expanded": 174,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ]
+    },
+    {
+      "file": "levels/level8.json",
+      "dimensions": [
+        10,
+        24
+      ],
+      "initial": [
+        1,
+        18,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 55,
+      "goal": [
+        8,
+        1
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            2,
+            19
+          ],
+          [
+            3,
+            20
+          ]
+        ],
+        "W": [],
+        "T": [
+          [
+            1,
+            22
+          ],
+          [
+            4,
+            21
+          ]
+        ],
+        "F": [
+          [
+            6,
+            5
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            6,
+            9
+          ]
+        ],
+        "B": [
+          [
+            7,
+            1
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 1184,
+        "actions": [
+          "DOWN",
+          "RIGHT",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "SWITCH",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "LEFT"
+        ],
+        "cost": 40.0
+      },
+      "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 35,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 108,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 2483,
+          "actions": [],
+          "cost": null
+        },
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 547,
+          "actions": [],
+          "cost": null
+        },
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:landing": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "split",
+        "control",
+        "merge",
+        "fragile",
+        "bridge"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "fragile",
+        "merge",
+        "split"
+      ]
+    },
+    {
+      "file": "levels/level9.json",
+      "dimensions": [
+        17,
+        17
+      ],
+      "initial": [
+        14,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 58,
+      "goal": [
+        1,
+        13
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            8,
+            9
+          ],
+          [
+            9,
+            8
+          ],
+          [
+            10,
+            8
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            11,
+            12
+          ]
+        ],
+        "W": [],
+        "T": [
+          [
+            12,
+            4
+          ],
+          [
+            15,
+            5
+          ]
+        ],
+        "F": [],
+        "B": [
+          [
+            5,
+            12
+          ],
+          [
+            6,
+            12
+          ],
+          [
+            7,
+            12
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 1781,
+        "actions": [
+          "RIGHT",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP",
+          "SWITCH",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "RIGHT",
+          "UP"
+        ],
+        "cost": 18.5
+      },
+      "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 65,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 4289,
+          "actions": [],
+          "cost": null
+        },
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 689,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:gate": {
+          "status": "unsolvable",
+          "expanded": 689,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "split",
+        "control",
+        "merge",
+        "bridge"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "merge",
+        "split"
+      ]
+    },
+    {
+      "file": "levels/level10.json",
+      "dimensions": [
+        13,
+        26
+      ],
+      "initial": [
+        1,
+        20,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 70,
+      "goal": [
+        10,
+        1
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            6,
+            10
+          ],
+          [
+            7,
+            9
+          ],
+          [
+            8,
+            16
+          ],
+          [
+            9,
+            2
+          ],
+          [
+            9,
+            9
+          ],
+          [
+            9,
+            18
+          ],
+          [
+            10,
+            17
+          ]
+        ],
+        "W": [],
+        "T": [
+          [
+            1,
+            24
+          ],
+          [
+            4,
+            23
+          ]
+        ],
+        "F": [
+          [
+            8,
+            3
+          ]
+        ],
+        "B": [
+          [
+            7,
+            12
+          ],
+          [
+            7,
+            13
+          ],
+          [
+            7,
+            14
+          ],
+          [
+            8,
+            5
+          ],
+          [
+            8,
+            6
+          ],
+          [
+            8,
+            7
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 2465,
+        "actions": [
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "SWITCH",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "LEFT"
+        ],
+        "cost": 29.0
+      },
+      "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 80,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 13453,
+          "actions": [],
+          "cost": null
+        },
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 561,
+          "actions": [],
+          "cost": null
+        },
+        "fragile": {
+          "status": "unsolvable",
+          "expanded": 49,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:near": {
+          "status": "unsolvable",
+          "expanded": 561,
+          "actions": [],
+          "cost": null
+        },
+        "bridge:far": {
+          "status": "unsolvable",
+          "expanded": 1553,
+          "actions": [],
+          "cost": null
+        }
+      },
+      "required": [
+        "split",
+        "control",
+        "merge",
+        "bridge",
+        "fragile"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "fragile",
+        "merge",
+        "split"
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "file": "tests/fixtures/advanced/soft_gate.json",
+      "dimensions": [
+        3,
+        12
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 8,
+      "goal": [
+        1,
+        10
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            1,
+            2
+          ]
+        ],
+        "W": [],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 7,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "cost": 6.0
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ],
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 3,
+          "actions": [],
+          "cost": null
+        }
+      }
+    },
+    {
+      "file": "tests/fixtures/advanced/heavy_gate.json",
+      "dimensions": [
+        3,
+        12
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 8,
+      "goal": [
+        1,
+        10
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [
+          [
+            1,
+            4
+          ]
+        ],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 9,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "cost": 5.5
+      },
+      "required": [
+        "bridge"
+      ],
+      "observed": [
+        "bridge"
+      ],
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 3,
+          "actions": [],
+          "cost": null
+        }
+      }
+    },
+    {
+      "file": "tests/fixtures/advanced/split_control.json",
+      "dimensions": [
+        5,
+        10
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 10,
+      "goal": [
+        3,
+        1
+      ],
+      "special_tiles": {
+        "w": [],
+        "W": [],
+        "T": [
+          [
+            1,
+            4
+          ]
+        ],
+        "F": [
+          [
+            3,
+            4
+          ]
+        ],
+        "B": []
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 27,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "SWITCH",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT"
+        ],
+        "cost": 11.0
+      },
+      "required": [
+        "split",
+        "control",
+        "merge"
+      ],
+      "observed": [
+        "control",
+        "fragile",
+        "merge",
+        "split"
+      ],
+      "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 2,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 7,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 22,
+          "actions": [],
+          "cost": null
+        }
+      }
+    },
+    {
+      "file": "tests/fixtures/advanced/split_gate.json",
+      "dimensions": [
+        5,
+        10
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 8,
+      "goal": [
+        3,
+        1
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            3,
+            5
+          ]
+        ],
+        "W": [],
+        "T": [
+          [
+            1,
+            4
+          ]
+        ],
+        "F": [],
+        "B": [
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 18,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "SWITCH",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT"
+        ],
+        "cost": 6.5
+      },
+      "required": [
+        "split",
+        "control",
+        "bridge",
+        "merge"
+      ],
+      "observed": [
+        "bridge",
+        "control",
+        "merge",
+        "split"
+      ],
+      "restricted": {
+        "split": {
+          "status": "unsolvable",
+          "expanded": 2,
+          "actions": [],
+          "cost": null
+        },
+        "control": {
+          "status": "unsolvable",
+          "expanded": 4,
+          "actions": [],
+          "cost": null
+        },
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 10,
+          "actions": [],
+          "cost": null
+        },
+        "merge": {
+          "status": "unsolvable",
+          "expanded": 26,
+          "actions": [],
+          "cost": null
+        }
+      }
+    },
+    {
+      "file": "tests/fixtures/advanced/optional_gate.json",
+      "dimensions": [
+        3,
+        12
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 10,
+      "goal": [
+        1,
+        10
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            1,
+            2
+          ]
+        ],
+        "W": [],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            2,
+            3
+          ]
+        ]
+      },
+      "full": {
+        "status": "solved",
+        "expanded": 7,
+        "actions": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "cost": 6.0
+      },
+      "required": [],
+      "observed": [
+        "bridge"
+      ],
+      "restricted": {
+        "bridge": {
+          "status": "solved",
+          "expanded": 6,
+          "actions": [
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT",
+            "RIGHT"
+          ],
+          "cost": 6.0
+        }
+      }
+    },
+    {
+      "file": "tests/fixtures/advanced/dead_gate.json",
+      "dimensions": [
+        3,
+        12
+      ],
+      "initial": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "orientation": "STANDING",
+      "walkable_initial": 7,
+      "goal": [
+        1,
+        10
+      ],
+      "special_tiles": {
+        "w": [
+          [
+            1,
+            2
+          ]
+        ],
+        "W": [],
+        "T": [],
+        "F": [],
+        "B": [
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      "full": {
+        "status": "unsolvable",
+        "expanded": 5,
+        "actions": [],
+        "cost": null
+      },
+      "required": [],
+      "observed": [],
+      "restricted": {
+        "bridge": {
+          "status": "unsolvable",
+          "expanded": 3,
+          "actions": [],
+          "cost": null
+        }
+      }
+    }
+  ]
+}

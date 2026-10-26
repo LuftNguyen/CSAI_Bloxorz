@@ -1,17 +1,29 @@
 {
+  "schema_version": 2,
   "level_id": 3,
-  "name": "Basic Trial",
-  "rows": 8,
-  "cols": 8,
-  "start": {"r": 1, "c": 1},
+  "name": "3: Fragile causeway",
+  "rows": 10,
+  "cols": 15,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
   "grid": [
-    "XXXXXXXX",
-    "X..XXXXX",
-    "X....XXX",
-    "X....XXX",
-    "XXX...GX",
-    "XXX....X",
-    "XXXXXXXX",
-    "XXXXXXXX"
-  ]
+    "XXXXXXXXXXXXXXX",
+    "XS....XXXXXXXXX",
+    "X..X..XX..F...X",
+    "X.X...XX...F..X",
+    "X.....FF......X",
+    "X.....XX......X",
+    "XXXXXXXX..X...X",
+    "XXXXXXXX.X...GX",
+    "XXXXXXXX......X",
+    "XXXXXXXXXXXXXXX"
+  ],
+  "bridges": [],
+  "switches": [],
+  "splits": [],
+  "design": {
+    "traps": []
+  }
 }
