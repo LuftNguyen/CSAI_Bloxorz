@@ -1,5 +1,22 @@
 # Cài đặt và kiểm tra
 
+## Kiểm tra DFS — 27/10/2026
+
+DFS đã triển khai trên nhánh `quyen/dfs`; bản sửa bổ sung kiểm tra step cost
+không hợp lệ, tràn tổng cost và regression test ở biên timeout.
+
+```powershell
+.venv\Scripts\python.exe -B -m unittest discover -s tests -p test_dfs.py -v
+.venv\Scripts\python.exe -B -m unittest discover -s tests -v
+```
+
+**PASS:** toàn bộ 39 test trên nền `f76ca39` với bản sửa DFS, gồm 24 test DFS,
+14 test foundation và 1 test GUI input dùng mock. Chưa nghiệm thu GUI thủ công.
+Các kết quả campaign 10 màn trong `DFS.md` được đo trên nền `main` tích hợp,
+không phải bộ màn và engine cũ đang có trên nhánh này.
+
+## Lịch sử kiểm tra bản nền ban đầu
+
 Chạy PowerShell tại thư mục repository. Đã kiểm tra Python 3.13.13 Windows.
 Headless và unittest chỉ dùng thư viện chuẩn, không cần Ursina.
 
