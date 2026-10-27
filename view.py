@@ -2,6 +2,7 @@ from ursina import *
 from math import ceil
 from panda3d.core import Point2
 from animation_sync import AnimationCompletion
+from rolling_animation import RollingAnimation
 from classic_theme import ClassicTheme, bronze_button, GOLD, MUTED
 from classic_audio import ClassicAudio, sound_events
 
@@ -29,10 +30,12 @@ class BloxorzView:
         self.isSolving = False
         self._pendingCalls = []
         self._movement = None
+        self._roll = None
+        self.rollDuration = 0.22
         self._animationGeneration = 0
         self._presentingMove = False
         self._replayReady = False
-        self.replayInterval = 0.5  # Pause between replay actions; manual moves stay instant.
+        self.replayInterval = 0.5  # Pause after landing before the next replay action.
         self._replayRemaining = 0.0
         self._fatalRemaining = None
         self._fatalNotice = False
@@ -61,9 +64,9 @@ class BloxorzView:
             on_next_level_callback=self.loadNextLevel,
             on_solver_callback= self.showSolverMenu
         )
-        self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected)
+        self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected, self.resumeGame)
         self.soundButton = bronze_button(self.pauseMenu, 'SOUND: ON', -.285, self.toggleSound)
-        self.solverMessage = Text(text="A*: ready (h=0); BFS/DFS/UCS: not implemented", x=-0.72, y=-0.41, scale=0.6, color=MUTED)
+        self.solverMessage = Text(text="Choose SOLVER to find a path.", x=-0.72, y=-0.41, scale=0.6, color=MUTED)
         self.fatalMessage = Text(text='', origin=(0,0), y=0.25, scale=1.5,
                                  color=color.red, enabled=False)
         self.winBlackout = Entity(parent=camera.ui, model='quad', color=color.black,
@@ -82,6 +85,7 @@ class BloxorzView:
         self.menuButton = bronze_button(camera.ui, 'MENU', .44, self.togglePause, x=-.67, width=.15)
         self.newGameButton = bronze_button(camera.ui, 'NEW GAME', .44, self.newGame, x=-.47, width=.21)
         self.restartButton = bronze_button(camera.ui, 'RESTART', .44, self.restartLevel, x=-.24, width=.21)
+        self.solverButton = bronze_button(camera.ui, 'SOLVER', .44, self.showSolverMenu, x=-.01, width=.18)
         self.stageText = Text(text='', position=(.60,.45), scale=1.1, color=GOLD)
         self.movesText = Text(text='', position=(.60,.40), scale=1.05, color=GOLD)
         self.updateBlockMesh()
@@ -94,16 +98,18 @@ class BloxorzView:
         self.soundButton.text = 'SOUND: ON' if self.sound.toggle() else 'SOUND: OFF'
 
     def showSolverMenu(self):
-        if not self.gameStarted or not self.isPaused:
+        if not self.gameStarted or self.isSolving or self.isAnimating:
             return
 
+        self.pauseMenu.disable()
         self.solverMenu.show()
         self.isPaused = True
 
     def handleAlgorithmSelected(self, algo_name: str):
-        self.isPaused = False
-        self.isSolving = True
         """Centralized handler for running solvers."""
+        if not self.gameStarted or self.isSolving or self.isAnimating:
+            return
+        self.resumeGame()
         print(f"Algorithm selected: {algo_name}")
 
         match algo_name:
@@ -138,6 +144,8 @@ class BloxorzView:
         self.solve("astar")
         
     def resumeGame(self):
+        self.pauseMenu.disable()
+        self.solverMenu.hide()
         self.isPaused = False
 
     def unlockControlAll(self):
@@ -193,6 +201,9 @@ class BloxorzView:
     def togglePause(self):
         if not self.gameStarted or self.isSolving or self.isAnimating:
             return
+        if self.solverMenu.enabled:
+            self.resumeGame()
+            return
         self.isPaused = not self.isPaused
         self.pauseMenu.toggle()
 
@@ -238,6 +249,7 @@ class BloxorzView:
             self.menuButton.x = -edge+.03
             self.newGameButton.x = -edge+.23
             self.restartButton.x = -edge+.46
+            self.solverButton.x = -edge+.69
             self.stageText.x = self.movesText.x = edge-.12
             self.solverMessage.x = -edge
             self.stageText.text = f'STAGE {self.levelManager.currentLevel:02d}'
@@ -248,18 +260,16 @@ class BloxorzView:
         board = self.gameModel.board if board is None else board
         self.effectTileEntities = []
 
-        closed = {p for key, positions in board.bridgeGroups.items()
-                  if not board.bridgeState[key] for p in positions}
         for r in range(board.rows):
             for c in range(board.cols):
                 tile = board.getTile(r,c)
-                if tile == Tile.VOID and (r,c) not in closed:
+                if tile == Tile.VOID:
                     continue
-                root = self.theme.tile(board,r,c,closed=(r,c) in closed)
+                root = self.theme.tile(board,r,c)
                 shadow = self.theme.shadow(r,c)
                 self.tileEntities.extend([root,shadow])
                 if tile in (Tile.FRAGILE,Tile.SOFT_SWITCH,Tile.HEAVY_SWITCH,
-                            Tile.SPLIT_SWITCH,Tile.BRIDGE) or (r,c) in closed:
+                            Tile.SPLIT_SWITCH,Tile.BRIDGE):
                     self.effectTileEntities.append(root)
 
     def animateFall(self, direction: Direction = None):
@@ -287,9 +297,11 @@ class BloxorzView:
         """
         self.updateClassicHUD()
         currentBlock = self.gameModel.block if block is None else block
+        self.blockMesh.rotation = (0, 0, 0)
         split = currentBlock.orientation == Orientation.SPLIT
         self.blockMesh.enabled = not split
         for index, mesh in enumerate(getattr(self, "cubeMeshes", [])):
+            mesh.rotation = (0, 0, 0)
             mesh.enabled = split
             if split:
                 r, c = currentBlock.cubes[index]
@@ -305,7 +317,7 @@ class BloxorzView:
 
         if currentBlock.orientation == Orientation.STANDING:
             # Standing vertically: 1x2x1 scale, centered directly over tile (c, r)
-            targetScale = (0.9, 1.8, 0.9)
+            targetScale = (0.9, 1.9, 0.9)
             targetPos = (c, 0, -r)
 
         elif currentBlock.orientation == Orientation.LYING:
@@ -353,10 +365,11 @@ class BloxorzView:
         self.beginMove(dir)
 
     def beginMove(self, action):
-        """Compute the transition once and immediately present its final pose."""
+        """Compute once, roll the old mesh, then present landing effects."""
         if self.isAnimating or self.gameModel.hasWon or getattr(self, "_presentingMove", False):
             return False
         self.isAnimating = True
+        source = self.gameModel.block.copy()
         before = State(self.gameModel.board, self.gameModel.block).copy() if hasattr(self, 'sound') else None
         valid = self.gameModel.executeMove(action)
         if not valid and not self.gameModel.isGameOver:
@@ -364,11 +377,18 @@ class BloxorzView:
             self.solverMessage.text = "Replay/input error: invalid move"
             return False
         self.moveCount = getattr(self,"moveCount",0)+1
+        self._stepSounds = []
         if before is not None:
-            self.sound.play(sound_events(before, State(self.gameModel.board, self.gameModel.block), action,
-                                         won=self.gameModel.hasWon, lost=self.gameModel.isGameOver))
+            self._stepSounds = sound_events(before, State(self.gameModel.board, self.gameModel.block), action,
+                                           won=self.gameModel.hasWon, lost=self.gameModel.isGameOver)
         self._presentingMove = True
-        self.finishStep(action)
+        if action == Direction.SWITCH:
+            self.finishStep(action)
+        else:
+            mesh = (self.cubeMeshes[source.active] if source.orientation == Orientation.SPLIT
+                    else self.blockMesh)
+            self._roll = RollingAnimation(mesh, source, action, getattr(self, 'rollDuration', .22))
+            self._rollAction = action
         return True
 
     def schedule(self, callback, delay):
@@ -404,6 +424,13 @@ class BloxorzView:
         self.updateClassicHUD()
         if hasattr(self, '_cameraAspect') and abs(camera.lens.get_aspect_ratio()-self._cameraAspect) > 1e-4:
             self.setupCamera()
+        roll = getattr(self, '_roll', None)
+        if roll is not None:
+            elapsed = getattr(time, 'dt', 0.0) if delta is None else delta
+            if roll.advance(elapsed):
+                self._roll = None
+                self.finishStep(self._rollAction)
+            return  # Landing cannot also consume the replay/fall/countdown delay.
         blackout = getattr(self, '_blackoutRemaining', None)
         if blackout is not None:
             elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
@@ -425,7 +452,7 @@ class BloxorzView:
             return
         movement = getattr(self, "_movement", None)
         if movement is not None:
-            movement.poll()  # Only asynchronous effects, currently falling.
+            movement.poll()  # Fall and win effects still use Ursina sequences.
         if getattr(self, "_replayReady", False) and not self.isAnimating:
             elapsed = getattr(time, 'dt', 0.0) if delta is None else delta
             self._replayRemaining = max(0.0, getattr(self, "_replayRemaining", 0.0) - elapsed)
@@ -439,12 +466,15 @@ class BloxorzView:
             self._replayReady = True
 
     def finishStep(self, direction=None):
-        if not getattr(self, "_presentingMove", False):
+        if not getattr(self, "_presentingMove", False) or getattr(self, '_roll', None) is not None:
             return  # Duplicate/stale completion cannot repeat win/fall handling.
         self._presentingMove = False
         self.updateBlockMesh()
         self.destroyTileEntities()
         self.renderBoard()
+        if getattr(self, '_stepSounds', None):
+            self.sound.play(self._stepSounds)
+        self._stepSounds = []
         if self.gameModel.isGameOver:
             self.isSolving = self._replayReady = False
             if self.gameModel.board.fatalSwitch is not None:
@@ -459,6 +489,9 @@ class BloxorzView:
             self.startWinTransition()
         else:
             self.isAnimating = False
+            if self.isSolving:
+                self._replayRemaining = self.replayInterval
+                self.queueReplay()
 
     def setFatalMessage(self, message):
         self._fatalNotice = True
@@ -556,6 +589,11 @@ class BloxorzView:
         self._replayCall = self.schedule(self.queueReplay, 0.5)
 
     def cancelReplay(self):
+        roll = getattr(self, '_roll', None)
+        if roll is not None:
+            roll.cancel()
+        self._roll = None
+        self._stepSounds = []
         if hasattr(self, 'sound'):
             self.sound.stop()
         was_winning = getattr(self, '_winPhase', None) is not None
@@ -615,9 +653,6 @@ class BloxorzView:
 
         if self.beginMove(action):
             self.autoIndex += 1
-            if self.isSolving and not self.isAnimating:
-                self._replayRemaining = self.replayInterval
-                self.queueReplay()
 
     def loadNextLevel(self):
         self.cancelReplay()

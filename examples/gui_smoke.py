@@ -1,4 +1,4 @@
-"""Instant-pose and real fall/replay checks; not manual desktop acceptance."""
+"""Edge rolling and real fall/replay checks; not manual desktop acceptance."""
 import argparse
 from contextlib import ExitStack
 import json
@@ -48,6 +48,8 @@ def main():
 
     def key(name):
         ui.handleUrsinaInput(name)
+        if ui._roll is not None:
+            until(lambda: ui._roll is None)
         if not ui.gameModel.hasWon and not ui.gameModel.isGameOver:
             assert not ui.isAnimating and ui._movement is None
 
@@ -63,6 +65,12 @@ def main():
             path.write_bytes(stream.getData())
             assert path.stat().st_size > 0
             print('Capture:',path.resolve())
+
+    def assert_bridge_visible(visible):
+        # Legacy stage 13: both the slab and its soft shadow disappear on CLOSE.
+        for x, z in ((4, -2), (4.16, -2.12)):
+            entities = [e for e in ui.tileEntities if abs(e.x-x) < 1e-4 and abs(e.z-z) < 1e-4]
+            assert len(entities) == int(visible), (visible, x, z, entities)
 
     try:
         ui.startMenu.start_game()
@@ -86,22 +94,37 @@ def main():
             for mesh in [ui.blockMesh] + ui.cubeMeshes:
                 for method in ('animate_position', 'animate_scale'):
                     ordinary_animations.append(stack.enter_context(patch.object(mesh, method, wraps=getattr(mesh, method))))
-            key('right arrow')
+            ui.handleUrsinaInput('right arrow')
+            assert ui._roll is not None and ui.isAnimating
+            tick(6)
+            assert 0 < ui.blockMesh.rotation_z < 90
+            capture('standing_mid_roll')
+            until(lambda: ui._roll is None)
             assert tuple(ui.blockMesh.position) == (2.5,0,-1)
+            # The lying block must tip around its long edge, not slide sideways.
+            ui.handleUrsinaInput('down arrow')
+            tick(6)
+            assert -90 < ui.blockMesh.rotation_x < 0
+            assert ui.blockMesh.y > 0
+            capture('horizontal_mid_roll')
+            until(lambda: ui._roll is None)
+            key('up arrow')
             key('right arrow')
             assert ui.gameModel.hasWon and tuple(ui.blockMesh.position) == (4,0,-1)
             ui.restartLevel()
-            ui.handleUrsinaInput('left arrow')
+            key('left arrow')
             assert ui.gameModel.isGameOver and ui.isAnimating
             assert tuple(ui.blockMesh.position) == (-0.5,0,-1)
             until(lambda: not ui.isAnimating)
             assert not ui.gameModel.isGameOver
 
             ui.changeLevel(load(13))
+            assert_bridge_visible(False)
             capture('bridge_before_move')
             old_tiles = tuple(ui.tileEntities)
             key('right arrow')
             assert ui.gameModel.board.bridgeState['crossing']
+            assert_bridge_visible(True)
             assert tuple(ui.blockMesh.position) == (2.5,0,-1)
             assert tuple(ui.tileEntities) != old_tiles
             capture('bridge_after_move')
@@ -116,6 +139,8 @@ def main():
             for action in witness['actions']:
                 key(names[action])
             assert not ui.gameModel.board.bridgeState['crossing']
+            assert_bridge_visible(False)
+            capture('bridge_after_close')
             clock.setDt(1/60)
 
             ui.changeLevel(load(12))
@@ -139,14 +164,14 @@ def main():
             ui.changeLevel(load(6))
             ui.gameModel.block = Block(3,3,0,1,Orientation.LYING)
             ui.updateBlockMesh()
-            ui.handleUrsinaInput('left arrow')
+            key('left arrow')
             assert ui.gameModel.board.getTile(3,2) == Tile.VOID
             assert tuple(ui.blockMesh.position) == (2,0,-3)
             assert ui.isAnimating
             until(lambda: not ui.isAnimating)
             assert ui.gameModel.board.getTile(3,2) == Tile.FRAGILE
 
-            # Real A* still returns the same valid actions; replay snaps per frame.
+            # Real A* returns the same actions; replay waits for each landing.
             ui.changeLevel(load(1))
             ui.levelManager.currentLevel = 1
             with patch.object(ui.gameModel, 'executeMove', wraps=ui.gameModel.executeMove) as execute:
@@ -155,22 +180,22 @@ def main():
                 assert execute.call_count == 2
             assert not ui.isAnimating and not ui.isSolving
 
-            # Only fall remains asynchronous: cancel it before reset/change level.
+            # Cancel a fall after landing, before reset/change level.
             ui.changeLevel(load(1))
-            ui.handleUrsinaInput('left arrow')
+            key('left arrow')
             ui.restartLevel()
             snapshot = State(ui.gameModel.board,ui.gameModel.block).copy()
             tick(120)
             assert State(ui.gameModel.board,ui.gameModel.block)==snapshot
             assert tuple(ui.blockMesh.position)==(1,0,-1)
-            ui.handleUrsinaInput('left arrow')
+            key('left arrow')
             ui.changeLevel(load(12))
             snapshot = State(ui.gameModel.board,ui.gameModel.block).copy()
             tick(120)
             assert State(ui.gameModel.board,ui.gameModel.block)==snapshot
             assert tuple(ui.blockMesh.position)==(1,0,-1)
 
-            # Reset also cancels a replay queued after an already-visible first step.
+            # Reset also cancels a replay queued after its first landing.
             from gameModel.block import Direction
             ui.changeLevel(load(1))
             ui.isSolving = True
@@ -178,14 +203,29 @@ def main():
             ui.autoIndex = 0
             ui.queueReplay()
             ui.updateAnimations()
+            assert ui._roll is not None
+            until(lambda: ui._roll is None)
             assert ui.autoIndex == 1 and ui._replayReady
             ui.restartLevel()
             tick(40)
             assert (ui.gameModel.block.r,ui.gameModel.block.c)==(1,1)
             assert not ui.isSolving and not ui._replayReady
+            # Cancel halfway through a real roll, with no delayed landing effects.
+            ui.changeLevel(load(13))
+            ui.handleUrsinaInput('right arrow')
+            tick(6)
+            assert ui._roll is not None
+            ui.restartLevel()
+            snapshot = State(ui.gameModel.board,ui.gameModel.block).copy()
+            tick(30)
+            assert State(ui.gameModel.board,ui.gameModel.block) == snapshot
+            assert tuple(ui.blockMesh.rotation) == (0,0,0)
+            assert ui._roll is None and not ui.isAnimating
+            assert_bridge_visible(False)
             for method in ordinary_animations:
                 method.assert_not_called()
-            # Play every current campaign stage through the actual GUI input path.
+            # Play every campaign stage through real rolls at a second frame rate.
+            clock.setDt(.1)
             manifest = json.loads((root/'levels/validation.json').read_text())
             for record in manifest['levels']:
                 ui.changeLevel(loadLevelFromJson(root/f'levels/level{record["level"]}.json', False))
@@ -197,6 +237,7 @@ def main():
                 assert not ui.gameModel.isGameOver
             for method in ordinary_animations:
                 method.assert_not_called()
+            clock.setDt(1/60)
             print('All 10 current campaign stages: real GUI input replay passed')
             # Complete a manual win, including visible fall and solid black frame.
             record = next(r for r in manifest['levels'] if r['level'] == 7)
@@ -294,7 +335,7 @@ def main():
             assert State(ui.gameModel.board, ui.gameModel.block) == initial
             assert not ui.fatalMessage.enabled
             print('Split trap: teleported cubes, 5-second countdown, loss and reset passed')
-        print('Offscreen instant movement OK: direct final poses, zero position/scale animators, bridge OPEN/CLOSE, fragile/fall/reset, split/SWITCH/merge, A* replay, cancellation')
+        print('Offscreen rolling OK: rigid edge turns, landing effects, bridge OPEN/CLOSE, fragile/fall/reset, split/SWITCH/merge, A* replay, cancellation')
     finally:
         ui.cancelReplay()
         ui.app.destroy()

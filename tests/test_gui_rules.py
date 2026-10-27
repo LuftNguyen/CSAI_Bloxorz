@@ -29,8 +29,13 @@ def finish_movement(view):
     view.updateAnimations()
 
 
+def finish_roll(view):
+    if getattr(view, '_roll', None) is not None:
+        view.updateAnimations(view.rollDuration)
+
+
 def mesh(enabled=True):
-    return SimpleNamespace(enabled=enabled, position=(1,0,-1), scale=(0.9,1.8,0.9),
+    return SimpleNamespace(enabled=enabled, position=(1,0,-1), scale=(0.9,1.9,0.9),
                            rotation=(0,0,0), rotation_x=0, rotation_z=0, y=0, color=None, animations=[],
                            animate_position=Mock(side_effect=lambda *a, **k: tuple(animation_handle() for _ in range(3))),
                            animate_scale=Mock(side_effect=lambda *a, **k: animation_handle()),
@@ -49,6 +54,8 @@ def make_view(number=1):
     v.isPaused = v.isAnimating = v.isSolving = False
     v._pendingCalls = []
     v._movement = None
+    v._roll = None
+    v.rollDuration = .22
     v._replayReady = False
     v.replayInterval = 0.5
     v._replayRemaining = 0.0
@@ -90,7 +97,7 @@ class GuiRulesTests(unittest.TestCase):
             self.assertFalse(v.isSolving)
             invoke.assert_not_called()
 
-    def test_replay_pauses_between_instant_moves_without_movement_animation(self):
+    def test_replay_waits_for_roll_then_full_pause_before_next_action(self):
         v = make_view()
         v.isSolving = True
         v.autoSolution = [D.RIGHT, D.RIGHT]
@@ -100,6 +107,11 @@ class GuiRulesTests(unittest.TestCase):
             self.assertEqual(v.autoIndex, 0)
             v.updateAnimations(0)
             self.assertEqual(v.autoIndex, 1)
+            self.assertTrue(v.isAnimating)
+            self.assertEqual(v.blockMesh.position, (1,0,-1))
+            v.updateAnimations(.11)
+            self.assertEqual(v.blockMesh.rotation, (0,0,45))
+            v.updateAnimations(.11)
             self.assertEqual(v.blockMesh.position, (2.5,0,-1))
             self.assertFalse(v.isAnimating)
             self.assertIsNone(v._movement)
@@ -109,6 +121,8 @@ class GuiRulesTests(unittest.TestCase):
             v.updateAnimations(0.01)
             self.assertEqual(v.autoIndex, 2)
             self.assertTrue(v.gameModel.hasWon)
+            self.assertIsNone(v._winPhase)
+            finish_roll(v)
             self.assertEqual(v.blockMesh.position, (4,0,-1))
             self.assertTrue(v.isAnimating)
             self.assertEqual(v._winPhase, 'fall')
@@ -166,18 +180,25 @@ class GuiRulesTests(unittest.TestCase):
         v.updateBlockMesh()
         self.assertEqual(v.cubeMeshes[1].color, color.yellow)
 
-    def test_closed_bridge_and_split_marker_rendered(self):
+    def test_bridge_disappears_with_shadow_when_closed_and_returns_when_open(self):
         from view import BloxorzView
         v = make_view(13)
-        v.tileEntities = []
-        v.tileColors = {}
-        with patch('classic_theme.Entity', side_effect=lambda **kwargs: SimpleNamespace(**kwargs)) as entity, patch('classic_theme.Text'):
-            BloxorzView.renderBoard(v)
-            closed = [call.kwargs for call in entity.call_args_list if call.kwargs.get('position') == (4,-0.1,-2)]
-            self.assertEqual(len(closed), 1)
-            bridge = next(e for e in v.tileEntities if e.position == (4,-.1,-2))
-            self.assertEqual(bridge.y, -.3)
-            self.assertEqual(bridge.scale_y, .2)
+        board = v.gameModel.board
+        for switch, visible in ((None, False), ((1,2), True), ((2,2), False)):
+            with self.subTest(switch=switch, visible=visible):
+                if switch is not None:
+                    board.applySwitch(switch)
+                before = State(board, v.gameModel.block).copy()
+                v.tileEntities = []
+                with patch('classic_theme.Entity', side_effect=lambda **kwargs: SimpleNamespace(**kwargs)), patch('classic_theme.Text'):
+                    BloxorzView.renderBoard(v)
+                positions = [e.position for e in v.tileEntities]
+                self.assertEqual(positions.count((4,-.1,-2)), int(visible))
+                self.assertEqual(positions.count((4.16,-.75,-2.12)), int(visible))
+                self.assertEqual(State(board, v.gameModel.block), before)
+
+    def test_split_marker_rendered(self):
+        from view import BloxorzView
         v = make_view(12)
         v.tileEntities = []
         v.tileColors = {}

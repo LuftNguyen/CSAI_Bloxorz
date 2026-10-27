@@ -61,21 +61,23 @@ class PauseMenu(Entity):
 
 
 class SolverMenu(Entity):
-    def __init__(self, algorithms, on_select):
+    def __init__(self, algorithms, on_select, on_cancel):
         super().__init__(parent=camera.ui, enabled=False)
         self.algorithms, self.on_select = algorithms, on_select
+        self.on_cancel = on_cancel
         self.elements = []
         self.create_menu()
 
     def create_menu(self):
-        self.elements.append(panel(self, 'CHOOSE A SOLVER', height=.68))
+        self.elements.append(panel(self, 'CHOOSE A SOLVER', height=.78))
         for index, name in enumerate(self.algorithms):
             def choose(algorithm=name):
                 self.hide()
                 self.on_select(algorithm)
-            self.elements.append(bronze_button(self, name, .105-index*.085, choose))
-        Text(parent=self, text='Search the path. Keep your balance.', origin=(0,0),
-             y=-.26, scale=.6, color=MUTED)
+            self.elements.append(bronze_button(self, name, .155-index*.085, choose))
+        self.cancel_button = bronze_button(self, 'BACK TO GAME', -.205, self.on_cancel)
+        Text(parent=self, text='P TO RESUME', origin=(0,0),
+             y=-.32, scale=.6, color=MUTED)
 
     def show(self):
         self.enabled = True
