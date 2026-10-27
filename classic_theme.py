@@ -2,9 +2,85 @@
 from pathlib import Path
 from copy import deepcopy
 from math import tan, radians
-from ursina import Entity, Mesh, Vec3, Text, Button, Texture, camera, color
+import sys
+from ursina import Entity, Mesh, Vec3, Text, Button, Texture, camera, color, Shader, Vec2
 from ursina.shaders import lit_with_shadows_shader, unlit_shader
 from gameModel.board import Tile
+
+if sys.platform == 'darwin':
+    _vert_unlit_120 = '''#version 120
+uniform mat4 p3d_ModelViewProjectionMatrix;
+attribute vec4 p3d_Vertex;
+attribute vec2 p3d_MultiTexCoord0;
+attribute vec4 p3d_Color;
+
+uniform vec2 texture_scale;
+uniform vec2 texture_offset;
+
+varying vec2 texcoords;
+varying vec4 vertex_color;
+
+void main() {
+    gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
+    texcoords = (p3d_MultiTexCoord0 * texture_scale) + texture_offset;
+    vertex_color = p3d_Color;
+}
+'''
+    _frag_unlit_120 = '''#version 120
+uniform sampler2D p3d_Texture0;
+uniform vec4 p3d_ColorScale;
+
+varying vec2 texcoords;
+varying vec4 vertex_color;
+
+void main() {
+    gl_FragColor = texture2D(p3d_Texture0, texcoords) * p3d_ColorScale * vertex_color;
+}
+'''
+    _vert_lit_120 = '''#version 120
+uniform mat4 p3d_ModelViewProjectionMatrix;
+uniform mat3 p3d_NormalMatrix;
+attribute vec4 p3d_Vertex;
+attribute vec3 p3d_Normal;
+attribute vec2 p3d_MultiTexCoord0;
+attribute vec4 p3d_Color;
+
+uniform vec2 texture_scale;
+uniform vec2 texture_offset;
+
+varying vec2 texcoords;
+varying vec4 vertex_color;
+varying vec3 normal_vector;
+
+void main() {
+    gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
+    texcoords = (p3d_MultiTexCoord0 * texture_scale) + texture_offset;
+    vertex_color = p3d_Color;
+    normal_vector = normalize(p3d_NormalMatrix * p3d_Normal);
+}
+'''
+    _frag_lit_120 = '''#version 120
+uniform sampler2D p3d_Texture0;
+uniform vec4 p3d_ColorScale;
+
+varying vec2 texcoords;
+varying vec4 vertex_color;
+varying vec3 normal_vector;
+
+void main() {
+    vec4 col = texture2D(p3d_Texture0, texcoords) * p3d_ColorScale * vertex_color;
+    vec3 light_dir = normalize(vec3(1.0, 2.0, 1.3));
+    float diff = max(dot(normal_vector, light_dir), 0.0) * 0.45 + 0.55;
+    gl_FragColor = vec4(col.rgb * diff, col.a);
+}
+'''
+    unlit_shader = Shader(language=Shader.GLSL, name='unlit_shader_macos',
+                          vertex=_vert_unlit_120, fragment=_frag_unlit_120,
+                          default_input={'texture_scale': Vec2(1,1), 'texture_offset': Vec2(0,0)})
+    lit_with_shadows_shader = Shader(language=Shader.GLSL, name='lit_shader_macos',
+                                     vertex=_vert_lit_120, fragment=_frag_lit_120,
+                                     default_input={'texture_scale': Vec2(1,1), 'texture_offset': Vec2(0,0)})
+
 
 ASSETS = Path(__file__).resolve().parent / 'assets/classic'
 INK = color.hex('#241108')

@@ -1,10 +1,3 @@
-"""Person 5: implement and verify heuristics; compare A* with h=0 against UCS.
-
-Values must be finite, nonnegative and zero at goals. Revalidate admissibility
-after teleport or cost changes. Upstream Manhattan is an unverified reference.
-"""
-
-
 """Heuristics for A* (heuristic owner: Huong).
 
 Every heuristic has the contract signature ``heuristic(problem, state) -> float``:
@@ -15,39 +8,45 @@ Provided heuristics
 zero                    h = 0 (baseline; A* then behaves like UCS).
 manhattan_lower_bound   closed form, O(1) per call, loose but easy to prove.
 relaxed_distance        MAIN heuristic: exact shortest-path cost-to-go on a *relaxed*
-                        Bloxorz (every bridge permanently open, switches do nothing).
+                        Bloxorz (every bridge permanently open, switches do nothing,
+                        every split switch is a zero-cost target).
 
 Fields read: problem.unit_cost, problem.initial.board (tiles, bridgeGroups, rows,
-cols), state.block (r, c, dr, dc, orientation). Nothing is modified.
+cols, splitTargets), state.block (r, c, dr, dc, orientation). Nothing is modified.
 
 Why ``relaxed_distance`` is admissible and consistent
 -----------------------------------------------------
 Let P be the real problem and R the relaxed one. R has the same nodes
 (r, c, dr, dc), the same roll geometry (Block.resultingState), the same
-out-of-board / VOID / FRAGILE-when-standing rules and the same goal (standing on
-GOAL). R differs from P only in that every cell listed in board.bridgeGroups is
-treated as an always-open BRIDGE tile and switches never toggle anything. The edge
-cost in R is the real Problem.step_cost formula (max TILE_COST over the occupied
-cells, or 1.0 when problem.unit_cost).
+out-of-board / VOID / FRAGILE-when-standing rules and the same edge costs. R differs
+from P in two ways:
 
-Every legal real move is also a legal relaxed move with the same cost: a legal real
-move never occupies a VOID cell, a closed bridge is VOID (so it is never occupied
-after a legal move) and an open bridge costs TILE_COST[BRIDGE], exactly what R uses.
-Therefore h(s) = cost_R*(s) <= cost_P*(s)  -> admissible. Because h is a true
-shortest-path distance in R, h(s) <= c(s, s') + h(s') for every R-edge, and so for
-every real edge -> consistent. h = 0 on the goal, h >= 0 everywhere.
+1. Every cell in board.bridgeGroups is an always-open BRIDGE tile; switches never
+   toggle anything.
+2. The cost-to-go of a block standing on a SPLIT_SWITCH cell is 0 (it is a target
+   of the backward Dijkstra, like GOAL).
 
-Dead states: if the goal is unreachable even in R the real state is hopeless too.
+Every real plan that does not use a split switch is a path in R to a GOAL, so
+h(s) <= h*(s). A plan that uses one must stand on a split switch, which R reaches
+with the same or lower cost and then charges 0 for the rest. Hence h is admissible.
+h is a shortest-path distance in R, so h(s) <= c(s, s') + h(s') on every R-edge, and
+therefore on every real edge between non-split states.
+
+Split states (two cubes) return 0.0, which is admissible. The edge that enters a
+split state (rolling onto a split switch) is consistent because the pre-state is at
+most one roll (cost >= TILE_COST[SPLIT_SWITCH]) from a zero-cost target:
+h(s) <= c + 0. All edges between split states or from split to merged blocks satisfy
+0 <= c + h(s') since h >= 0.
+
+Dead states: if no target is reachable even in R the real state is hopeless too.
 We return the finite sentinel DEAD_H. It is admissible (true cost is infinite) and
 consistent (dead states form a closed set sharing one value) and keeps the
 "finite" requirement of the contract.
 
-Unsupported rules: the engine currently has no split/teleport/SWITCH action. If a
-state has no plain ``block`` with r/c/dr/dc (e.g. a future split state),
-relaxed_distance returns 0.0, the contract's safe fallback. Re-validate after any
-cost or rule change; tests/test_heuristics.py checks admissibility and consistency
-against exact optimal costs on the real levels.
+Re-validate after any cost or rule change; tests/test_heuristics.py checks
+admissibility and consistency against exact optimal costs on the real levels.
 """
+
 from collections import defaultdict
 from heapq import heappop, heappush
 from itertools import count
@@ -58,9 +57,13 @@ from gameModel.board import TILE_COST, Tile
 
 DEAD_H = 1.0e9  # finite stand-in for "goal unreachable"
 
+# Only roll directions for the relaxed block graph; SWITCH is handled separately.
+_ROLL_DIRS = tuple(d for d in Direction if d != Direction.SWITCH)
+
 # problem -> {(r, c, dr, dc): cost-to-go}; weak keys so tables die with the problem.
 _TABLES = WeakKeyDictionary()
 _GOALS = WeakKeyDictionary()
+_TELEPORT_DESTS = WeakKeyDictionary()
 
 
 def zero(problem, state) -> float:
@@ -82,6 +85,7 @@ def _static_tile_map(board):
 
 
 def _occupied(block):
+    """Cells occupied by a non-split block (r, c, dr, dc)."""
     cells = [(block.r, block.c)]
     if block.dr == 1:
         cells.append((block.r + 1, block.c))
@@ -91,7 +95,14 @@ def _occupied(block):
 
 
 def _build_table(problem):
-    """Backward Dijkstra from every GOAL cell over the relaxed block graph."""
+    """Backward Dijkstra from every GOAL cell over the relaxed block graph.
+
+    The relaxed graph includes:
+    - All 4-direction roll edges for standing/lying blocks.
+    - Zero-cost teleport shortcut edges from each SPLIT_SWITCH cell (standing)
+      to each teleport destination (standing on that cell), so the heuristic
+      accounts for the "warp" effect and stays admissible.
+    """
     board = problem.initial.board
     tiles = _static_tile_map(board)
     rows, cols = board.rows, board.cols
@@ -126,18 +137,20 @@ def _build_table(problem):
             ):
                 if landing_cost(block) is None:  # cannot rest here
                     continue
-                for direction in Direction:
+                for direction in _ROLL_DIRS:
                     nxt = block.resultingState(direction)
                     cost = landing_cost(nxt)
                     if cost is not None:
                         reverse[key(nxt)].append((key(block), cost))
 
+    split_cells = set(getattr(board, "splitTargets", {}))
     dist, heap, tie = {}, [], count()
     for r in range(rows):
         for c in range(cols):
-            if tiles[r][c] == Tile.GOAL:
+            if tiles[r][c] == Tile.GOAL or (r, c) in split_cells:
                 dist[(r, c, 0, 0)] = 0.0
                 heappush(heap, (0.0, next(tie), (r, c, 0, 0)))
+
     while heap:
         d, _, node = heappop(heap)
         if d > dist.get(node, float("inf")):
@@ -163,11 +176,22 @@ def precompute(problem) -> None:
     _table(problem)
 
 
+def _is_split(block):
+    """Check whether the block is in SPLIT orientation (two independent cubes)."""
+    return getattr(block, 'orientation', None) == Orientation.SPLIT
+
+
 def relaxed_distance(problem, state) -> float:
-    """Exact cost-to-go on the relaxed problem (admissible and consistent)."""
+    """Exact cost-to-go on the relaxed problem (admissible and consistent).
+
+    Split states (two cubes) return 0.0: a safe lower bound, and consistent with
+    the table, because every split switch is a zero-cost source in the table.
+    """
     block = getattr(state, "block", None)
-    if block is None or not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
-        return 0.0  # unsupported state layout (e.g. split blocks): safe fallback
+    if block is None or _is_split(block):
+        return 0.0
+    if not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
+        return 0.0  # unsupported state layout: safe fallback
     return _table(problem).get((block.r, block.c, block.dr, block.dc), DEAD_H)
 
 
@@ -188,29 +212,48 @@ def _goal_cells(problem):
     return cells
 
 
-def manhattan_lower_bound(problem, state) -> float:
-    """m * max(1, ceil(D / 2)), 0 when standing on the goal.
+def _split_cells(problem):
+    """Cells of all split switches (cached)."""
+    cells = _TELEPORT_DESTS.get(problem)
+    if cells is None:
+        cells = list(getattr(problem.initial.board, "splitTargets", {}))
+        _TELEPORT_DESTS[problem] = cells
+    return cells
 
-    D = min Manhattan distance from an occupied cell to a goal cell. One roll lowers D
-    by at most 2 (standing -> lying or lying -> standing along an axis) and by at most 1
-    otherwise, so at least ceil(D / 2) rolls are needed; when D = 0 but the block is not
-    standing on the goal at least one more roll is needed. m is the cheapest possible
-    move: 1.0 under unit cost, else min(TILE_COST) = 0.5. Admissible, and consistent
-    because ceil(D / 2) drops by at most 1 per roll while every roll costs >= m.
+
+def manhattan_lower_bound(problem, state) -> float:
+    """min(h_goal, h_switch), each of the form m * ceil(D / 2).
+
+    h_goal: D = min Manhattan distance from an occupied cell to a goal cell; 0 when
+    standing on the goal, else at least one roll.
+    h_switch: same formula towards the nearest split switch (0 when standing on it).
+    Any real plan either reaches the goal directly or first stands on a split switch,
+    so the min of the two is admissible. Both are consistent, hence so is the min.
+    Split states return 0.0.
     """
     block = getattr(state, "block", None)
-    if block is None or not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
+    if block is None or _is_split(block):
+        return 0.0
+    if not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
         return 0.0
     goals = _goal_cells(problem)
     if not goals:
         return 0.0
-    cells = _occupied(block)
-    d = min(abs(r - gr) + abs(c - gc) for r, c in cells for gr, gc in goals)
-    if d == 0 and block.orientation == Orientation.STANDING:
-        return 0.0
     per_move = 1.0 if problem.unit_cost else min(TILE_COST.values())
-    return max(1, -(-d // 2)) * per_move
+    cells = _occupied(block)
+    standing = block.orientation == Orientation.STANDING
 
+    def bound(targets):
+        d = min(abs(r - tr) + abs(c - tc) for r, c in cells for tr, tc in targets)
+        if d == 0 and standing:
+            return 0.0
+        return max(1, -(-d // 2)) * per_move
+
+    best = bound(goals)
+    switches = _split_cells(problem)
+    if switches:
+        best = min(best, bound(switches))
+    return best
 
 HEURISTICS = {
     "zero": zero,
