@@ -1,10 +1,3 @@
-"""Person 5: implement and verify heuristics; compare A* with h=0 against UCS.
-
-Values must be finite, nonnegative and zero at goals. Revalidate admissibility
-after teleport or cost changes. Upstream Manhattan is an unverified reference.
-"""
-
-
 """Heuristics for A* (heuristic owner: Huong).
 
 Every heuristic has the contract signature ``heuristic(problem, state) -> float``:
@@ -16,44 +9,44 @@ zero                    h = 0 (baseline; A* then behaves like UCS).
 manhattan_lower_bound   closed form, O(1) per call, loose but easy to prove.
 relaxed_distance        MAIN heuristic: exact shortest-path cost-to-go on a *relaxed*
                         Bloxorz (every bridge permanently open, switches do nothing,
-                        teleport destinations are free-cost shortcuts).
+                        every split switch is a zero-cost target).
 
 Fields read: problem.unit_cost, problem.initial.board (tiles, bridgeGroups, rows,
-cols, splitTargets), state.block (r, c, dr, dc, orientation, cubes, active).
-Nothing is modified.
+cols, splitTargets), state.block (r, c, dr, dc, orientation). Nothing is modified.
 
 Why ``relaxed_distance`` is admissible and consistent
 -----------------------------------------------------
 Let P be the real problem and R the relaxed one. R has the same nodes
 (r, c, dr, dc), the same roll geometry (Block.resultingState), the same
-out-of-board / VOID / FRAGILE-when-standing rules and the same goal (standing on
-GOAL). R differs from P in two ways:
+out-of-board / VOID / FRAGILE-when-standing rules and the same edge costs. R differs
+from P in two ways:
 
-1. Every cell listed in board.bridgeGroups is treated as an always-open BRIDGE tile
-   and switches never toggle anything.
-2. Standing on a SPLIT_SWITCH cell is additionally connected to each teleport
-   destination via a zero-cost edge, allowing instant traversal.
+1. Every cell in board.bridgeGroups is an always-open BRIDGE tile; switches never
+   toggle anything.
+2. The cost-to-go of a block standing on a SPLIT_SWITCH cell is 0 (it is a target
+   of the backward Dijkstra, like GOAL).
 
-Every legal real move is also a legal relaxed move with the same or higher cost:
-bridges that are open in the real game are open in R; a teleport in P requires one
-move to the split switch plus landing cost — the relaxed model offers the same
-path for free, which is ≤ the real cost. Therefore:
-    h(s) = cost_R*(s) ≤ cost_P*(s)  → admissible.
-Because h is a true shortest-path distance in a graph R that is a supergraph of P's
-edges, h(s) ≤ c(s, s') + h(s') for every R-edge, and so for every real edge
-→ consistent. h = 0 on the goal, h ≥ 0 everywhere.
+Every real plan that does not use a split switch is a path in R to a GOAL, so
+h(s) <= h*(s). A plan that uses one must stand on a split switch, which R reaches
+with the same or lower cost and then charges 0 for the rest. Hence h is admissible.
+h is a shortest-path distance in R, so h(s) <= c(s, s') + h(s') on every R-edge, and
+therefore on every real edge between non-split states.
 
-Split states: when the block is split into two cubes, each cube must independently
-reach the goal after merging. A safe lower bound is the minimum relaxed distance
-among the two cube positions (since one of them could be adjacent to the goal).
-This remains admissible because the real cost is at least the cost to reach the
-goal with the closer cube.
+Split states (two cubes) return 0.0, which is admissible. The edge that enters a
+split state (rolling onto a split switch) is consistent because the pre-state is at
+most one roll (cost >= TILE_COST[SPLIT_SWITCH]) from a zero-cost target:
+h(s) <= c + 0. All edges between split states or from split to merged blocks satisfy
+0 <= c + h(s') since h >= 0.
 
-Dead states: if the goal is unreachable even in R the real state is hopeless too.
+Dead states: if no target is reachable even in R the real state is hopeless too.
 We return the finite sentinel DEAD_H. It is admissible (true cost is infinite) and
 consistent (dead states form a closed set sharing one value) and keeps the
 "finite" requirement of the contract.
+
+Re-validate after any cost or rule change; tests/test_heuristics.py checks
+admissibility and consistency against exact optimal costs on the real levels.
 """
+
 from collections import defaultdict
 from heapq import heappop, heappush
 from itertools import count
@@ -150,31 +143,14 @@ def _build_table(problem):
                     if cost is not None:
                         reverse[key(nxt)].append((key(block), cost))
 
-    # Add zero-cost teleport shortcut edges for split switches.
-    # Standing on a SPLIT_SWITCH teleports cubes to distant destinations;
-    # in the relaxed model we add a free edge from each destination back to
-    # the split switch (backward Dijkstra direction), so any state that can
-    # reach a teleport destination is credited for the shortcut.
-    split_targets = getattr(board, 'splitTargets', {})
-    for switch_pos, destinations in split_targets.items():
-        sr, sc = switch_pos
-        if tile_at(sr, sc) in (Tile.VOID,):
-            continue
-        switch_key = (sr, sc, 0, 0)  # standing on the split switch
-        for dest_r, dest_c in destinations:
-            if tile_at(dest_r, dest_c) == Tile.VOID:
-                continue
-            dest_key = (dest_r, dest_c, 0, 0)  # standing at destination
-            # Backward edge: from destination, you can reach the switch for free.
-            # This means: in forward direction, from switch you can reach dest for free.
-            reverse[switch_key].append((dest_key, 0.0))
-
+    split_cells = set(getattr(board, "splitTargets", {}))
     dist, heap, tie = {}, [], count()
     for r in range(rows):
         for c in range(cols):
-            if tiles[r][c] == Tile.GOAL:
+            if tiles[r][c] == Tile.GOAL or (r, c) in split_cells:
                 dist[(r, c, 0, 0)] = 0.0
                 heappush(heap, (0.0, next(tie), (r, c, 0, 0)))
+
     while heap:
         d, _, node = heappop(heap)
         if d > dist.get(node, float("inf")):
@@ -208,29 +184,15 @@ def _is_split(block):
 def relaxed_distance(problem, state) -> float:
     """Exact cost-to-go on the relaxed problem (admissible and consistent).
 
-    For split states (two cubes), returns the minimum relaxed distance among
-    the two cube positions. This is admissible because the real solution must
-    move at least one cube to the goal (after merging), and the merge itself
-    requires the other cube to be adjacent — making the true cost ≥ the
-    minimum single-cube distance.
+    Split states (two cubes) return 0.0: a safe lower bound, and consistent with
+    the table, because every split switch is a zero-cost source in the table.
     """
     block = getattr(state, "block", None)
-    if block is None:
-        return 0.0  # unsupported state layout: safe fallback
-
-    table = _table(problem)
-
-    if _is_split(block):
-        # Two cubes: return min distance among cube positions (standing).
-        cubes = getattr(block, 'cubes', ())
-        if not cubes:
-            return 0.0
-        return min(table.get((r, c, 0, 0), DEAD_H) for r, c in cubes)
-
+    if block is None or _is_split(block):
+        return 0.0
     if not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
-        return 0.0  # missing attributes: safe fallback
-
-    return table.get((block.r, block.c, block.dr, block.dc), DEAD_H)
+        return 0.0  # unsupported state layout: safe fallback
+    return _table(problem).get((block.r, block.c, block.dr, block.dc), DEAD_H)
 
 
 # ---------------------------------------------------------------------------
@@ -250,106 +212,48 @@ def _goal_cells(problem):
     return cells
 
 
-def _teleport_destinations(problem):
-    """All teleport destination cells for the problem (cached)."""
-    dests = _TELEPORT_DESTS.get(problem)
-    if dests is None:
-        board = problem.initial.board
-        split_targets = getattr(board, 'splitTargets', {})
-        dests = []
-        for positions in split_targets.values():
-            dests.extend(positions)
-        _TELEPORT_DESTS[problem] = dests
-    return dests
+def _split_cells(problem):
+    """Cells of all split switches (cached)."""
+    cells = _TELEPORT_DESTS.get(problem)
+    if cells is None:
+        cells = list(getattr(problem.initial.board, "splitTargets", {}))
+        _TELEPORT_DESTS[problem] = cells
+    return cells
 
 
 def manhattan_lower_bound(problem, state) -> float:
-    """m * max(1, ceil(D / 2)), 0 when standing on the goal.
+    """min(h_goal, h_switch), each of the form m * ceil(D / 2).
 
-    D = min Manhattan distance from an occupied cell to a goal cell. One roll lowers D
-    by at most 2 (standing -> lying or lying -> standing along an axis) and by at most 1
-    otherwise, so at least ceil(D / 2) rolls are needed; when D = 0 but the block is not
-    standing on the goal at least one more roll is needed. m is the cheapest possible
-    move: 1.0 under unit cost, else min(TILE_COST) = 0.5. Admissible, and consistent
-    because ceil(D / 2) drops by at most 1 per roll while every roll costs >= m.
-
-    On levels with teleport (splitTargets), the block may reach the goal through a
-    teleport destination. We take the minimum Manhattan distance considering both
-    direct paths and paths through any teleport destination, preserving admissibility.
-
-    For split states (two cubes), returns the minimum bound among the two cube
-    positions. This is admissible for the same reason as relaxed_distance.
+    h_goal: D = min Manhattan distance from an occupied cell to a goal cell; 0 when
+    standing on the goal, else at least one roll.
+    h_switch: same formula towards the nearest split switch (0 when standing on it).
+    Any real plan either reaches the goal directly or first stands on a split switch,
+    so the min of the two is admissible. Both are consistent, hence so is the min.
+    Split states return 0.0.
     """
     block = getattr(state, "block", None)
-    if block is None:
+    if block is None or _is_split(block):
         return 0.0
-
+    if not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
+        return 0.0
     goals = _goal_cells(problem)
     if not goals:
         return 0.0
-
     per_move = 1.0 if problem.unit_cost else min(TILE_COST.values())
-
-    if _is_split(block):
-        cubes = getattr(block, 'cubes', ())
-        if not cubes:
-            return 0.0
-        return min(_manhattan_single(r, c, True, goals, per_move, problem)
-                   for r, c in cubes)
-
-    if not all(hasattr(block, a) for a in ("r", "c", "dr", "dc")):
-        return 0.0
-
     cells = _occupied(block)
-    is_standing = block.orientation == Orientation.STANDING
+    standing = block.orientation == Orientation.STANDING
 
-    # Direct distance to goal
-    d_direct = min(abs(r - gr) + abs(c - gc) for r, c in cells for gr, gc in goals)
-    if d_direct == 0 and is_standing:
-        return 0.0
+    def bound(targets):
+        d = min(abs(r - tr) + abs(c - tc) for r, c in cells for tr, tc in targets)
+        if d == 0 and standing:
+            return 0.0
+        return max(1, -(-d // 2)) * per_move
 
-    # Check teleport shortcut: distance to a split switch + distance from
-    # teleport destination to goal. Since teleport is a single move, the total
-    # lower bound via teleport is: ceil(D_to_switch / 2) + 1 + ceil(D_from_dest / 2).
-    # We take the minimum of the direct and all teleport-via paths.
-    d = d_direct
-    teleport_dests = _teleport_destinations(problem)
-    board = problem.initial.board
-    split_targets = getattr(board, 'splitTargets', {})
-    for switch_pos, destinations in split_targets.items():
-        sr, sc = switch_pos
-        # Distance from current position to the split switch
-        d_to_switch = min(abs(r - sr) + abs(c - sc) for r, c in cells)
-        # Best distance from any teleport destination to goal
-        d_from_dest = min(abs(dr - gr) + abs(dc - gc)
-                          for dr, dc in destinations for gr, gc in goals)
-        # Via teleport: moves_to_switch + 1_teleport_move + moves_from_dest_to_goal
-        # But we need a lower bound: at minimum ceil(d_to_switch/2) + ceil(d_from_dest/2)
-        # (the teleport step itself has cost >= per_move)
-        d_via = max(1, -(-d_to_switch // 2)) + max(1, -(-d_from_dest // 2))
-        d = min(d, d_via)
-
-    return max(1, -(-d_direct // 2)) * per_move if d == d_direct else d * per_move
-
-
-def _manhattan_single(r, c, standing, goals, per_move, problem):
-    """Manhattan lower bound for a single cube at (r, c)."""
-    d = min(abs(r - gr) + abs(c - gc) for gr, gc in goals)
-    if d == 0 and standing:
-        return 0.0
-
-    board = problem.initial.board
-    split_targets = getattr(board, 'splitTargets', {})
-    for switch_pos, destinations in split_targets.items():
-        sr, sc = switch_pos
-        d_to_switch = abs(r - sr) + abs(c - sc)
-        d_from_dest = min(abs(dr - gr) + abs(dc - gc)
-                          for dr, dc in destinations for gr, gc in goals)
-        d_via = max(1, -(-d_to_switch // 2)) + max(1, -(-d_from_dest // 2))
-        d = min(d, d_via)
-
-    return max(1, -(-d // 2)) * per_move
-
+    best = bound(goals)
+    switches = _split_cells(problem)
+    if switches:
+        best = min(best, bound(switches))
+    return best
 
 HEURISTICS = {
     "zero": zero,
