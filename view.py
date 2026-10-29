@@ -17,6 +17,7 @@ from runner import run_search, validate_solution
 from search.contracts import SearchLimits
 from gameModel.problem import Problem
 from gameModel.state import State
+from search.heuristics import relaxed_distance
 
 class BloxorzView:
     def __init__(self, gameModel: GameController, problem):
@@ -564,7 +565,8 @@ class BloxorzView:
         self.isSolving = True
         self.problem = Problem(State(self.gameModel.board, self.gameModel.block).copy())
         try:
-            result = run_search(self.problem, algorithm, SearchLimits(), heuristic=None)
+            heuristic = relaxed_distance if algorithm.strip().lower() in ("astar", "a*") else None
+            result = run_search(self.problem, algorithm, SearchLimits(), heuristic=heuristic)
             validate_solution(self.problem, result.search)
         except NotImplementedError as exc:
             self.solverMessage.text = str(exc)

@@ -158,7 +158,16 @@ def solve(problem, limits, heuristic=None) -> SearchResult:
                     child,
                 ),
             )
-
+            
+    if perf_counter() - start_time >= limits.timeout_seconds:
+        return SearchResult(
+            status="timeout",
+            actions=(),
+            total_cost=None,
+            expanded_nodes=expanded_nodes,
+            generated_nodes=generated_nodes,
+        )
+    
     return SearchResult(
         status="unsolvable",
         actions=(),
