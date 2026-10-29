@@ -6,6 +6,7 @@ Only depth-limited DFS or IDS would need further policy. Keep the shared solve
 interface unchanged. No GUI or tracemalloc.
 """
 from dataclasses import dataclass
+from math import isfinite
 from time import perf_counter
 
 from gameModel.block import Direction
@@ -88,9 +89,13 @@ def solve(problem, limits, heuristic=None) -> SearchResult:
             if child is None or child in visited:
                 continue
 
-            cost = node.cost + problem.step_cost(
-                node.state, action, child
-            )
+            step = float(problem.step_cost(node.state, action, child))
+            if not isfinite(step) or step <= 0:
+                raise ValueError("Step cost must be positive and finite")
+
+            cost = node.cost + step
+            if not isfinite(cost):
+                raise ValueError("Accumulated cost must be finite")
 
             successors.append(
                 _Node(child, node, action, cost)

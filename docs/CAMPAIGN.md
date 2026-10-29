@@ -64,7 +64,8 @@ split đã có, không đổi engine.
 Ô đỡ ban đầu không tính VOID/cầu đóng. Đường đi tối ưu chi phí TILE_COST của
 A* h=0, không khẳng định tối ưu số bước. Điều khiển thay thế có thể làm đường
 thắng tốt ngắn hơn dù có nhiều lựa chọn sai hơn; không dùng riêng số bước để
-khẳng định độ khó. BFS/DFS/UCS chưa có triển khai nên chưa so sánh benchmark.
+khẳng định độ khó. BFS/DFS/UCS đã tích hợp; số liệu đo riêng DFS và giới hạn
+diễn giải tại [DFS.md](DFS.md). Chưa có bảng benchmark so sánh tất cả solver.
 
 ## Bẫy có bằng chứng
 
