@@ -2,8 +2,9 @@
 
 Nhóm 5 người tự phát triển BFS, DFS/IDS, UCS, A*, heuristic và thực nghiệm.
 BFS/DFS/UCS/A* đã tích hợp từ các nhánh thành viên, không dùng solver cũ thay thế.
-Heuristic của thành viên đã merge nguyên trạng nhưng chưa bật; GUI dùng h=0.
-Các lỗi tương thích heuristic còn mở tại [INTEGRATION.md](docs/INTEGRATION.md).
+Heuristic `manhattan` và `relaxed` chạy được trên cả màn split; A* với hai heuristic
+này cho chi phí bằng UCS trên màn 8 và 9. GUI vẫn dùng h=0 (`heuristic=None`).
+Chi tiết tại [INTEGRATION.md](docs/INTEGRATION.md).
 Engine hỗ trợ fragile, cầu và
 soft/heavy/split, teleport, SWITCH và ghép; xem trạng thái nghiệm thu thực tế
 trong [REQUIREMENTS_STATUS.md](docs/REQUIREMENTS_STATUS.md).

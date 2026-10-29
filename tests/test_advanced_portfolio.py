@@ -15,7 +15,7 @@ from search.registry import get_solver
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / 'tests/fixtures/advanced'
-LIMITS = SearchLimits(timeout_seconds=60, max_expanded_nodes=100000)
+LIMITS = SearchLimits(timeout_seconds=30, max_expanded_nodes=30_000)
 
 
 def events(state, action, child):

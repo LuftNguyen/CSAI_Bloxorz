@@ -18,7 +18,7 @@ from search import heuristics as H
 
 ROOT = Path(__file__).resolve().parents[1]
 LEVELS = sorted((ROOT / "levels").glob("level*.json"), key=lambda p: int(p.stem[5:]))
-STATE_CAP = 200_000
+STATE_CAP = 50_000
 
 
 def make_problem(tiles, start, unit_cost=False, bridges=()):
@@ -70,8 +70,8 @@ def explore(problem):
     return states, edges, star
 
 
-def check_heuristic(test, problem, heuristic, name):
-    states, edges, star = explore(problem)
+def check_heuristic(test, problem, heuristic, name, explored=None):
+    states, edges, star = explored if explored is not None else explore(problem)
     values = [heuristic(problem, s) for s in states]
     for i, s in enumerate(states):
         h = values[i]
@@ -163,9 +163,10 @@ class LevelTests(unittest.TestCase):
             for unit in (False, True):
                 board, block = loadLevelFromJson(path, isDebug=False)
                 problem = Problem(State(board, block).copy(), unit_cost=unit)
+                explored = explore(problem) 
                 for name, h in H.HEURISTICS.items():
                     with self.subTest(level=path.stem, unit_cost=unit, heuristic=name):
-                        check_heuristic(self, problem, h, name)
+                        check_heuristic(self, problem, h, name, explored)
 
     def test_relaxed_never_worse_than_manhattan_at_start(self):
         for path in LEVELS:

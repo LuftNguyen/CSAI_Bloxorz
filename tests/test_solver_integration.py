@@ -32,11 +32,17 @@ class SolverIntegrationTests(unittest.TestCase):
             if 'ucs' in costs and 'astar' in costs:
                 self.assertEqual(costs['ucs'],costs['astar'])
 
-    def test_split_heuristics_stay_blocked_before_search(self):
-        problem = self.problem(8)
-        for heuristic in (heuristics.manhattan_lower_bound,heuristics.relaxed_distance):
-            with self.subTest(heuristic=heuristic.__name__), self.assertRaisesRegex(ValueError,'unverified'):
-                run_search(problem,'astar',SearchLimits(),heuristic)
+    def test_astar_with_heuristics_matches_ucs_cost_on_split_levels(self):
+        for number in (8,9):
+            problem = self.problem(number)
+            optimal = run_search(problem,'ucs',SearchLimits(timeout_seconds=60)).search
+            self.assertEqual(optimal.status,'solved')
+            for heuristic in (heuristics.manhattan_lower_bound,heuristics.relaxed_distance):
+                with self.subTest(level=number,heuristic=heuristic.__name__):
+                    result = run_search(problem,'astar',SearchLimits(timeout_seconds=60),heuristic).search
+                    self.assertEqual(result.status,'solved')
+                    validate_solution(problem,result)
+                    self.assertEqual(result.total_cost,optimal.total_cost)
 
     def test_runner_accepts_the_member_zero_on_split(self):
         problem = self.problem(8)
