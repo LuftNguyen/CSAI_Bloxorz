@@ -1,138 +1,19 @@
 # Cài đặt và kiểm tra
 
-## Baseline tích hợp thành viên — 26/10/2026
+## Kiểm tra DFS — 27/10/2026
 
-BFS/DFS/UCS/A* đã triển khai. Test registry hiện là
-`test_registry_uses_member_solvers_without_fallback`; không kỳ vọng stub nữa.
-Test UCS dùng fixture màn cũ, test tích hợp mới replay bốn solver trên campaign.
-Heuristic giữ nguyên cả mã/test: discovery toàn suite còn lỗi đã biết tại phần
-heuristic, không được hiểu các số pass lịch sử dưới đây là kết quả toàn main.
-Xem [INTEGRATION.md](INTEGRATION.md) trước khi chạy và bàn giao.
-
-## Camera, split bẫy và chuyển cảnh nhanh — 26/10/2026
-
-88 test pass, 254 subtest, 0 skip. Smoke kiểm tra 10 màn × 4 tỉ lệ lens và
-resize refit, split bẫy đếm 5 giây/reset, wave nhanh và cancellation trên frame
-thật. Xem [CAMERA_SPLIT_SPEED.md](CAMERA_SPLIT_SPEED.md). Số liệu dưới là lịch sử.
-
-## Chuyển cảnh thắng màn — kết quả mới nhất
-
-85 test pass, 251 lượt subtest, 0 skip. Goal fall thật, cả bàn rơi/co dần theo làn sóng,
-blackout 1 giây rồi next level; dùng chung manual/replay và hủy được khi reset.
-Smoke đo framebuffer đen và đã xem ảnh rơi/đen/màn mới.
-Xem [WIN_TRANSITION.md](WIN_TRANSITION.md); số test thấp hơn dưới đây là lịch sử.
-
-## Permanent CLOSE gây thua — kết quả mới nhất
-
-82 test pass, 243 lượt subtest, 0 skip. Sáu nút có `!` gây thua ngay trong
-model; GUI đếm 5 giây, báo YOU LOSE 1 giây rồi reset. Smoke frame clock và
-ảnh HUD đã xác nhận. Xem [FATAL_CLOSE.md](FATAL_CLOSE.md). Các số test thấp
-hơn trong phần dưới là lịch sử; solver/heuristic không sửa.
-
-## Bộ 10 màn hiện hành
-
-Đã mở rộng từ hành lang thành phòng/đảo nhiều nhánh: lời giải 10–26 bước,
-99–2467 node A* h=0. Giới hạn audit tăng lên 60 giây/query; test đúng/sai dùng
-solver từ registry không tracemalloc, audit manifest vẫn dùng runner đo bộ nhớ.
-Xem [bản đồ 10 màn](CAMPAIGN_MAPS.svg). 73 test pass; smoke GUI đã xem ảnh màn 7/10.
-
-Xem [CAMPAIGN.md](CAMPAIGN.md): 73 test pass, 236 lượt subtest, 0 skip;
-10 lời giải, 37 witness kích hoạt, 27 truy vấn vô nghiệm chứng minh cơ chế bắt buộc.
-`python -B -m examples.gui_smoke` phát đủ 10 màn qua input GUI offscreen,
-giữ di chuyển tức thời và replay 0,5 giây. Chưa nghiệm thu desktop thủ công.
-Các kết quả 14 màn/24 witness và số test trong phần dưới là lịch sử.
-
-## Bản di chuyển tức thời 25/10/2026
-
-Theo yêu cầu mới, ordinary move không còn nội suy hay chờ 0.4 giây; các kết
-quả đồng bộ nội suy ở phần sau là lịch sử. Lượt hiện tại: 11 test visual sync,
-6 test GUI rules và toàn bộ **64 test pass, 0 skip**. Smoke offscreen với
-`--capture-dir (Join-Path $env:TEMP 'BloxorzInstantMoveReview')` cũng pass;
-đã xem ảnh trước/sau bước mở cầu, chưa nghiệm thu desktop thủ công.
-Xem [ANIMATION_SYNC.md](ANIMATION_SYNC.md) cho luồng mới, lệnh và giới hạn.
-
-## Đồng bộ hoạt ảnh 25/10/2026
-
-Đã khôi phục WIP 72d7016 trên feature/new-game-rules và sửa riêng phần trình
-bày; stash được giữ. Baseline 53 pass, sau sửa **63 test pass, 0 skip**.
-Có test với Sequence thật của Ursina 8.3.0, không chỉ gọi callback thủ công.
-`python -m examples.gui_smoke` nay dùng frame clock và poll animator thật,
-kiểm tra 1/60 và 0.1 giây/frame; không dùng finishStep() để bỏ qua thời lượng.
-Xem [ANIMATION_SYNC.md](ANIMATION_SYNC.md) cho cơ chế, lệnh chạy và checklist.
-Đã xem ảnh offscreen trước/sau arrival; chưa nghiệm thu chơi trực tiếp desktop.
-
-## Hoàn thiện liên kết màn 24/10/2026
-
-Đã chạy `python -m examples.audit_levels --write`: **14 màn có lời giải và
-24 công tắc có witness kích hoạt làm đổi cầu/tách khối**, đã verify cost/goal
-và controller replay. `levels/validation.json` gắn với hash từng JSON.
-Unittest hiện **53 phương thức test pass**; bốn test mới trong
-`tests/test_level_links.py` chỉ phát lại witness, không chạy thuật toán tìm kiếm.
-Kết quả 49 test/bốn màn trong phần dưới là lịch sử lượt triển khai luật.
+DFS đã triển khai trên nhánh `quyen/dfs`; bản sửa bổ sung kiểm tra step cost
+không hợp lệ, tràn tổng cost và regression test ở biên timeout.
 
 ```powershell
-.venv\Scripts\python.exe -m examples.audit_levels
-.venv\Scripts\python.exe -m unittest discover -s tests -v
+.venv\Scripts\python.exe -B -m unittest discover -s tests -p test_dfs.py -v
+.venv\Scripts\python.exe -B -m unittest discover -s tests -v
 ```
 
-Sau khi sửa JSON màn, cập nhật witness bằng `python -m examples.audit_levels --write`
-rồi chạy test. Không dùng witness cũ hoặc so benchmark giữa các phiên bản dữ
-liệu khác nhau. Chi tiết những ô/liên kết đổi và cách thử màn 1:
-[LEVEL_COMPLETION.md](LEVEL_COMPLETION.md). GUI offscreen smoke chạy lại pass;
-GUI tương tác thủ công vẫn chưa nghiệm thu.
-
-## Cập nhật luật 23/10/2026
-
-Nền `c237d10`, nhánh làm việc `feature/new-game-rules`. Lần cập nhật này không
-commit/push hoặc thao tác nhánh khác. Các kết quả 13–15 test ở phần lịch sử
-bên dưới là của bản nền cũ, không phải số test hiện tại.
-
-```powershell
-.venv\Scripts\python.exe -m unittest discover -s tests -v
-.venv\Scripts\python.exe -m examples.headless
-.venv\Scripts\python.exe -m examples.rules_headless
-.venv\Scripts\python.exe -m examples.gui_smoke
-```
-
-Kết quả thực tế: **49 phương thức test pass**, gồm 8 test A* sẵn có giữ nguyên,
-14 test nền, 1 input GUI, 6 test GUI orchestration mới và 20 test luật/loader/
-replay mới. Các vòng lặp và subtest bao phủ nhiều hơn 49 tình huống.
-Headless cũ vẫn thắng màn 1, cost=2.0. Headless luật mới gọi đúng A* hiện có,
-h=0: màn 1 (2 bước, cost=2), màn 12 (7 bước, cost=6.5), màn 13/14 (4 bước,
-cost=4). Mọi lời giải được kiểm chứng goal/cost và phát lại khớp controller.
-Các con số này chỉ là kiểm tra kết nối, không phải benchmark so sánh thuật toán.
-
-`examples.gui_smoke` tạo Ursina offscreen và chạy start, lăn, thắng/rơi, restart,
-split, SWITCH, dựng cảnh. Đã chạy thành công, không mở cửa sổ thao tác trực tiếp.
-Có cảnh báo framebuffer/color profile của Panda3D, không có lỗi runtime.
-Test GUI còn lại dùng mock/timer giả; không chứng minh hình ảnh, độ mượt hoặc
-keyboard focus trên mọi máy. `rules_headless` dùng thư viện chuẩn; hai kiểm tra
-GUI cần requirements.txt như nguồn, không thêm dependency mới.
-
-Chỉ sửa một kỳ vọng trong `test_foundation.py`: actions ở trạng thái chưa tách
-phải là bốn hướng, không phải toàn bộ enum nữa vì enum đã thêm SWITCH. Đây là
-thay đổi luật theo contract §3, không phải né test thuật toán. Không sửa
-`tests/test_astar.py` hoặc solver/heuristic.
-
-## Checklist thủ công bổ sung (chưa nghiệm thu)
-
-- [ ] `main.py`: Start, lăn cả ba tư thế, New Game, R/P, menu Solver; A* giải
-  màn 1 và tự phát tới đích; BFS/DFS/UCS vẫn báo chưa triển khai, không khóa game.
-- [ ] Thử fragile: nằm được đỡ; đứng vỡ ô và rơi; restart khôi phục; cube đơn
-  đứng fragile không vỡ theo QA.
-- [ ] Next Level tới 12 (hoặc chọn currentLevel=12 trong phiên debug, không
-  sửa dữ liệu benchmark): phải hai lần để split, Space đổi cube và đổi màu vàng;
-  một cube đứng yên trên soft không bị kích hoạt lại; ghép kề cạnh đúng.
-- [ ] Màn 13/14: cầu đóng hiển thị tấm mỏng tối màu, cầu mở nâu; soft o,
-  heavy X, split ( ) phân biệt; quan sát tác động OPEN/CLOSE/TOGGLE.
-- [ ] Restart/New Game/Next Level giữa hoạt ảnh hoặc phát lại không còn callback
-  cũ tác động lên màn mới; hai cube ẩn sau reset/đổi màn.
-- [ ] Đối chiếu snapshot/replay không lệch trạng thái game; không có lời giải
-  sai được hiển thị solved. Tìm kiếm đồng bộ có thể đứng cửa sổ; chưa có cancel.
-
-Chi tiết luật và schema: [GAME_RULES.md](GAME_RULES.md),
-[LEVEL_SCHEMA.md](LEVEL_SCHEMA.md). Hạng mục còn thiếu và trách nhiệm:
-[REQUIREMENTS_STATUS.md](REQUIREMENTS_STATUS.md).
+**PASS:** toàn bộ 39 test trên nền `f76ca39` với bản sửa DFS, gồm 24 test DFS,
+14 test foundation và 1 test GUI input dùng mock. Chưa nghiệm thu GUI thủ công.
+Các kết quả campaign 10 màn trong `DFS.md` được đo trên nền `main` tích hợp,
+không phải bộ màn và engine cũ đang có trên nhánh này.
 
 ## Lịch sử kiểm tra bản nền ban đầu
 

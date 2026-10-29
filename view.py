@@ -3,7 +3,7 @@ from math import ceil
 from panda3d.core import Point2
 from animation_sync import AnimationCompletion
 from rolling_animation import RollingAnimation
-from classic_theme import ClassicTheme, bronze_button, GOLD, MUTED
+from classic_theme import ClassicTheme, bronze_button, set_block_pose, GOLD, MUTED
 from classic_audio import ClassicAudio, sound_events
 
 from gameModel.gameController import GameController
@@ -13,8 +13,8 @@ from inputHandler import InputHandler, Utility
 from menu import *
 from levels.levelManager import LevelManager
 
-from runner import run_search, validate_solution
-from search.contracts import SearchLimits
+from runner import run_search
+from gui_search import SearchJob
 from gameModel.problem import Problem
 from gameModel.state import State
 from search.heuristics import relaxed_distance
@@ -99,16 +99,28 @@ class BloxorzView:
         self.soundButton.text = 'SOUND: ON' if self.sound.toggle() else 'SOUND: OFF'
 
     def showSolverMenu(self):
-        if not self.gameStarted or self.isSolving or self.isAnimating:
+        if not self.gameStarted:
             return
 
         self.pauseMenu.disable()
         self.solverMenu.show()
-        self.isPaused = True
+        self.setPaused(True)
 
     def handleAlgorithmSelected(self, algo_name: str):
         """Centralized handler for running solvers."""
-        if not self.gameStarted or self.isSolving or self.isAnimating:
+        if not self.gameStarted:
+            return
+        if algo_name not in ("BFS", "DFS", "UCS", "A*"):
+            return
+        if getattr(self, '_roll', None) is not None:
+            # The engine has already committed this move. Finish its presentation
+            # before searching from the new state, without replaying another move.
+            self._nextAlgorithm = algo_name
+            self.isSolving = self._replayReady = False
+            self.resumeGame()
+            return
+        if self.isAnimating:
+            self.resumeGame()
             return
         self.resumeGame()
         print(f"Algorithm selected: {algo_name}")
@@ -147,7 +159,25 @@ class BloxorzView:
     def resumeGame(self):
         self.pauseMenu.disable()
         self.solverMenu.hide()
-        self.isPaused = False
+        self.setPaused(False)
+
+    def setPaused(self, paused):
+        if self.isPaused == paused:
+            return
+        self.isPaused = paused
+        handles = list(getattr(self, '_pendingCalls', []))
+        movement = getattr(self, '_movement', None)
+        if movement is not None:
+            handles.extend(movement.handles)
+        for handle in handles:
+            if paused:
+                if not getattr(handle, 'finished', False):
+                    handle.pause()
+                    self._pausedHandles = getattr(self, '_pausedHandles', []) + [handle]
+        if not paused:
+            for handle in getattr(self, '_pausedHandles', []):
+                handle.resume()
+            self._pausedHandles = []
 
     def unlockControlAll(self):
         """
@@ -200,13 +230,17 @@ class BloxorzView:
         )
 
     def togglePause(self):
-        if not self.gameStarted or self.isSolving or self.isAnimating:
+        if not self.gameStarted:
             return
         if self.solverMenu.enabled:
-            self.resumeGame()
+            self.solverMenu.hide()
+            self.pauseMenu.enabled = True
             return
-        self.isPaused = not self.isPaused
-        self.pauseMenu.toggle()
+        if self.isPaused:
+            self.resumeGame()
+        else:
+            self.setPaused(True)
+            self.pauseMenu.enabled = True
 
     def setupCamera(self):
         board = self.gameModel.board
@@ -291,23 +325,23 @@ class BloxorzView:
             self.schedule(self.restartLevel, 0.1)
         self.watchAnimations(handles, fallen)
 
-    def updateBlockMesh(self, block=None):
+    def updateBlockMesh(self, block=None, *, preserve_faces=False):
         """
         Reads gameModel.block state and updates 3D mesh position and scale.
         Accounts for detaching roll math base positions.
         """
         self.updateClassicHUD()
         currentBlock = self.gameModel.block if block is None else block
-        self.blockMesh.rotation = (0, 0, 0)
+        full_was_visible = self.blockMesh.enabled
         split = currentBlock.orientation == Orientation.SPLIT
         self.blockMesh.enabled = not split
         for index, mesh in enumerate(getattr(self, "cubeMeshes", [])):
-            mesh.rotation = (0, 0, 0)
+            was_visible = mesh.enabled
             mesh.enabled = split
             if split:
                 r, c = currentBlock.cubes[index]
-                mesh.position = (c, 0, -r)
-                mesh.scale = (0.9, 0.9, 0.9)
+                set_block_pose(mesh, (c, 0, -r), (0.9, 0.9, 0.9),
+                               preserve_faces=preserve_faces and was_visible)
                 mesh.color = color.yellow if index == currentBlock.active else color.azure
         if split:
             return
@@ -335,8 +369,8 @@ class BloxorzView:
                 targetPos = (c, 0, -(r + 0.5))
 
         # Apply scale 
-        self.blockMesh.scale = targetScale
-        self.blockMesh.position = targetPos
+        set_block_pose(self.blockMesh, targetPos, targetScale,
+                       preserve_faces=preserve_faces and full_was_visible)
 
     def handleUrsinaInput(self, key: str):
         """Pass key to InputHandler, then update 3D mesh if state changed."""
@@ -347,7 +381,10 @@ class BloxorzView:
         if uti is not None:
             match uti:
                 case Utility.PAUSE:
-                    self.togglePause()
+                    if self.isPaused:
+                        self.resumeGame()
+                    else:
+                        self.togglePause()
                 case Utility.RESTART:
                     self.restartLevel()
             return
@@ -425,6 +462,9 @@ class BloxorzView:
         self.updateClassicHUD()
         if hasattr(self, '_cameraAspect') and abs(camera.lens.get_aspect_ratio()-self._cameraAspect) > 1e-4:
             self.setupCamera()
+        if self.isPaused:
+            return
+        self.pollSearch()
         roll = getattr(self, '_roll', None)
         if roll is not None:
             elapsed = getattr(time, 'dt', 0.0) if delta is None else delta
@@ -470,7 +510,7 @@ class BloxorzView:
         if not getattr(self, "_presentingMove", False) or getattr(self, '_roll', None) is not None:
             return  # Duplicate/stale completion cannot repeat win/fall handling.
         self._presentingMove = False
-        self.updateBlockMesh()
+        self.updateBlockMesh(preserve_faces=True)
         self.destroyTileEntities()
         self.renderBoard()
         if getattr(self, '_stepSounds', None):
@@ -490,6 +530,11 @@ class BloxorzView:
             self.startWinTransition()
         else:
             self.isAnimating = False
+            algorithm = getattr(self, '_nextAlgorithm', None)
+            if algorithm is not None:
+                self._nextAlgorithm = None
+                self.handleAlgorithmSelected(algorithm)
+                return
             if self.isSolving:
                 self._replayRemaining = self.replayInterval
                 self.queueReplay()
@@ -562,21 +607,24 @@ class BloxorzView:
         """Search an isolated snapshot and replay on the matching live state."""
         if self.isAnimating:
             return
+        self.cancelReplay()
         self.isSolving = True
         self.problem = Problem(State(self.gameModel.board, self.gameModel.block).copy())
-        try:
-            heuristic = relaxed_distance if algorithm.strip().lower() in ("astar", "a*") else None
-            result = run_search(self.problem, algorithm, SearchLimits(), heuristic=heuristic)
-            validate_solution(self.problem, result.search)
-        except NotImplementedError as exc:
-            self.solverMessage.text = str(exc)
-            print(exc)
-            self.isSolving = False
+        self._searchAlgorithm = algorithm
+        self.solverMessage.text = f"{algorithm}: searching..."
+        self._searchJob = SearchJob(self.problem, algorithm, run_search)
+
+    def pollSearch(self):
+        job = getattr(self, '_searchJob', None)
+        if job is None or not job.future.done():
             return
+        self._searchJob = None
+        algorithm = self._searchAlgorithm
+        try:
+            result = job.future.result()
         except Exception as exc:
             self.solverMessage.text = f"Solver error: {exc}"
             self.isSolving = False
-            print(f"Solver error: {exc}")
             return
         self.solverMessage.text = (f"{algorithm}: {result.search.status}; moves={len(result.search.actions)} "
                                    f"cost={result.search.total_cost}\n"
@@ -588,9 +636,16 @@ class BloxorzView:
             return
         self.autoSolution = list(result.search.actions)
         self.autoIndex = 0
-        self._replayCall = self.schedule(self.queueReplay, 0.5)
+        self._replayRemaining = 0.5
+        self.queueReplay()
 
     def cancelReplay(self):
+        job = getattr(self, '_searchJob', None)
+        if job is not None:
+            job.cancel()
+        self._searchJob = None
+        self._nextAlgorithm = None
+        self._pausedHandles = []
         roll = getattr(self, '_roll', None)
         if roll is not None:
             roll.cancel()
@@ -641,7 +696,7 @@ class BloxorzView:
             self.updateBlockMesh()
 
     def playSolution(self):
-        if not self.isSolving or self.isAnimating:
+        if self.isPaused or not self.isSolving or self.isAnimating:
             return
 
         if self.autoIndex >= len(self.autoSolution):
@@ -672,6 +727,7 @@ class BloxorzView:
 
     def changeLevel(self, result):
         self.cancelReplay()
+        self.solverMessage.text = ''
         self.pauseMenu.disable()
         self.solverMenu.hide()
         board, block = result

@@ -111,7 +111,7 @@ class PresentationOrderingTests(unittest.TestCase):
                     v.updateBlockMesh()
                 events = []
                 update = v.updateBlockMesh
-                v.updateBlockMesh = Mock(side_effect=lambda: (events.append('pose'), update()))
+                v.updateBlockMesh = Mock(side_effect=lambda **kw: (events.append('pose'), update(**kw)))
                 def render():
                     events.append('board')
                     self.assertEqual(v.gameModel.board.bridgeState['crossing'], not closing)

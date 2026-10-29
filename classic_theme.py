@@ -2,8 +2,7 @@
 from pathlib import Path
 from copy import deepcopy
 from math import tan, radians
-import sys
-from ursina import Entity, Mesh, Vec3, Text, Button, Texture, camera, color, Shader, Vec2
+from ursina import Entity, Mesh, Vec3, Text, Button, Texture, camera, color, scene
 from ursina.shaders import lit_with_shadows_shader, unlit_shader
 from gameModel.board import Tile
 
@@ -88,6 +87,21 @@ GOLD = color.hex('#ecc391')
 MUTED = color.hex('#c39368')
 
 
+def set_block_pose(mesh, position, scale, *, preserve_faces=False):
+    """Normalize the motion frame without turning the textured faces back."""
+    parts = getattr(mesh, '_visual_parts', ())
+    world = [part.get_mat(scene) for part in parts] if preserve_faces else None
+    mesh.rotation = (0, 0, 0)
+    mesh.position = position
+    mesh.scale = scale
+    if world is not None:
+        for part, matrix in zip(parts, world):
+            part.set_mat(scene, matrix)
+    else:
+        for part, transform in zip(parts, getattr(mesh, '_visual_rest', ())):
+            part.set_transform(transform)
+
+
 def bronze_button(parent, text, y, callback, x=0, width=.32):
     b = Button(parent=parent, text=text, model='quad',
                texture=Texture(ASSETS/'bronze_button.png'),
@@ -136,6 +150,10 @@ class ClassicTheme:
         self.textures = {name:Texture(ASSETS/f'{name}.png')
                          for name in ['ember_background','limestone','fragile_stone',
                                       'oxidized_metal','soft_shadow']}
+        # Nearest-neighbor sampling makes the fine metal grain crawl as it turns.
+        # Ursina's mipmap setter only sets minification; set magnification too.
+        self.textures['oxidized_metal'].filtering = 'bilinear'
+        self.textures['oxidized_metal'].filtering = 'mipmap'
         self.slab = slab_mesh()
         self.background = Entity(parent=camera, model='quad', z=180, scale=(300,200),
                                  texture=self.textures['ember_background'], shader=unlit_shader,
@@ -191,15 +209,17 @@ class ClassicTheme:
     def block(self):
         root = Entity(model='cube',texture=self.textures['oxidized_metal'],
                       color=color.white,shader=lit_with_shadows_shader,origin_y=-.5)
-        for x in (-.49,.49):
-            for z in (-.49,.49):
+        for x in (-.5,.5):
+            for z in (-.5,.5):
                 Entity(parent=root,model='cube',position=(x,.5,z),scale=(.022,1,.022),
                        color=color.hex('#503829'),shader=lit_with_shadows_shader)
         for y in (0,1):
-            for x in (-.49,.49):
+            for x in (-.5,.5):
                 Entity(parent=root,model='cube',position=(x,y,0),scale=(.022,.022,1),
                        color=color.hex('#503829'),shader=lit_with_shadows_shader)
-            for z in (-.49,.49):
+            for z in (-.5,.5):
                 Entity(parent=root,model='cube',position=(0,y,z),scale=(1,.022,.022),
                        color=color.hex('#503829'),shader=lit_with_shadows_shader)
+        root._visual_parts = (root.model, *root.children)
+        root._visual_rest = tuple(part.get_transform() for part in root._visual_parts)
         return root

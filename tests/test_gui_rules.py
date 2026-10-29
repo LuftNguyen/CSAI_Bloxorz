@@ -93,6 +93,9 @@ class GuiRulesTests(unittest.TestCase):
             return RunResult(SearchResult('solved', (D.LEFT,), 1.0, 0, 0), 0.0, 0)
         with patch('view.run_search', side_effect=fake), patch('view.invoke') as invoke:
             v.solve('astar')
+            with self.assertRaises(ValueError):
+                v._searchJob.future.result(timeout=5)
+            v.pollSearch()
             self.assertIn('Solver error', v.solverMessage.text)
             self.assertFalse(v.isSolving)
             invoke.assert_not_called()

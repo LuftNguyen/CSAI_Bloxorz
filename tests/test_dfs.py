@@ -3,7 +3,7 @@
 Run from the repository root:
     python -m unittest discover -s tests -p "test_dfs.py" -v
 
-These tests intentionally fail while search/dfs.py is still a stub.
+Cover the implemented DFS, including numeric errors and timeout boundaries.
 """
 from copy import deepcopy
 from pathlib import Path
@@ -172,6 +172,23 @@ class DfsContractTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "transition failed"):
             dfs.solve(problem, SearchLimits())
 
+    def test_accumulated_cost_overflow_raises(self):
+        problem = GraphProblem({
+            "start": [(D.RIGHT, "middle", 1e308)],
+            "middle": [(D.RIGHT, "goal", 1e308)],
+        }, goals={"goal"})
+        with self.assertRaisesRegex(ValueError, "Accumulated cost.*finite"):
+            dfs.solve(problem, SearchLimits())
+
+    def test_invalid_step_cost_raises(self):
+        for cost in (float("inf"), float("-inf"), float("nan"), 0.0, -1.0):
+            with self.subTest(cost=cost):
+                problem = GraphProblem({
+                    "start": [(D.RIGHT, "goal", cost)],
+                }, goals={"goal"})
+                with self.assertRaisesRegex(ValueError, "Step cost.*positive and finite"):
+                    dfs.solve(problem, SearchLimits())
+
     def test_same_block_with_different_bridge_status_is_not_pruned(self):
         board = Board(1, 4)
         board.addBridge((0, 1), [(0, 2)])
@@ -203,6 +220,21 @@ class DfsContractTests(unittest.TestCase):
             result = dfs.solve(problem, SearchLimits(timeout_seconds=1.0))
         self.assert_result(result, "timeout", expanded=0, generated=0)
         self.assertEqual(problem.attempts, [])
+
+    def test_initial_goal_precedes_expired_timeout(self):
+        problem = GraphProblem({}, goals={"start"})
+        with patch.object(dfs, "perf_counter", side_effect=(0.0, 2.0)):
+            result = dfs.solve(problem, SearchLimits(timeout_seconds=1.0))
+        self.assert_result(result, "solved", cost=0.0, expanded=0, generated=0)
+
+    def test_timeout_after_final_invalid_successor(self):
+        problem = GraphProblem({"start": [(D.UP, None, 99)]})
+        clock = Mock(return_value=0.0)
+        problem.on_result = lambda state, action: setattr(clock, "return_value", 2.0)
+        with patch.object(dfs, "perf_counter", clock):
+            result = dfs.solve(problem, SearchLimits(timeout_seconds=1.0))
+        self.assert_result(result, "timeout", expanded=1, generated=0)
+        self.assertEqual(problem.attempts, [("start", D.UP)])
 
     def test_timeout_is_checked_between_successor_generations(self):
         problem = GraphProblem({

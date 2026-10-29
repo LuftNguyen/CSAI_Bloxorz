@@ -51,7 +51,7 @@ def main():
     draw = ImageDraw.Draw(fragile)
     for path in [[(0,35),(29,43),(46,69),(80,72),(110,106)],
                  [(46,69),(37,98),(44,128)],[(80,72),(95,41),(128,32)]]:
-        draw.line(path,fill=(97,72,49),width=1)
+        draw.line(path,fill=(57,35,21),width=3)
     fragile.save(ROOT/'fragile_stone.png')
     coarse = noise((256,256),(13,13),90)
     rust = Image.new('RGB',(256,256))
