@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from gameModel.block import Block
 from gameModel.board import Board, Tile
 
@@ -16,7 +14,7 @@ class State:
 
     def copy(self):
         return State(
-            deepcopy(self.board),
+            self.board.copy(),
             self.block.copy()
         )
 
