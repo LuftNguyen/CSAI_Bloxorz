@@ -10,7 +10,7 @@ def main():
     args = parser.parse_args()
     from panda3d.core import ClockObject, PNMImage, StringStream, loadPrcFileData
     loadPrcFileData('', 'audio-library-name null')
-    from ursina import Ursina, camera, window
+    from ursina import Ursina, camera, window, scene
     import view
     from gameModel.gameController import GameController
     from gameModel.problem import Problem
@@ -60,6 +60,17 @@ def main():
         ui.setupCamera()
         ui.renderBoard()
         ui.updateBlockMesh()
+
+    finish_step = ui.finishStep
+    def check_surface_continuity(direction=None):
+        visible = [(mesh, [part.get_mat(scene) for part in mesh._visual_parts])
+                   for mesh in [ui.blockMesh, *ui.cubeMeshes] if mesh.enabled]
+        finish_step(direction)
+        for mesh, matrices in visible:
+            if mesh.enabled:  # Split/merge deliberately replaces the visible meshes.
+                assert all(part.get_mat(scene).almost_equal(matrix, 1e-4)
+                           for part, matrix in zip(mesh._visual_parts, matrices)), 'Faces jumped at landing'
+    ui.finishStep = check_surface_continuity
 
     try:
         capture('01_start_menu')
@@ -123,6 +134,18 @@ def main():
             tick()
         assert ui.gameModel.board.bridgeState['crossing']
         capture('08_bridge_open')
+        ui.handleUrsinaInput('down arrow')
+        tick(6)
+        assert ui._roll is not None
+        capture('09_surface_mid_roll')
+        while ui._roll is not None:
+            tick()
+        capture('10_surface_landed')
+        ui.handleUrsinaInput('up arrow')
+        while ui._roll is not None:
+            tick()
+        assert ui.theme.textures['oxidized_metal'].filtering == 'mipmap'
+        print('Textured faces and rims remain continuous across successive landings; metal mipmapping enabled')
         print('Classic graphics smoke passed: HUD solver, cancel/P, all solver buttons, bridge views, input, reset and A* replay')
     finally:
         ui.cancelReplay()

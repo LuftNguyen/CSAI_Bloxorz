@@ -3,7 +3,7 @@ from math import ceil
 from panda3d.core import Point2
 from animation_sync import AnimationCompletion
 from rolling_animation import RollingAnimation
-from classic_theme import ClassicTheme, bronze_button, GOLD, MUTED
+from classic_theme import ClassicTheme, bronze_button, set_block_pose, GOLD, MUTED
 from classic_audio import ClassicAudio, sound_events
 
 from gameModel.gameController import GameController
@@ -290,23 +290,23 @@ class BloxorzView:
             self.schedule(self.restartLevel, 0.1)
         self.watchAnimations(handles, fallen)
 
-    def updateBlockMesh(self, block=None):
+    def updateBlockMesh(self, block=None, *, preserve_faces=False):
         """
         Reads gameModel.block state and updates 3D mesh position and scale.
         Accounts for detaching roll math base positions.
         """
         self.updateClassicHUD()
         currentBlock = self.gameModel.block if block is None else block
-        self.blockMesh.rotation = (0, 0, 0)
+        full_was_visible = self.blockMesh.enabled
         split = currentBlock.orientation == Orientation.SPLIT
         self.blockMesh.enabled = not split
         for index, mesh in enumerate(getattr(self, "cubeMeshes", [])):
-            mesh.rotation = (0, 0, 0)
+            was_visible = mesh.enabled
             mesh.enabled = split
             if split:
                 r, c = currentBlock.cubes[index]
-                mesh.position = (c, 0, -r)
-                mesh.scale = (0.9, 0.9, 0.9)
+                set_block_pose(mesh, (c, 0, -r), (0.9, 0.9, 0.9),
+                               preserve_faces=preserve_faces and was_visible)
                 mesh.color = color.yellow if index == currentBlock.active else color.azure
         if split:
             return
@@ -334,8 +334,8 @@ class BloxorzView:
                 targetPos = (c, 0, -(r + 0.5))
 
         # Apply scale 
-        self.blockMesh.scale = targetScale
-        self.blockMesh.position = targetPos
+        set_block_pose(self.blockMesh, targetPos, targetScale,
+                       preserve_faces=preserve_faces and full_was_visible)
 
     def handleUrsinaInput(self, key: str):
         """Pass key to InputHandler, then update 3D mesh if state changed."""
@@ -469,7 +469,7 @@ class BloxorzView:
         if not getattr(self, "_presentingMove", False) or getattr(self, '_roll', None) is not None:
             return  # Duplicate/stale completion cannot repeat win/fall handling.
         self._presentingMove = False
-        self.updateBlockMesh()
+        self.updateBlockMesh(preserve_faces=True)
         self.destroyTileEntities()
         self.renderBoard()
         if getattr(self, '_stepSounds', None):
