@@ -85,6 +85,18 @@ def solve(problem, limits, heuristic=None) -> SearchResult:
                                  path_cost=path_cost)
                 queue.append(next_node)
 
+
+
+
+    if perf_counter() >= deadline:
+        return SearchResult(
+            status="timeout",
+            actions=(),
+            total_cost=None,
+            expanded_nodes=expanded_nodes,
+            generated_nodes=generated_nodes
+        )
+
         
     # Exhausting the queue means no reachable state satisfies the goal.
     return SearchResult(status="unsolvable",
