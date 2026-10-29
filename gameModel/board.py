@@ -29,6 +29,19 @@ TILE_COST = {
     Tile.SPLIT_SWITCH: 0.5,
 }
 
+def _clone(value):
+    """Structural copy of nested list/dict/set/tuple; other objects are shared."""
+    kind = type(value)
+    if kind is list:
+        return [_clone(v) for v in value]
+    if kind is dict:
+        return {_clone(k): _clone(v) for k, v in value.items()}
+    if kind is tuple:
+        return tuple(_clone(v) for v in value)
+    if kind is set:
+        return {_clone(v) for v in value}
+    return value
+
 #add switch toggles and bridge tiles to the board class, and add a method to toggle switches and bridges
 class Board:
     def __init__(self, rows: int, cols: int,
@@ -62,6 +75,12 @@ class Board:
     def __repr__(self):
         return f"Board({self.rows}x{self.cols})"
 
+    def copy(self):
+        new = Board.__new__(Board)
+        for key, value in self.__dict__.items():
+            new.__dict__[key] = _clone(value)
+        return new
+    
     def reset(self):
         self.tiles = [row[:] for row in self.initialTiles]
 

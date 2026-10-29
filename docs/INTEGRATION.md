@@ -25,27 +25,22 @@ merge/push nhánh `feature/classic-graphics` cũ.
   chuyển đường dẫn sang `tests/fixtures/legacy/level1.json`. Không đổi kỳ vọng
   hoặc cách cài UCS. Campaign 1 mới có bố cục và lời giải khác.
 - Thêm `tests/test_solver_integration.py`: replay bốn solver trên 10 màn,
-  so chi phí UCS/A* h=0, kiểm tra state nguồn không đổi, kiểm tra runner chặn
-  heuristic chưa xác minh cho split và chấp nhận zero.
+  so chi phí UCS/A* h=0, kiểm tra state nguồn không đổi, kiểm tra A* với `manhattan` và `relaxed` trên màn 8, 9 cho chi phí bằng UCS, và runner chấp nhận zero trên split.
 - Cập nhật README và báo cáo này; không thay thuật toán hoặc contract.
 
-## Heuristic chưa nghiệm thu — giao lại người phụ trách
+## Heuristic
 
-Mã và `tests/test_heuristics.py` của thành viên giữ nguyên, không skip, không sửa
-assertion để làm xanh test. Discovery toàn suite có thể thất bại ở phần này:
+Bốn lỗi từng ghi ở đây (SWITCH khi dựng relaxed, fallback không nhận `Block.split()`,
+Manhattan không consistent với teleport, test viết cho engine cũ) đã được sửa trong
+commit `dbd9ca9` và các commit heuristic trước đó.
 
-1. Vòng dựng relaxed duyệt `Direction.SWITCH` cho khối chưa split gây ValueError.
-2. Fallback kiểm tra tồn tại r/c/dr/dc không nhận diện `Block.split()` thật.
-3. Manhattan và relaxed chưa bảo đảm admissible/consistent với teleport.
-   Đã tái hiện Manhattan không consistent ở campaign 8–10; trên một màn teleport
-   kiểm chứng riêng, cost tối ưu 5 nhưng Manhattan trả 12,5.
-4. Test heuristic được viết cho engine/11 màn cũ; cần người phụ trách cập nhật
-   phạm vi chứng minh và kiểm thử theo engine/campaign mới.
-
-GUI tiếp tục truyền `heuristic=None` (h=0). Runner giữ chặn heuristic khác zero
-trên màn có splitTargets. Không bỏ chặn hoặc thay heuristic bằng một bản tự viết.
-Giới hạn còn lại: lời gọi trực tiếp solver hoặc truyền heuristic trên màn không
-split vẫn là trách nhiệm bên gọi; relaxed hiện chưa dùng được với enum mới.
+- `tests/test_heuristics.py` pass trên 10 màn, cả `unit_cost` True/False: heuristic
+  admissible và consistent so với h* tính bằng duyệt toàn bộ không gian trạng thái.
+- Chi phí tối ưu từ A* với `manhattan` và `relaxed` bằng UCS trên màn 8 (40.0) và
+  màn 9 (18.5); test nằm ở `tests/test_solver_integration.py`.
+- Runner chỉ chặn heuristic không có trong `search.heuristics.HEURISTICS` trên màn có
+  splitTargets. Lời gọi trực tiếp solver vẫn là trách nhiệm của bên gọi.
+- GUI tiếp tục truyền `heuristic=None` (h=0).
 
 ## Kiểm tra
 
@@ -54,21 +49,12 @@ split vẫn là trách nhiệm bên gọi; relaxed hiện chưa dùng được v
 .venv\Scripts\python.exe -B -m unittest discover -s tests -p test_heuristics.py -v
 .venv\Scripts\python.exe -B -m examples.classic_preview
 git diff --check
+python -B -m unittest discover -s tests -v
 ```
 
 Chưa nghiệm thu desktop hoặc benchmark. Thành viên nên tạo nhánh sửa của mình
 từ baseline main đã tích hợp, không lấy lại nguyên test nền cũ khi merge lần sau.
 
-Kết quả sau merge: 155 test ngoài `test_heuristics.py` pass trong một lần
-discovery chọn riêng phạm vi tích hợp. Bao gồm cả ba test tích hợp mới, bốn
-solver giải/replay đủ 10 màn, UCS/A* h=0 cùng cost. Đây không phải tuyên bố
-toàn suite xanh: test heuristic được chạy riêng, giữ nguyên mọi assertion.
-Smoke `examples.classic_preview` pass menu, âm thanh ON/OFF, input/restart và
-A* replay sang màn; `git diff --check` pass. Không chạy desktop thủ công.
-
-Nhóm heuristic giữ nguyên chạy đủ 12 test trong 290 giây: 6 failure, 43 error
-(bao gồm subtest, không phải 49 test method). Cả 43 error là ValueError khi
-dựng relaxed gặp SWITCH; sáu failure là Manhattan không consistent tại campaign
-8/9/10 trong hai chế độ cost. Log thô ở `.source-import/heuristic-integration-review.log`
-chỉ lưu local, không commit. Chạy riêng không bỏ qua hoặc sửa test heuristic.
-Vì vậy baseline tích hợp chơi được với h=0 nhưng toàn suite CHƯA xanh.
+Toàn suite: `Ran <N> tests in <T>s`, OK (skipped=<K>). Giới hạn số trạng thái trong test:
+`STATE_CAP = 50_000` (tests/test_heuristics.py) và `max_expanded_nodes=30_000`
+(tests/test_advanced_portfolio.py). Chưa nghiệm thu GUI thủ công hoặc benchmark.
