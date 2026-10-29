@@ -92,7 +92,8 @@ Không gán đè app.input vì làm mất đường phân phối và chuẩn hó
 - [ ] Màn 1: RIGHT RIGHT thắng và sang màn kế; đi khỏi sàn thì rơi và restart.
 - [ ] R restart đúng vị trí và board; P/menu pause đúng; kiểm tra không kích hoạt
   hai lần với sự kiện nhấn/nhả phím tiện ích của Ursina trên máy đang dùng.
-- [ ] Chọn từng BFS/DFS/UCS/A*: thấy thông báo chưa triển khai, điều khiển mở lại.
+- [ ] Chọn BFS/DFS/UCS: thấy thông báo chưa triển khai, điều khiển mở lại;
+  A* hiện có phải tìm và phát lời giải hợp lệ.
 - [ ] Khi solver thật tích hợp: phát từ đúng trạng thái lúc gọi, mỗi bước xong mới
   sang bước tiếp; đối chiếu goal và tổng step_cost với kết quả solver.
 - [ ] Restart/Next Level khi phát lại hủy callback cũ, không đi thêm bước vào màn mới.

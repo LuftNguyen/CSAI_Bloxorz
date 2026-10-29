@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "name": "Demo: split, select and rejoin",
+  "rows": 3,
+  "cols": 10,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXX",
+    "XS..T..G.X",
+    "XXXXXXXXXX"
+  ],
+  "splits": [
+    {
+      "position": [
+        1,
+        4
+      ],
+      "targets": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          6
+        ]
+      ]
+    }
+  ],
+  "level_id": 12,
+  "purpose": "demo, not benchmark"
+}

@@ -1,4 +1,10 @@
 from ursina import *
+from math import ceil
+from panda3d.core import Point2
+from animation_sync import AnimationCompletion
+from rolling_animation import RollingAnimation
+from classic_theme import ClassicTheme, bronze_button, GOLD, MUTED
+from classic_audio import ClassicAudio, sound_events
 
 from gameModel.gameController import GameController
 from gameModel.block import  Orientation, Direction
@@ -7,7 +13,7 @@ from inputHandler import InputHandler, Utility
 from menu import *
 from levels.levelManager import LevelManager
 
-from runner import run_search
+from runner import run_search, validate_solution
 from search.contracts import SearchLimits
 from gameModel.problem import Problem
 from gameModel.state import State
@@ -15,12 +21,27 @@ from gameModel.state import State
 class BloxorzView:
     def __init__(self, gameModel: GameController, problem):
         self.app = Ursina()
+        self.sound = ClassicAudio()
         self.gameModel = gameModel
         self.inputHandler = InputHandler()
         self.isPaused = False
         self.gameStarted = False
         self.isAnimating = False
         self.isSolving = False
+        self._pendingCalls = []
+        self._movement = None
+        self._roll = None
+        self.rollDuration = 0.22
+        self._animationGeneration = 0
+        self._presentingMove = False
+        self._replayReady = False
+        self.replayInterval = 0.5  # Pause after landing before the next replay action.
+        self._replayRemaining = 0.0
+        self._fatalRemaining = None
+        self._fatalNotice = False
+        self._winPhase = None
+        self._blackoutRemaining = None
+        self._winTilePoses = []
 
         self.problem = problem
         self.solution = []
@@ -29,7 +50,9 @@ class BloxorzView:
         self.algorithmList = ["BFS", "DFS", "UCS", "A*"]
 
         # Visuals & Setup
-        window.color = color.black50
+        window.color = color.hex("#581606")
+        self.theme = ClassicTheme()
+        self.moveCount = 0
         self.setupLighting()
         self.setupCamera()
 
@@ -41,42 +64,52 @@ class BloxorzView:
             on_next_level_callback=self.loadNextLevel,
             on_solver_callback= self.showSolverMenu
         )
-        self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected)
-        self.solverMessage = Text(text="Team solvers: chua trien khai", x=-0.85, y=0.46, scale=0.8)
+        self.solverMenu = SolverMenu(self.algorithmList, self.handleAlgorithmSelected, self.resumeGame)
+        self.soundButton = bronze_button(self.pauseMenu, 'SOUND: ON', -.285, self.toggleSound)
+        self.solverMessage = Text(text="Choose SOLVER to find a path.", x=-0.72, y=-0.41, scale=0.6, color=MUTED)
+        self.fatalMessage = Text(text='', origin=(0,0), y=0.25, scale=1.5,
+                                 color=color.red, enabled=False)
+        self.winBlackout = Entity(parent=camera.ui, model='quad', color=color.black,
+                                  scale=99, z=-100, collider='box', enabled=False)
 
     def startGame(self):
         self.gameStarted = True
-        self.tileColors = {
-            Tile.NORMAL:       color.light_gray,
-            Tile.GOAL:         color.magenta,
-            Tile.FRAGILE:      color.orange,
-            Tile.SOFT_SWITCH:  color.cyan,
-            Tile.HEAVY_SWITCH: color.red,
-            Tile.BRIDGE:       color.brown
-        }
-
         self.tileEntities = []
+        self.effectTileEntities = []
         self.renderBoard()
 
-        # 3D Block mesh creation
-        self.blockMesh = Entity(
-            model='cube',
-            color=color.azure,
-            texture='white_cube',   # Sharpens edges
-            origin_y=-0.5  # Pivot at the bottom face of the block
-        )
+        self.blockMesh = self.theme.block()
+        self.cubeMeshes = [self.theme.block() for _ in range(2)]
+        self.controlsText = Text(text="WASD / ARROWS: ROLL | SPACE: SWITCH | P: MENU | R: RESTART",
+                                 origin=(0,0), y=-.475, scale=.55, color=MUTED)
+        self.menuButton = bronze_button(camera.ui, 'MENU', .44, self.togglePause, x=-.67, width=.15)
+        self.newGameButton = bronze_button(camera.ui, 'NEW GAME', .44, self.newGame, x=-.47, width=.21)
+        self.restartButton = bronze_button(camera.ui, 'RESTART', .44, self.restartLevel, x=-.24, width=.21)
+        self.solverButton = bronze_button(camera.ui, 'SOLVER', .44, self.showSolverMenu, x=-.01, width=.18)
+        self.stageText = Text(text='', position=(.60,.45), scale=1.1, color=GOLD)
+        self.movesText = Text(text='', position=(.60,.40), scale=1.05, color=GOLD)
         self.updateBlockMesh()
 
+    def newGame(self):
+        self.levelManager.currentLevel = 1
+        self.changeLevel(self.levelManager.loadLevel())
+
+    def toggleSound(self):
+        self.soundButton.text = 'SOUND: ON' if self.sound.toggle() else 'SOUND: OFF'
+
     def showSolverMenu(self):
-        if not self.gameStarted or not self.isPaused:
+        if not self.gameStarted or self.isSolving or self.isAnimating:
             return
 
+        self.pauseMenu.disable()
         self.solverMenu.show()
-        self.isPaused = False
+        self.isPaused = True
 
     def handleAlgorithmSelected(self, algo_name: str):
-        self.isSolving = True
         """Centralized handler for running solvers."""
+        if not self.gameStarted or self.isSolving or self.isAnimating:
+            return
+        self.resumeGame()
         print(f"Algorithm selected: {algo_name}")
 
         match algo_name:
@@ -111,6 +144,8 @@ class BloxorzView:
         self.solve("astar")
         
     def resumeGame(self):
+        self.pauseMenu.disable()
+        self.solverMenu.hide()
         self.isPaused = False
 
     def unlockControlAll(self):
@@ -127,17 +162,23 @@ class BloxorzView:
             for entity in self.tileEntities:
                 destroy(entity)
         self.tileEntities = []
+        self.effectTileEntities = []
 
     def restartLevel(self):
         """Resets the game model and refreshes 3D visual representations."""
+        if not self.gameStarted:
+            return
         print("Restarting level...")
 
         self.cancelReplay()
+        self.pauseMenu.disable()
+        self.solverMenu.hide()
 
         # 1. Block inputs during reset state transition
         self.isAnimating = True
         
         # 2. Reset underlying logical model (board layout, block coords, flags)
+        self.moveCount = 0
         self.gameModel.reset()
 
         # 3. Clean up old 3D board meshes and re-render fresh tiles
@@ -158,91 +199,117 @@ class BloxorzView:
         )
 
     def togglePause(self):
-        if not self.gameStarted:
+        if not self.gameStarted or self.isSolving or self.isAnimating:
+            return
+        if self.solverMenu.enabled:
+            self.resumeGame()
             return
         self.isPaused = not self.isPaused
         self.pauseMenu.toggle()
 
     def setupCamera(self):
         board = self.gameModel.board
-        
-        # 1. Calculate true center X and Z of the board grid
-        centerX = (board.cols - 1) / 2.0
-        centerZ = -(board.rows - 1) / 2.0
-        
-        # 2. Determine the bounding size of the stage
-        maxDim = max(board.cols, board.rows)
-        
-        # 3. Scale distance dynamically:
-        # - Height (Y) grows with grid size
-        # - Pull back along Z into negative space relative to the bottom edge (-board.rows)
-        heightY = maxDim * 1.35
-        distanceZ = -board.rows - (maxDim * 0.75)
-        
-        camera.position = (centerX, heightY, distanceZ)
-        
-        # 4. Point directly at the board center
-        camera.look_at(Vec3(centerX, 0, centerZ))
+        cells = {(r, c) for r, row in enumerate(board.initialTiles)
+                 for c, tile in enumerate(row) if tile != Tile.VOID}
+        cells.update(p for group in board.bridgeGroups.values() for p in group)
+        if not cells:
+            cells = {(board.startR, board.startC)}
+        left, right = min(c for _, c in cells)-0.55, max(c for _, c in cells)+0.55
+        back, front = -max(r for r, _ in cells)-0.55, -min(r for r, _ in cells)+0.55
+        target = Vec3((left+right)/2, 0.75, (back+front)/2)
+        self._cameraBounds = [Vec3(x, y, z) for x in (left, right)
+                              for y in (-0.6, 2.1) for z in (back, front)]
+        distance = max(right-left, front-back, 3) * .55
+        # Fit the actual lens, including standing-block height and HUD margins.
+        # This also handles tall/narrow windows instead of assuming 16:9.
+        for _ in range(80):
+            camera.position = target + Vec3(-distance*.35, distance, -distance)
+            camera.look_at(target)
+            fits = True
+            for point in self._cameraBounds:
+                projected = Point2()
+                local = camera._cam.get_relative_point(scene, point)
+                if not camera.lens.project(local, projected) or abs(projected.x) > 0.82 or abs(projected.y) > 0.76:
+                    fits = False
+                    break
+            if fits:
+                break
+            distance *= 1.03
+        self._cameraAspect = camera.lens.get_aspect_ratio()
+        self.theme.fit_background()
 
     def setupLighting(self):
-        # Soft overall fill light so black shadows aren't pitch dark
-        ambient = AmbientLight(color=color.rgba(100, 100, 100, 255))
-        
-        # Main sun light angled down to create clear top & side contrast
-        sun = DirectionalLight(shadows=True)
-        sun.look_at(Vec3(1, -2, -1))  # Angled light source
-    
-    def renderBoard(self):
+        self.ambient = AmbientLight(color=color.hex('#a09a92'))
+        self.sun = DirectionalLight(shadows=True, color=color.hex('#fff0dc'))
+        self.sun.look_at(Vec3(1,-2,-1.3))
+
+    def updateClassicHUD(self):
+        if hasattr(self, 'stageText'):
+            edge = min(window.aspect_ratio/2-.12,.78)
+            self.menuButton.x = -edge+.03
+            self.newGameButton.x = -edge+.23
+            self.restartButton.x = -edge+.46
+            self.solverButton.x = -edge+.69
+            self.stageText.x = self.movesText.x = edge-.12
+            self.solverMessage.x = -edge
+            self.stageText.text = f'STAGE {self.levelManager.currentLevel:02d}'
+            self.movesText.text = f'MOVES {self.moveCount:02d}'
+
+    def renderBoard(self, board=None):
         """Reads gameModel.board grid and spawns 3D floor tiles."""
-        board = self.gameModel.board
+        board = self.gameModel.board if board is None else board
+        self.effectTileEntities = []
 
         for r in range(board.rows):
             for c in range(board.cols):
-                tileType = board.getTile(r, c)
-                if tileType != Tile.VOID:
-                    # c = X axis (columns), r = Z axis (rows)
-                    tileEntity = Entity(
-                        model='cube',
-                        color=self.tileColors.get(tileType, color.white),
-                        position=(c, -0.1, -r),
-                        scale=(0.92, 0.2, 0.92),
-                        texture='white_cube'      # Adds built-in subtle edge shadowing
-                    )
-                    self.tileEntities.append(tileEntity)
+                tile = board.getTile(r,c)
+                if tile == Tile.VOID:
+                    continue
+                root = self.theme.tile(board,r,c)
+                shadow = self.theme.shadow(r,c)
+                self.tileEntities.extend([root,shadow])
+                if tile in (Tile.FRAGILE,Tile.SOFT_SWITCH,Tile.HEAVY_SWITCH,
+                            Tile.SPLIT_SWITCH,Tile.BRIDGE):
+                    self.effectTileEntities.append(root)
 
     def animateFall(self, direction: Direction = None):
-        """
-        Drops the mesh down into the void from its current position
-        """
+        """Start falling only after the arrival and board-effect phase."""
         self.isAnimating = True
-        fallDuration = 1
+        handles = []
+        for mesh, _, _ in self.visualSnapshot():
+            handles.append(mesh.animate_y(mesh.y - 10, duration=1, curve=curve.in_cubic))
+        if self.blockMesh.enabled and direction in (Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT):
+            if direction in (Direction.UP, Direction.DOWN):
+                angle = -60 if direction == Direction.UP else 60
+                handles.append(self.blockMesh.animate_rotation_x(self.blockMesh.rotation_x + angle, duration=0.5))
+            else:
+                angle = 60 if direction == Direction.LEFT else -60
+                handles.append(self.blockMesh.animate_rotation_z(self.blockMesh.rotation_z + angle, duration=0.5))
+        def fallen():
+            self._movement = None
+            self.schedule(self.restartLevel, 0.1)
+        self.watchAnimations(handles, fallen)
 
-        # 1. Animate Y straight down into the void
-        targetY = self.blockMesh.y - 10
-        self.blockMesh.animate_y(
-            targetY,
-            duration=fallDuration,
-            curve=curve.in_cubic
-        )
-
-        # 2. Add a slight tilt in the move direction so it doesn't drop completely flat
-        if direction:
-            match direction:
-                case Direction.UP:    self.blockMesh.animate_rotation_x(self.blockMesh.rotation_x - 60, duration=fallDuration - 0.5)
-                case Direction.DOWN:  self.blockMesh.animate_rotation_x(self.blockMesh.rotation_x + 60, duration=fallDuration - 0.5)
-                case Direction.LEFT:  self.blockMesh.animate_rotation_z(self.blockMesh.rotation_z + 60, duration=fallDuration - 0.5)
-                case Direction.RIGHT: self.blockMesh.animate_rotation_z(self.blockMesh.rotation_z - 60, duration=fallDuration - 0.5)
-
-        # 3. Delay and trigger restartLevel
-        invoke(lambda: self.restartLevel(), delay=fallDuration + 0.1)
-    
-
-    def updateBlockMesh(self):
+    def updateBlockMesh(self, block=None):
         """
         Reads gameModel.block state and updates 3D mesh position and scale.
         Accounts for detaching roll math base positions.
         """
-        currentBlock = self.gameModel.block
+        self.updateClassicHUD()
+        currentBlock = self.gameModel.block if block is None else block
+        self.blockMesh.rotation = (0, 0, 0)
+        split = currentBlock.orientation == Orientation.SPLIT
+        self.blockMesh.enabled = not split
+        for index, mesh in enumerate(getattr(self, "cubeMeshes", [])):
+            mesh.rotation = (0, 0, 0)
+            mesh.enabled = split
+            if split:
+                r, c = currentBlock.cubes[index]
+                mesh.position = (c, 0, -r)
+                mesh.scale = (0.9, 0.9, 0.9)
+                mesh.color = color.yellow if index == currentBlock.active else color.azure
+        if split:
+            return
         r, c = currentBlock.r, currentBlock.c
         dr, dc = currentBlock.dr, currentBlock.dc
         targetScale = (0, 0, 0)
@@ -250,7 +317,7 @@ class BloxorzView:
 
         if currentBlock.orientation == Orientation.STANDING:
             # Standing vertically: 1x2x1 scale, centered directly over tile (c, r)
-            targetScale = (0.9, 1.8, 0.9)
+            targetScale = (0.9, 1.9, 0.9)
             targetPos = (c, 0, -r)
 
         elif currentBlock.orientation == Orientation.LYING:
@@ -273,6 +340,8 @@ class BloxorzView:
     def handleUrsinaInput(self, key: str):
         """Pass key to InputHandler, then update 3D mesh if state changed."""
 
+        if not self.gameStarted:
+            return
         uti = self.inputHandler.processKeyUtility(key)
         if uti is not None:
             match uti:
@@ -290,45 +359,213 @@ class BloxorzView:
 
         if dir is None:
             return
+        if dir == Direction.SWITCH and self.gameModel.block.orientation != Orientation.SPLIT:
+            return
 
-        self.gameModel.executeMove(dir)
+        self.beginMove(dir)
 
-        # Refresh board graphics
-        # Important for bridge/switch changes
+    def beginMove(self, action):
+        """Compute once, roll the old mesh, then present landing effects."""
+        if self.isAnimating or self.gameModel.hasWon or getattr(self, "_presentingMove", False):
+            return False
+        self.isAnimating = True
+        source = self.gameModel.block.copy()
+        before = State(self.gameModel.board, self.gameModel.block).copy() if hasattr(self, 'sound') else None
+        valid = self.gameModel.executeMove(action)
+        if not valid and not self.gameModel.isGameOver:
+            self.isAnimating = self.isSolving = False
+            self.solverMessage.text = "Replay/input error: invalid move"
+            return False
+        self.moveCount = getattr(self,"moveCount",0)+1
+        self._stepSounds = []
+        if before is not None:
+            self._stepSounds = sound_events(before, State(self.gameModel.board, self.gameModel.block), action,
+                                           won=self.gameModel.hasWon, lost=self.gameModel.isGameOver)
+        self._presentingMove = True
+        if action == Direction.SWITCH:
+            self.finishStep(action)
+        else:
+            mesh = (self.cubeMeshes[source.active] if source.orientation == Orientation.SPLIT
+                    else self.blockMesh)
+            self._roll = RollingAnimation(mesh, source, action, getattr(self, 'rollDuration', .22))
+            self._rollAction = action
+        return True
+
+    def schedule(self, callback, delay):
+        generation = getattr(self, "_animationGeneration", 0)
+        holder = [None]
+        def guarded():
+            if generation != getattr(self, "_animationGeneration", 0):
+                return
+            call = holder[0]
+            if call is not None and call in self._pendingCalls:
+                self._pendingCalls.remove(call)
+            callback()
+        if not hasattr(self, "_pendingCalls"):
+            self._pendingCalls = []
+        call = invoke(guarded, delay=delay)
+        holder[0] = call
+        if call is not None:
+            self._pendingCalls.append(call)
+        return call
+
+    def visualSnapshot(self):
+        meshes = ([self.blockMesh] if hasattr(self, "blockMesh") else []) + getattr(self, "cubeMeshes", [])
+        return [(m, tuple(m.position), tuple(m.scale)) for m in meshes if m.enabled]
+
+    def watchAnimations(self, handles, callback):
+        generation = getattr(self, "_animationGeneration", 0)
+        def complete():
+            if generation == getattr(self, "_animationGeneration", 0):
+                callback()
+        self._movement = AnimationCompletion(handles, complete)
+
+    def updateAnimations(self, delta=None):
+        self.updateClassicHUD()
+        if hasattr(self, '_cameraAspect') and abs(camera.lens.get_aspect_ratio()-self._cameraAspect) > 1e-4:
+            self.setupCamera()
+        roll = getattr(self, '_roll', None)
+        if roll is not None:
+            elapsed = getattr(time, 'dt', 0.0) if delta is None else delta
+            if roll.advance(elapsed):
+                self._roll = None
+                self.finishStep(self._rollAction)
+            return  # Landing cannot also consume the replay/fall/countdown delay.
+        blackout = getattr(self, '_blackoutRemaining', None)
+        if blackout is not None:
+            elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
+            self._blackoutRemaining = max(0.0, blackout - elapsed)
+            if self._blackoutRemaining <= 1e-9:
+                self._blackoutRemaining = None
+                self.loadNextLevel()
+            return
+        remaining = getattr(self, '_fatalRemaining', None)
+        if remaining is not None:
+            elapsed = max(0.0, getattr(time, 'dt', 0.0) if delta is None else delta)
+            self._fatalRemaining = max(0.0, remaining - elapsed)
+            if self._fatalRemaining > 1e-9:
+                self.setFatalMessage(f'{self._fatalTitle}\nLoss in {ceil(self._fatalRemaining)} s')
+            else:
+                self._fatalRemaining = None
+                self.setFatalMessage('YOU LOSE\nRestarting...')
+                self.schedule(self.restartLevel, 1.0)
+            return
+        movement = getattr(self, "_movement", None)
+        if movement is not None:
+            movement.poll()  # Fall and win effects still use Ursina sequences.
+        if getattr(self, "_replayReady", False) and not self.isAnimating:
+            elapsed = getattr(time, 'dt', 0.0) if delta is None else delta
+            self._replayRemaining = max(0.0, getattr(self, "_replayRemaining", 0.0) - elapsed)
+            if self._replayRemaining > 1e-9:
+                return
+            self._replayReady = False
+            self.playSolution()  # At most one action here per frame; no recursion.
+
+    def queueReplay(self):
+        if self.isSolving:
+            self._replayReady = True
+
+    def finishStep(self, direction=None):
+        if not getattr(self, "_presentingMove", False) or getattr(self, '_roll', None) is not None:
+            return  # Duplicate/stale completion cannot repeat win/fall handling.
+        self._presentingMove = False
+        self.updateBlockMesh()
         self.destroyTileEntities()
         self.renderBoard()
-
-        # Update block position
-        self.updateBlockMesh()
-
-        if self.gameModel.isGameOver or self.gameModel.hasWon:
-            print("Updating mesh")
-
-            if self.gameModel.hasWon:
-                print("Stage Complete!")
+        if getattr(self, '_stepSounds', None):
+            self.sound.play(self._stepSounds)
+        self._stepSounds = []
+        if self.gameModel.isGameOver:
+            self.isSolving = self._replayReady = False
+            if self.gameModel.board.fatalSwitch is not None:
                 self.isAnimating = True
-                invoke(self.loadNextLevel, delay=2)
-                return
+                self._fatalRemaining = 5.0
+                self._fatalTitle = ('Split trap!' if self.gameModel.board.fatalSwitch in
+                                    self.gameModel.board.fatalSplitSwitches else 'Permanent CLOSE!')
+                self.setFatalMessage(f'{self._fatalTitle}\nLoss in 5 s')
+            else:
+                self.animateFall(direction)
+        elif self.gameModel.hasWon:
+            self.startWinTransition()
+        else:
+            self.isAnimating = False
+            if self.isSolving:
+                self._replayRemaining = self.replayInterval
+                self.queueReplay()
 
-            elif self.gameModel.isGameOver:
-                print("Game Over - Block fell into void!")
-                self.isAnimating = True
-                self.animateFall(dir)
+    def setFatalMessage(self, message):
+        self._fatalNotice = True
+        self.solverMessage.text = message.replace('\n', ' ')
+        overlay = getattr(self, 'fatalMessage', None)
+        if overlay is not None:
+            overlay.text, overlay.enabled = message, True
+
+    def startWinTransition(self):
+        if not self.gameModel.hasWon or getattr(self, '_winPhase', None) is not None:
+            return
+        self._winPhase = 'fall'
+        self.isAnimating = True
+        self.isSolving = self._replayReady = False
+        handle = self.blockMesh.animate_y(-3.5, duration=0.6, curve=curve.in_cubic)
+        self.watchAnimations([handle], self.finishWinFall)
+
+    def finishWinFall(self):
+        if getattr(self, '_winPhase', None) != 'fall':
+            return
+        movement = getattr(self, '_movement', None)
+        if movement is not None and not movement.completed:
+            return
+        self._movement = None
+        self.blockMesh.enabled = False
+        self._winPhase = 'collapse'
+        self._winTilePoses = [(tile, tuple(tile.position), tuple(tile.scale), tile.enabled)
+                             for tile in getattr(self, 'tileEntities', [])]
+        visible = [pose for pose in self._winTilePoses if pose[3]]
+        if not visible:
+            self.finishBoardCollapse()
+            return
+        block = self.gameModel.block
+        distances = [abs(p[0]-block.c) + abs(p[2]+block.r) for _, p, _, _ in visible]
+        furthest = max(max(distances), 1.0)
+        handles = []
+        for (tile, position, scale, _), distance in zip(visible, distances):
+            delay = 0.32 * distance / furthest
+            handles.append(tile.animate_y(position[1]-6, duration=0.28, delay=delay,
+                                          resolution=10, curve=curve.in_quad))
+            handles.append(tile.animate_scale(tuple(v*0.05 for v in scale), duration=0.16,
+                                               delay=delay+0.1, resolution=6, curve=curve.in_quad))
+        self.watchAnimations(handles, self.finishBoardCollapse)
+
+    def finishBoardCollapse(self):
+        if getattr(self, '_winPhase', None) != 'collapse':
+            return
+        movement = getattr(self, '_movement', None)
+        if movement is not None and not movement.completed:
+            return
+        self._movement = None
+        for tile, _, _, _ in self._winTilePoses:
+            tile.enabled = False
+        self._winPhase = 'blackout'
+        self._blackoutRemaining = 1.0
+        self.winBlackout.enabled = True
 
     def run(self):
         """Starts the main Ursina 3D render loop."""
 
         # Keep Ursina's dispatcher intact: it normalizes keys and routes events
         # to menus, mouse handling, and entities on both press and release.
-        self.inputEntity = Entity(input=self.handleUrsinaInput)
+        self.inputEntity = Entity(input=self.handleUrsinaInput, update=self.updateAnimations)
         self.app.run()
 
     def solve(self, algorithm):
         """Search an isolated snapshot and replay on the matching live state."""
+        if self.isAnimating:
+            return
         self.isSolving = True
         self.problem = Problem(State(self.gameModel.board, self.gameModel.block).copy())
         try:
-            result = run_search(self.problem, algorithm, SearchLimits())
+            result = run_search(self.problem, algorithm, SearchLimits(), heuristic=None)
+            validate_solution(self.problem, result.search)
         except NotImplementedError as exc:
             self.solverMessage.text = str(exc)
             print(exc)
@@ -337,51 +574,85 @@ class BloxorzView:
         except Exception as exc:
             self.solverMessage.text = f"Solver error: {exc}"
             self.isSolving = False
-            raise
-        self.solverMessage.text = f"{algorithm}: {result.search.status}"
+            print(f"Solver error: {exc}")
+            return
+        self.solverMessage.text = (f"{algorithm}: {result.search.status}; moves={len(result.search.actions)} "
+                                   f"cost={result.search.total_cost}\n"
+                                   f"{result.search_time_seconds:.3f}s; {result.peak_memory_bytes} bytes; "
+                                   f"expanded={result.search.expanded_nodes}")
         print(result)
         if result.search.status != "solved":
             self.isSolving = False
             return
         self.autoSolution = list(result.search.actions)
         self.autoIndex = 0
-        self._replayCall = invoke(self.playSolution, delay=0.5)
+        self._replayCall = self.schedule(self.queueReplay, 0.5)
 
     def cancelReplay(self):
+        roll = getattr(self, '_roll', None)
+        if roll is not None:
+            roll.cancel()
+        self._roll = None
+        self._stepSounds = []
+        if hasattr(self, 'sound'):
+            self.sound.stop()
+        was_winning = getattr(self, '_winPhase', None) is not None
+        self._winPhase = self._blackoutRemaining = None
+        blackout = getattr(self, 'winBlackout', None)
+        if blackout is not None:
+            blackout.enabled = False
+        if getattr(self, '_fatalNotice', False):
+            self.solverMessage.text = ''
+        self._fatalNotice = False
+        self._fatalRemaining = None
+        overlay = getattr(self, 'fatalMessage', None)
+        if overlay is not None:
+            overlay.enabled = False
+        self._animationGeneration = getattr(self, "_animationGeneration", 0) + 1
+        movement = getattr(self, "_movement", None)
+        if movement is not None:
+            movement.cancel()
+        self._movement = None
+        for tile, position, scale, enabled in getattr(self, '_winTilePoses', []):
+            for animation in list(tile.animations):
+                animation.kill()
+            tile.position, tile.scale, tile.enabled = position, scale, enabled
+        self._winTilePoses = []
+        self._presentingMove = self._replayReady = False
+        self._replayRemaining = 0.0
+        calls = list(getattr(self, "_pendingCalls", []))
         if getattr(self, "_replayCall", None):
-            self._replayCall.kill()
-            self._replayCall = None
+            calls.append(self._replayCall)
+        for call in calls:
+            if call:
+                call.kill()
+        self._pendingCalls = []
+        self._replayCall = None
+        for mesh in ([self.blockMesh] if hasattr(self, "blockMesh") else []) + getattr(self, "cubeMeshes", []):
+            for animation in list(mesh.animations):
+                animation.kill()
+            mesh.rotation = (0, 0, 0)
         self.autoSolution = []
         self.autoIndex = 0
-        self.isSolving = False
+        self.isSolving = self.isAnimating = False
+        if was_winning:
+            self.updateBlockMesh()
 
     def playSolution(self):
-        if not self.isSolving:
+        if not self.isSolving or self.isAnimating:
             return
 
         if self.autoIndex >= len(self.autoSolution):
             self.isSolving = False
             print("Finished")
             if (self.gameModel.hasWon): 
-                self.loadNextLevel()
+                self.startWinTransition()
             return
 
         action = self.autoSolution[self.autoIndex]
 
-        if not self.gameModel.executeMove(action):
-            self.solverMessage.text = "Replay error: invalid move"
-            self.isSolving = False
-            return
-
-        self.destroyTileEntities()
-
-        self.renderBoard()
-
-        self.updateBlockMesh()
-
-        self.autoIndex += 1
-
-        self._replayCall = invoke(self.playSolution, delay=0.4)
+        if self.beginMove(action):
+            self.autoIndex += 1
 
     def loadNextLevel(self):
         self.cancelReplay()
@@ -391,10 +662,18 @@ class BloxorzView:
 
         if result is None:
             print("Finished all levels")
+            self.solverMessage.text = 'All levels completed!'
             self.isAnimating = False
             return
 
+        self.changeLevel(result)
+
+    def changeLevel(self, result):
+        self.cancelReplay()
+        self.pauseMenu.disable()
+        self.solverMenu.hide()
         board, block = result
+        self.moveCount = 0
 
         # Replace current level
         self.gameModel.board = board

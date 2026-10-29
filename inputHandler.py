@@ -17,6 +17,8 @@ class InputHandler:
             'arrow_right': Direction.RIGHT,
             'right arrow': Direction.RIGHT,
             'd': Direction.RIGHT,
+            'space': Direction.SWITCH,
+            ' ': Direction.SWITCH,
             
             'arrow_up': Direction.UP,
             'up arrow': Direction.UP,

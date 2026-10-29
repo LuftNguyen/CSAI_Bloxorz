@@ -1,0 +1,56 @@
+{
+  "schema_version": 2,
+  "name": "Demo: initially closed shared bridge",
+  "rows": 4,
+  "cols": 10,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
+  "grid": [
+    "XXXXXXXXXX",
+    "XSw....G.X",
+    "X.W.B....X",
+    "X..XXXXXXX"
+  ],
+  "bridges": [
+    {
+      "id": "crossing",
+      "initial_open": false,
+      "tiles": [
+        [
+          2,
+          4
+        ]
+      ]
+    }
+  ],
+  "switches": [
+    {
+      "position": [
+        1,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        2,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "crossing",
+          "mode": "CLOSE"
+        }
+      ]
+    }
+  ],
+  "level_id": 13,
+  "purpose": "demo, not benchmark"
+}

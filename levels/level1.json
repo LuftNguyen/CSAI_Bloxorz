@@ -1,15 +1,28 @@
 {
+  "schema_version": 2,
   "level_id": 1,
-  "name": "Stage 1",
-  "rows": 6,
-  "cols": 10,
-  "start": { "r": 1, "c": 1 },
+  "name": "1: Courtyard",
+  "rows": 9,
+  "cols": 11,
+  "start": {
+    "r": 1,
+    "c": 1
+  },
   "grid": [
-    "....XXXXXX",
-    ".S..GXXXXX",
-    "....XXXXXX",
-    "...WWXXXXX",
-    "...FFXXXXX",
-    "...wwXXXXX"
-  ]
+    "XXXXXXXXXXX",
+    "XS..X.....X",
+    "X...X.....X",
+    "X...X.....X",
+    "X...X.....X",
+    "X......X..X",
+    "X......X..X",
+    "X........GX",
+    "XXXXXXXXXXX"
+  ],
+  "bridges": [],
+  "switches": [],
+  "splits": [],
+  "design": {
+    "traps": []
+  }
 }

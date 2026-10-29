@@ -1,35 +1,178 @@
 {
-  "level_id":7,
-  "name":"Stage 7: First Bridge",
-  "rows":10,
-  "cols":12,
-
-  "start":{
-    "r":1,
-    "c":1
+  "schema_version": 2,
+  "level_id": 7,
+  "name": "7: Three islands",
+  "rows": 11,
+  "cols": 23,
+  "start": {
+    "r": 1,
+    "c": 1
   },
-
-  "bridges":[
+  "grid": [
+    "XXXXXXXXXXXXXXXXXXXXXXX",
+    "XS..W.XXXXXXXXXXX....GX",
+    "X..X..XXXXXXXXXXX.....X",
+    "X.....XXXXXXXXXXX..X..X",
+    "X.w...BBB....WXXX.....X",
+    "X.w...XXX..X..BBB.....X",
+    "XXXXXXXXX.w...XXX.....X",
+    "XXXXXXXXX....WXXXXXXXXX",
+    "XXXXXXXXX...W.XXXXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXXXXXXXXX"
+  ],
+  "bridges": [
     {
-      "switch":[7,2],
-      "tiles":[
-        [4,5],
-        [4,6],
-        [4,7]
+      "id": "first",
+      "initial_open": false,
+      "tiles": [
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          8
+        ]
+      ]
+    },
+    {
+      "id": "second",
+      "initial_open": false,
+      "tiles": [
+        [
+          5,
+          14
+        ],
+        [
+          5,
+          15
+        ],
+        [
+          5,
+          16
+        ]
       ]
     }
   ],
-
-  "grid":[
-    "XXXXXXXXXXXX",
-    "XS........XX",
-    "X.XXXXXX..XX",
-    "X......X..XX",
-    "XXX..BBB.GXX",
-    "X......X..XX",
-    "X.XXXXXX..XX",
-    "X.w.......XX",
-    "X.........XX",
-    "XXXXXXXXXXXX"
-  ]
+  "switches": [
+    {
+      "position": [
+        5,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "first",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        8,
+        12
+      ],
+      "effects": [
+        {
+          "bridge": "second",
+          "mode": "TOGGLE"
+        }
+      ]
+    },
+    {
+      "position": [
+        1,
+        4
+      ],
+      "effects": [
+        {
+          "bridge": "first",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        6,
+        10
+      ],
+      "effects": [
+        {
+          "bridge": "second",
+          "mode": "CLOSE"
+        }
+      ]
+    },
+    {
+      "position": [
+        4,
+        13
+      ],
+      "effects": [
+        {
+          "bridge": "second",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        4,
+        2
+      ],
+      "effects": [
+        {
+          "bridge": "first",
+          "mode": "OPEN"
+        }
+      ]
+    },
+    {
+      "position": [
+        7,
+        13
+      ],
+      "effects": [
+        {
+          "bridge": "second",
+          "mode": "CLOSE"
+        }
+      ],
+      "fatal_close": true
+    }
+  ],
+  "splits": [],
+  "design": {
+    "traps": [
+      {
+        "position": [
+          1,
+          4
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "first"
+      },
+      {
+        "position": [
+          6,
+          10
+        ],
+        "kind": "close_open_bridge",
+        "bridge": "second"
+      },
+      {
+        "position": [
+          7,
+          13
+        ],
+        "kind": "fatal_close",
+        "bridge": "second"
+      }
+    ]
+  }
 }
