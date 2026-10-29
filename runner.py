@@ -26,9 +26,9 @@ _measurement_lock = Lock()
 def run_search(problem, algorithm, limits, heuristic=None) -> RunResult:
     board = getattr(getattr(problem, "initial", None), "board", None)
     if board is not None and getattr(board, "splitTargets", {}) and heuristic is not None:
-        from search.heuristics import zero
-        if heuristic is not zero:
-            raise ValueError("Split/teleport heuristic is unverified; use None or search.heuristics.zero")
+        from search.heuristics import HEURISTICS
+        if heuristic not in HEURISTICS.values():
+            raise ValueError("Split/teleport heuristic is unverified; use a registered one from search.heuristics.HEURISTICS")
     if not isinstance(limits, SearchLimits):
         raise TypeError("limits must be SearchLimits")
     if not isfinite(limits.timeout_seconds) or limits.timeout_seconds <= 0:

@@ -111,6 +111,15 @@ def solve(problem, limits, heuristic=None) -> SearchResult:
 
             child = problem.result(state, action)
 
+            if perf_counter() - start_time >= limits.timeout_seconds:
+                return SearchResult(
+                    status="timeout",
+                    actions=(),
+                    total_cost=None,
+                    expanded_nodes=expanded_nodes,
+                    generated_nodes=generated_nodes,
+                )
+            
             if child is None:
                 continue
 
@@ -125,6 +134,11 @@ def solve(problem, limits, heuristic=None) -> SearchResult:
 
             new_g = g + step
 
+            if not isfinite(new_g):
+                raise ValueError(
+                    "Accumulated cost must be finite"
+                )
+            
             if new_g >= best_g.get(child, float("inf")):
                 continue
 
