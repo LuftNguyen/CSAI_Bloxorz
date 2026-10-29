@@ -8,6 +8,7 @@ from search.contracts import SearchResult
 from search.node import Node
 from time import perf_counter
 from collections import deque
+from math import isfinite
 
 def solve(problem, limits, heuristic=None) -> SearchResult:
     """Ignore heuristic; enforce limits with perf_counter, including generation."""
@@ -77,7 +78,16 @@ def solve(problem, limits, heuristic=None) -> SearchResult:
             if next_state not in visited:
                 visited.add(next_state)
                 # Accumulate actual move costs; BFS still orders by move count.
-                path_cost=node.path_cost + problem.step_cost(node.state, action, next_state)
+                step_cost = float(problem.step_cost(node.state, action, next_state))
+
+                if not isfinite(step_cost) or step_cost <= 0:
+                    raise ValueError("Step cost must be positive and finite")
+                
+                path_cost=node.path_cost + step_cost
+
+                if not isfinite(path_cost):
+                    raise ValueError("Accumulated cost must be finite")
+                
                 # Keep the parent and action so the solution can be reconstructed.
                 next_node = Node(state=next_state,
                                  parent=node,
