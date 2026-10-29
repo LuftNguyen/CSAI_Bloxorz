@@ -17,6 +17,7 @@ from runner import run_search
 from gui_search import SearchJob
 from gameModel.problem import Problem
 from gameModel.state import State
+from search.heuristics import relaxed_distance
 
 class BloxorzView:
     def __init__(self, gameModel: GameController, problem):
