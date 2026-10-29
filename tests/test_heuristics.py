@@ -1,6 +1,7 @@
 """Heuristic checks. The exact optimal cost-to-go h* is computed here by brute force
 (full reachable state space + reverse Dijkstra) and is used ONLY as a test oracle;
 it is not a team solver."""
+
 import unittest
 from collections import defaultdict, deque
 from heapq import heappop, heappush
@@ -176,6 +177,33 @@ class LevelTests(unittest.TestCase):
                     H.manhattan_lower_bound(problem, problem.initial),
                 )
 
+class SplitTests(unittest.TestCase):
+    def _level(self, n, unit_cost=True):
+        board, block = loadLevelFromJson(ROOT / "levels" / f"level{n}.json", isDebug=False)
+        return Problem(State(board, block).copy(), unit_cost=unit_cost)
 
+    def test_split_state_returns_zero(self):
+        problem = self._level(8)
+        split = State(problem.initial.board, Block.split([(7, 2), (7, 12)]))
+        self.assertEqual(H.relaxed_distance(problem, split), 0.0)
+        self.assertEqual(H.manhattan_lower_bound(problem, split), 0.0)
+
+    def test_split_switch_is_zero_target(self):
+        problem = self._level(8)
+        board = problem.initial.board
+        for (r, c) in board.splitTargets:
+            state = State(board, Block(r, c))
+            self.assertEqual(H.relaxed_distance(problem, state), 0.0)
+            self.assertEqual(H.manhattan_lower_bound(problem, state), 0.0)
+
+    def test_start_is_not_dead_on_split_levels(self):
+        for n in (8, 9, 10):
+            problem = self._level(n)
+            self.assertLess(H.relaxed_distance(problem, problem.initial), H.DEAD_H)
+
+    def test_roll_graph_ignores_switch_action(self):
+        # _build_table must not call resultingState(SWITCH) on a non-split block.
+        H.precompute(self._level(8))
+        
 if __name__ == "__main__":
     unittest.main()
