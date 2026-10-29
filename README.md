@@ -56,8 +56,11 @@ tách, P để pause, R để restart. Nút SOLVER trên màn hình chơi mở b
 BFS/DFS/UCS/A*; chọn BACK TO GAME hoặc nhấn P để quay lại. Cầu đóng biến mất
 hoàn toàn, chỉ hiện khi công tắc mở cầu. Khối xoay 90° quanh cạnh khi lăn
 (0,22 giây/bước); công tắc và hiệu ứng cập nhật khi tiếp đất. Có New Game/Restart. A* mặc định
-h=0; lời giải phải qua kiểm chứng trước khi phát lại. Tìm kiếm còn đồng bộ nên
-có thể đứng cửa sổ trong khi solve. Đã kiểm tra engine, mock GUI và offscreen;
+h=0; lời giải phải qua kiểm chứng trước khi phát lại. Tìm kiếm chạy nền để giao diện
+vẫn nhận nút bấm. MENU/P và SOLVER tạm dừng chuyển động, kể cả giữa cú lăn;
+BACK TO GAME/P tiếp tục replay. Chọn thuật toán khác hủy lời giải cũ và tìm từ
+trạng thái hiện tại (hoàn tất cú lăn đang dở trước khi tìm). Khi mở panel, tìm kiếm
+nền có thể hoàn tất nhưng replay chỉ chạy khi tiếp tục game. Đã kiểm tra engine, mock GUI và offscreen;
 chưa nghiệm thu GUI tương tác thủ công. Đây chưa phải kết quả benchmark.
 
 ## Tài liệu và phân công

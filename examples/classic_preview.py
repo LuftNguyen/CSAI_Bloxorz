@@ -116,8 +116,10 @@ def main():
         choose(1)
         ui.solverButton.on_click()
         next(e for e in ui.solverMenu.elements if getattr(e, 'text', None) == 'A*').on_click()
-        ui.solverButton.on_click()  # A running replay cannot open another solver.
-        assert not ui.solverMenu.enabled and not ui.isPaused and ui.isSolving
+        ui.solverButton.on_click()
+        assert ui.solverMenu.enabled and ui.isPaused and ui.isSolving
+        ui.solverMenu.cancel_button.on_click()
+        ui._searchJob.future.result(timeout=30)
         for _ in range(600):
             tick()
             if ui.levelManager.currentLevel == 2:
