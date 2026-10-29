@@ -8,6 +8,18 @@ nhật theo frame delta với easing đầu/cuối. `rolling_animation.py` giữ
 kích thước mesh trong cú lăn, tính vị trí theo cung tròn. Kích thước khối đứng
 là 0,9 × 1,9 × 0,9, khớp khối nằm sau khi xoay, tránh co/giãn ở cuối bước.
 
+Cập nhật 27/10/2026: khi chốt pose, `set_block_pose` giữ transform thế giới
+của model có texture và các thanh viền, rồi đổi hệ tọa độ chuyển động về pose
+trên lưới. Vì vậy họa tiết không quay giật về mặt cũ ở cuối mỗi cú lăn hoặc
+khi SWITCH đổi cube. Restart/đổi màn khôi phục transform gốc; split/merge
+khởi tạo các mesh vừa xuất hiện theo tư thế mới. Texture kim loại dùng lọc
+bilinear và mipmap để giảm nhấp nháy hạt nhỏ khi nghiêng; viền được đưa ra
+ngoài mặt khối rõ hơn để tránh hai bề mặt quá sát nhau.
+
+Kiểm tra bản sửa họa tiết: 50 test pass, gồm so transform từng mặt/viền trước
+và sau tiếp đất qua nhiều cú lăn; preview offscreen kiểm tra lại trên mesh
+và texture thật, cùng menu, restart và A* replay.
+
 `beginMove` gọi engine một lần rồi giữ hình ảnh bàn/khối cũ trong lúc lăn.
 Khi hoạt ảnh đến đích, `finishStep` chốt pose, render cầu/công tắc, phát âm
 thanh và xử lý split/merge, thắng hoặc rơi. SWITCH chỉ đổi cube điều khiển,
