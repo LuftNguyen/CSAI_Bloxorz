@@ -5,7 +5,7 @@ from threading import Event
 from gameModel.problem import Problem
 from runner import validate_solution
 from search.contracts import SearchLimits
-
+from search.heuristics import relaxed_distance
 
 _executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='bloxorz-search')
 
@@ -34,7 +34,8 @@ class SearchJob(Problem):
 
     def compute(self, algorithm, run_search):
         self.checkpoint()
-        result = run_search(self, algorithm, SearchLimits(), heuristic=None)
+        heuristic = relaxed_distance if algorithm.strip().lower() in ("astar", "a*") else None
+        result = run_search(self, algorithm, SearchLimits(), heuristic=heuristic)
         validate_solution(self, result.search)
         self.checkpoint()
         return result
