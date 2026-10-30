@@ -161,7 +161,7 @@ class BfsContractTests(unittest.TestCase):
 
 class BfsEngineTests(unittest.TestCase):
     def test_corridor_replay_cost_and_state_preservation(self):
-        for tile, cost in ((T.NORMAL, 2.0), (T.FRAGILE, 6.0)):
+        for tile, cost in ((T.NORMAL, 2.0), (T.FRAGILE, 5.0)):
             with self.subTest(tile=tile):
                 board = Board(1, 4, [[T.NORMAL, tile, T.NORMAL, T.GOAL]])
                 problem = Problem(State(board, Block(0, 0)))

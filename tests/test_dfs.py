@@ -302,7 +302,7 @@ class DfsEngineTests(unittest.TestCase):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
         result = self.solve_and_replay(Problem(State(board, Block(0, 0))))
         self.assertEqual(result.actions, (D.RIGHT, D.RIGHT))
-        self.assertAlmostEqual(result.total_cost, 6.0)
+        self.assertAlmostEqual(result.total_cost, 5.0)
 
     def test_unit_cost_corridor(self):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])

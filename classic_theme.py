@@ -1,8 +1,9 @@
 """Classic presentation only: original textures, stone slabs and aged metal."""
+import sys
 from pathlib import Path
 from copy import deepcopy
 from math import tan, radians
-from ursina import Entity, Mesh, Vec3, Text, Button, Texture, camera, color, scene
+from ursina import Entity, Mesh, Vec3, Vec2, Text, Button, Texture, Shader, camera, color, scene
 from ursina.shaders import lit_with_shadows_shader, unlit_shader
 from gameModel.board import Tile
 

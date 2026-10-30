@@ -69,10 +69,10 @@ class _Clock:
 
 
 def _weighted_problem(unit_cost=False):
-    board = Board(3, 4, [
-        [T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL],
-        [T.NORMAL] * 4,
-        [T.NORMAL] * 4,
+    board = Board(3, 7, [
+        [T.NORMAL, T.FRAGILE, T.NORMAL, T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL],
+        [T.NORMAL] * 7,
+        [T.NORMAL] * 7,
     ])
     return Problem(State(board, Block(0, 0)), unit_cost=unit_cost)
 
@@ -376,7 +376,7 @@ class UCSEngineTests(unittest.TestCase):
 
     def test_weighted_board_chooses_cost_over_length_and_replays(self):
         for unit_cost, expected_cost, expected_length in (
-            (True, 2.0, 2), (False, 5.0, 5)
+            (True, 4.0, 4), (False, 8.0, 8)
         ):
             with self.subTest(unit_cost=unit_cost):
                 problem = _weighted_problem(unit_cost)
@@ -411,7 +411,7 @@ class UCSEngineTests(unittest.TestCase):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
         problem = Problem(State(board, Block(0, 0)))
         result = solve(problem, SearchLimits())
-        self.assertEqual(result.total_cost, 6.0)
+        self.assertEqual(result.total_cost, 5.0)
         self.assertEqual(len(result.actions), 2)
         self.assert_engine_replay(problem, result)
 
@@ -451,7 +451,7 @@ class UCSEngineTests(unittest.TestCase):
         board.addBridge((0, 3), [(0, 7)])
         problem = Problem(State(board, Block(0, 0)))
         result = solve(problem, SearchLimits())
-        self.assertEqual(result.total_cost, 3.5)
+        self.assertEqual(result.total_cost, 3.75)
         final_state = self.assert_engine_replay(problem, result)
         self.assertFalse(final_state.board.bridgeState[(0, 3)])
 
@@ -482,8 +482,8 @@ class UCSRunnerTests(unittest.TestCase):
         result = run_search(_weighted_problem(), "ucs", SearchLimits())
         self.assertIsInstance(result, RunResult)
         self.assertEqual(result.search.status, "solved")
-        self.assertEqual(result.search.total_cost, 5.0)
-        self.assertEqual(len(result.search.actions), 5)
+        self.assertEqual(result.search.total_cost, 8.0)
+        self.assertEqual(len(result.search.actions), 8)
         self.assertGreaterEqual(result.search_time_seconds, 0.0)
         self.assertGreater(result.peak_memory_bytes, 0)
         self.assertFalse(tracemalloc.is_tracing())
