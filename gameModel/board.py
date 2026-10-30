@@ -14,19 +14,13 @@ class Tile(Enum):
 
 #costs for each tile type, used in uniform cost search
 TILE_COST = {
-
     Tile.NORMAL: 1,
-
     Tile.GOAL: 1,
-
-    Tile.SOFT_SWITCH: 0.5,
-
-    Tile.HEAVY_SWITCH: 0.5,
-
+    Tile.SOFT_SWITCH: 0.75,
+    Tile.HEAVY_SWITCH: 0.75,
     Tile.BRIDGE: 1,
-
-    Tile.FRAGILE: 5,
-    Tile.SPLIT_SWITCH: 0.5,
+    Tile.FRAGILE: 4,
+    Tile.SPLIT_SWITCH: 0.75,
 }
 
 def _clone(value):
