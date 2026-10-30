@@ -1,4 +1,5 @@
 """Classic presentation only: original textures, stone slabs and aged metal."""
+import sys
 from pathlib import Path
 from copy import deepcopy
 from math import tan, radians
