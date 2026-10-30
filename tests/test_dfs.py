@@ -298,15 +298,10 @@ class DfsEngineTests(unittest.TestCase):
         board, block = loadLevelFromJson(ROOT / "levels/level1.json", isDebug=False)
         self.solve_and_replay(Problem(State(board, block).copy()), via_runner=True)
 
-    def test_fragile_corridor_uses_shared_cost_function(self):
+    def test_fragile_corridor_uses_unit_cost(self):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
         result = self.solve_and_replay(Problem(State(board, Block(0, 0))))
         self.assertEqual(result.actions, (D.RIGHT, D.RIGHT))
-        self.assertAlmostEqual(result.total_cost, 5.0)
-
-    def test_unit_cost_corridor(self):
-        board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
-        result = self.solve_and_replay(Problem(State(board, Block(0, 0)), unit_cost=True))
         self.assertAlmostEqual(result.total_cost, 2.0)
 
     def test_soft_switch_opens_bridge_for_solution(self):

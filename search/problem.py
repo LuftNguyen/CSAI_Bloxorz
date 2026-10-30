@@ -1,6 +1,6 @@
 from gameModel.state import State
 from gameModel.block import Direction, Orientation
-from gameModel.board import Tile, TILE_COST
+from gameModel.board import Tile
 
 
 class Problem:
@@ -74,35 +74,4 @@ class Problem:
         return nextState
 
     def step_cost(self, state, action, nextState):
-
-        block = nextState.block
-
-        tiles = [
-            nextState.board.getTile(
-                block.r,
-                block.c
-            )
-        ]
-
-        if block.dr == 1:
-
-            tiles.append(
-                nextState.board.getTile(
-                    block.r + 1,
-                    block.c
-                )
-            )
-
-        elif block.dc == 1:
-
-            tiles.append(
-                nextState.board.getTile(
-                    block.r,
-                    block.c + 1
-                )
-            )
-
-        return max(
-            TILE_COST[t]
-            for t in tiles
-        )
+        return 1.0

@@ -97,7 +97,7 @@ class EngineTests(unittest.TestCase):
         for action in (D.RIGHT, D.RIGHT):
             child = problem.result(state, action)
             cost += problem.step_cost(state, action, child)
-            self.assertEqual(Problem(state, unit_cost=True).step_cost(state, action, child), 1)
+            self.assertEqual(problem.step_cost(state, action, child), 1)
             self.assertTrue(game.executeMove(action))
             self.assertEqual(child, State(game.board, game.block))
             state = child
