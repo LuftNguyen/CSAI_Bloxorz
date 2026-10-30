@@ -64,7 +64,7 @@
           "RIGHT",
           "DOWN"
         ],
-        "total_cost": 17.0
+        "total_cost": 16.0
       },
       "activations": []
     },
@@ -100,7 +100,7 @@
           "RIGHT",
           "DOWN"
         ],
-        "total_cost": 34.0
+        "total_cost": 32.0
       },
       "activations": []
     },
@@ -126,7 +126,7 @@
           "RIGHT",
           "DOWN"
         ],
-        "total_cost": 15.5
+        "total_cost": 15.75
       },
       "activations": [
         {
@@ -144,7 +144,7 @@
             "RIGHT",
             "UP"
           ],
-          "total_cost": 6.5,
+          "total_cost": 7.25,
           "outcome": "loss"
         },
         {
@@ -156,7 +156,7 @@
             "DOWN",
             "DOWN"
           ],
-          "total_cost": 1.5,
+          "total_cost": 1.75,
           "outcome": "effect"
         },
         {
@@ -170,7 +170,7 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 3.0,
+          "total_cost": 3.5,
           "outcome": "effect"
         },
         {
@@ -186,7 +186,7 @@
             "LEFT",
             "DOWN"
           ],
-          "total_cost": 5.0,
+          "total_cost": 5.5,
           "outcome": "effect"
         },
         {
@@ -201,7 +201,7 @@
             "DOWN",
             "RIGHT"
           ],
-          "total_cost": 4.0,
+          "total_cost": 4.5,
           "outcome": "effect"
         }
       ]
@@ -232,7 +232,7 @@
           "RIGHT",
           "RIGHT"
         ],
-        "total_cost": 19.5
+        "total_cost": 19.75
       },
       "activations": [
         {
@@ -249,7 +249,7 @@
             "RIGHT",
             "UP"
           ],
-          "total_cost": 6.5,
+          "total_cost": 6.75,
           "outcome": "effect"
         },
         {
@@ -264,7 +264,7 @@
             "UP",
             "UP"
           ],
-          "total_cost": 4.5,
+          "total_cost": 4.75,
           "outcome": "effect"
         },
         {
@@ -280,7 +280,7 @@
             "RIGHT",
             "UP"
           ],
-          "total_cost": 5.5,
+          "total_cost": 5.75,
           "outcome": "loss"
         },
         {
@@ -300,7 +300,7 @@
             "DOWN",
             "RIGHT"
           ],
-          "total_cost": 9.0,
+          "total_cost": 9.5,
           "outcome": "effect"
         },
         {
@@ -320,7 +320,7 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 9.5,
+          "total_cost": 9.75,
           "outcome": "effect"
         }
       ]
@@ -356,7 +356,7 @@
           "UP",
           "RIGHT"
         ],
-        "total_cost": 24.5
+        "total_cost": 24.75
       },
       "activations": [
         {
@@ -372,7 +372,7 @@
             "UP",
             "UP"
           ],
-          "total_cost": 5.5,
+          "total_cost": 5.75,
           "outcome": "effect"
         },
         {
@@ -385,7 +385,7 @@
             "RIGHT",
             "DOWN"
           ],
-          "total_cost": 2.5,
+          "total_cost": 2.75,
           "outcome": "effect"
         },
         {
@@ -405,7 +405,7 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 9.5,
+          "total_cost": 9.75,
           "outcome": "effect"
         },
         {
@@ -423,7 +423,7 @@
             "DOWN",
             "LEFT"
           ],
-          "total_cost": 7.0,
+          "total_cost": 7.5,
           "outcome": "effect"
         },
         {
@@ -446,7 +446,7 @@
             "LEFT",
             "DOWN"
           ],
-          "total_cost": 12.5,
+          "total_cost": 12.75,
           "outcome": "effect"
         },
         {
@@ -468,7 +468,7 @@
             "DOWN",
             "DOWN"
           ],
-          "total_cost": 11.0,
+          "total_cost": 11.5,
           "outcome": "loss"
         },
         {
@@ -492,7 +492,7 @@
             "DOWN",
             "RIGHT"
           ],
-          "total_cost": 13.5,
+          "total_cost": 13.75,
           "outcome": "effect"
         }
       ]
@@ -523,7 +523,7 @@
           "DOWN",
           "LEFT"
         ],
-        "total_cost": 40.0
+        "total_cost": 35.0
       },
       "activations": [
         {
@@ -609,7 +609,7 @@
           "RIGHT",
           "UP"
         ],
-        "total_cost": 18.5
+        "total_cost": 18.75
       },
       "activations": [
         {
@@ -629,7 +629,7 @@
             "UP",
             "RIGHT"
           ],
-          "total_cost": 8.5,
+          "total_cost": 9.25,
           "outcome": "effect"
         },
         {
@@ -647,7 +647,7 @@
             "UP",
             "LEFT"
           ],
-          "total_cost": 7.5,
+          "total_cost": 7.75,
           "outcome": "effect"
         },
         {
@@ -664,7 +664,7 @@
             "UP",
             "LEFT"
           ],
-          "total_cost": 6.5,
+          "total_cost": 6.75,
           "outcome": "effect"
         },
         {
@@ -683,7 +683,7 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 8.5,
+          "total_cost": 8.75,
           "outcome": "effect"
         },
         {
@@ -701,7 +701,7 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 7.5,
+          "total_cost": 7.75,
           "outcome": "loss"
         },
         {
@@ -768,7 +768,7 @@
           "DOWN",
           "LEFT"
         ],
-        "total_cost": 29.0
+        "total_cost": 28.5
       },
       "activations": [
         {
@@ -797,7 +797,7 @@
             "RIGHT",
             "RIGHT"
           ],
-          "total_cost": 8.0,
+          "total_cost": 7.0,
           "outcome": "effect"
         },
         {
@@ -825,7 +825,7 @@
             "UP",
             "RIGHT"
           ],
-          "total_cost": 20.5,
+          "total_cost": 20.25,
           "outcome": "effect"
         },
         {
@@ -851,7 +851,7 @@
             "LEFT",
             "LEFT"
           ],
-          "total_cost": 19.0,
+          "total_cost": 18.5,
           "outcome": "effect"
         },
         {
@@ -871,7 +871,7 @@
             "LEFT",
             "LEFT"
           ],
-          "total_cost": 13.0,
+          "total_cost": 12.5,
           "outcome": "effect"
         },
         {
@@ -887,7 +887,7 @@
             "DOWN",
             "LEFT"
           ],
-          "total_cost": 9.5,
+          "total_cost": 8.75,
           "outcome": "effect"
         },
         {
@@ -915,7 +915,7 @@
             "LEFT",
             "LEFT"
           ],
-          "total_cost": 21.0,
+          "total_cost": 20.5,
           "outcome": "effect"
         },
         {
@@ -932,7 +932,7 @@
             "DOWN",
             "DOWN"
           ],
-          "total_cost": 10.5,
+          "total_cost": 9.75,
           "outcome": "loss"
         },
         {
@@ -951,7 +951,7 @@
             "DOWN",
             "DOWN"
           ],
-          "total_cost": 12.5,
+          "total_cost": 11.75,
           "outcome": "effect"
         }
       ]
