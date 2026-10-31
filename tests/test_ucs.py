@@ -74,7 +74,7 @@ def _weighted_problem(unit_cost=False):
         [T.NORMAL] * 7,
         [T.NORMAL] * 7,
     ])
-    return Problem(State(board, Block(0, 0)), unit_cost=unit_cost)
+    return Problem(State(board, Block(0, 0)))
 
 
 class UCSGraphTests(unittest.TestCase):
@@ -374,21 +374,17 @@ class UCSEngineTests(unittest.TestCase):
             "unsolvable", (), None, 1, 0
         ))
 
-    def test_weighted_board_chooses_cost_over_length_and_replays(self):
-        for unit_cost, expected_cost, expected_length in (
-            (True, 4.0, 4), (False, 8.0, 8)
-        ):
-            with self.subTest(unit_cost=unit_cost):
-                problem = _weighted_problem(unit_cost)
-                before = deepcopy(problem.initial)
-                initial_key = {problem.initial: "unchanged"}
-                result = solve(problem, SearchLimits())
-                self.assertEqual(result.total_cost, expected_cost)
-                self.assertEqual(len(result.actions), expected_length)
-                self.assert_engine_replay(problem, result)
-                self.assertEqual(problem.initial, before)
-                self.assertEqual(problem.initial.board.__dict__, before.board.__dict__)
-                self.assertEqual(initial_key[problem.initial], "unchanged")
+    def test_board_with_fragile_tiles_replays_with_unit_cost(self):
+        problem = _weighted_problem()
+        before = deepcopy(problem.initial)
+        initial_key = {problem.initial: "unchanged"}
+        result = solve(problem, SearchLimits())
+        self.assertEqual(result.total_cost, 4.0)
+        self.assertEqual(len(result.actions), 4)
+        self.assert_engine_replay(problem, result)
+        self.assertEqual(problem.initial, before)
+        self.assertEqual(problem.initial.board.__dict__, before.board.__dict__)
+        self.assertEqual(initial_key[problem.initial], "unchanged")
 
     def test_every_expanded_state_is_preserved(self):
         problem = _weighted_problem()
@@ -407,11 +403,11 @@ class UCSEngineTests(unittest.TestCase):
             self.assertEqual(state.board.__dict__, before.board.__dict__)
             self.assertEqual(hash(state), original_hash)
 
-    def test_fragile_corridor_uses_shared_cost(self):
+    def test_fragile_corridor_uses_unit_cost(self):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
         problem = Problem(State(board, Block(0, 0)))
         result = solve(problem, SearchLimits())
-        self.assertEqual(result.total_cost, 5.0)
+        self.assertEqual(result.total_cost, 2.0)
         self.assertEqual(len(result.actions), 2)
         self.assert_engine_replay(problem, result)
 
@@ -443,7 +439,7 @@ class UCSEngineTests(unittest.TestCase):
         final_state = self.assert_engine_replay(problem, result)
         self.assertTrue(final_state.board.bridgeState[(0, 1)])
 
-    def test_heavy_switch_activates_when_standing_with_fractional_cost(self):
+    def test_heavy_switch_activates_when_standing(self):
         board = Board(1, 8, [[
             T.NORMAL, T.NORMAL, T.NORMAL, T.HEAVY_SWITCH,
             T.NORMAL, T.NORMAL, T.GOAL, T.BRIDGE,
@@ -451,7 +447,7 @@ class UCSEngineTests(unittest.TestCase):
         board.addBridge((0, 3), [(0, 7)])
         problem = Problem(State(board, Block(0, 0)))
         result = solve(problem, SearchLimits())
-        self.assertEqual(result.total_cost, 3.75)
+        self.assertEqual(result.total_cost, 4.0)
         final_state = self.assert_engine_replay(problem, result)
         self.assertFalse(final_state.board.bridgeState[(0, 3)])
 
@@ -482,8 +478,8 @@ class UCSRunnerTests(unittest.TestCase):
         result = run_search(_weighted_problem(), "ucs", SearchLimits())
         self.assertIsInstance(result, RunResult)
         self.assertEqual(result.search.status, "solved")
-        self.assertEqual(result.search.total_cost, 8.0)
-        self.assertEqual(len(result.search.actions), 8)
+        self.assertEqual(result.search.total_cost, 4.0)
+        self.assertEqual(len(result.search.actions), 4)
         self.assertGreaterEqual(result.search_time_seconds, 0.0)
         self.assertGreater(result.peak_memory_bytes, 0)
         self.assertFalse(tracemalloc.is_tracing())
