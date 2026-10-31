@@ -12,7 +12,8 @@ _executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='bloxorz-search
 
 class SearchJob(Problem):
     def __init__(self, problem, algorithm, run_search):
-        super().__init__(problem.initial, unit_cost=problem.unit_cost)
+        super().__init__(problem.initial, unit_cost=problem.unit_cost,
+                 fragile_penalty=problem.fragile_penalty)
         self.cancelled = Event()
         self.future = _executor.submit(self.compute, algorithm, run_search)
 

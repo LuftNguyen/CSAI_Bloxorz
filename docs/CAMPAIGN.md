@@ -61,7 +61,7 @@ split đã có, không đổi engine.
 | 9 | 17×17 | 58 | 5 / 2 | 19 / 18,5 | 1781 |
 | 10 | 13×26 | 70 | 7 / 2 | 26 / 29 | 2465 |
 
-Ô đỡ ban đầu không tính VOID/cầu đóng. Đường đi tối ưu chi phí TILE_COST của
+Ô đỡ ban đầu không tính VOID/cầu đóng. Đường đi tối ưu chi phí 1 + λ·I(fragile) của
 A* h=0, không khẳng định tối ưu số bước. Điều khiển thay thế có thể làm đường
 thắng tốt ngắn hơn dù có nhiều lựa chọn sai hơn; không dùng riêng số bước để
 khẳng định độ khó. BFS/DFS/UCS đã tích hợp; số liệu đo riêng DFS và giới hạn

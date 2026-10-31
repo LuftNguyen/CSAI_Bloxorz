@@ -1,7 +1,7 @@
 ﻿config,algorithm,heuristic,levels_tested,trials,solved_runs,success_rate,status_counts,median_time_s,median_peak_memory_mb,median_expanded_nodes,median_generated_nodes,median_solution_length,median_total_cost,note
-bfs,bfs,none,10,50,50,1.0,"{""solved"": 50}",0.38344905,2.633408,282.0,780.5,19.5,19.0,median of per-level medians; solution metrics exclude unsolved runs
-dfs,dfs,none,10,50,50,1.0,"{""solved"": 50}",0.34246505,2.98226,191.5,609.5,141.5,150.25,median of per-level medians; solution metrics exclude unsolved runs
-ucs,ucs,none,10,50,50,1.0,"{""solved"": 50}",0.47146135,2.66708,281.5,778.0,19.5,19.0,median of per-level medians; solution metrics exclude unsolved runs
-astar_zero,astar,zero,10,50,50,1.0,"{""solved"": 50}",0.47296945,2.731916,281.5,778.0,19.5,19.0,median of per-level medians; solution metrics exclude unsolved runs
-astar_manhattan,astar,manhattan,10,50,50,1.0,"{""solved"": 50}",0.42843485,2.59807,243.0,684.0,19.5,19.0,median of per-level medians; solution metrics exclude unsolved runs
-astar_relaxed,astar,relaxed,10,50,50,1.0,"{""solved"": 50}",0.1214489,0.769504,56.0,156.0,19.5,19.0,median of per-level medians; solution metrics exclude unsolved runs
+bfs,bfs,none,10,50,50,1.0,"{""solved"": 50}",0.11459569,2.398096,282.0,780.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs
+dfs,dfs,none,10,50,50,1.0,"{""solved"": 50}",0.10024716,2.776792,191.5,609.5,141.5,142.125,median of per-level medians; solution metrics exclude unsolved runs
+ucs,ucs,none,10,50,50,1.0,"{""solved"": 50}",0.14126002,2.41716,282.5,781.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs
+astar_zero,astar,zero,10,50,50,1.0,"{""solved"": 50}",0.14387561,2.415408,282.5,781.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs
+astar_manhattan,astar,manhattan,10,50,50,1.0,"{""solved"": 50}",0.0924666,1.833692,170.5,484.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs
+astar_relaxed,astar,relaxed,10,50,50,1.0,"{""solved"": 50}",0.03418019,0.673324,56.5,156.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs

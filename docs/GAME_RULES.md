@@ -69,10 +69,7 @@ tiếp. Reset khôi phục tiles/cầu ban đầu và khối đầy đủ tại 
 
 ## Chi phí và solver
 
-Giữ TILE_COST gốc: normal/goal/bridge=1, soft/heavy=0.5, fragile=5.
-Split switch dùng 0.5 như hai switch còn lại. Với khối đầy đủ, tính max các ô
-đích; với cube di chuyển, tính ô cube đang điều khiển; lượt teleport/ghép tính
-max các ô kết quả. Không đổi công thức heuristic của thành viên.
+Chi phí mỗi bước = 1 + λ·I(fragile); λ = FRAGILE_PENALTY (0,25). Công tắc (soft, heavy, split) không có ưu đãi. Với khối đầy đủ xét các ô đích; với cube di chuyển xét ô cube đang điều khiển; lượt teleport/ghép xét các ô kết quả; SWITCH = 1.
 
 Nhánh hiện tại có A*, mặc định heuristic=None tức h=0. Runner chặn heuristic
 khác zero trên board có splitTargets vì chưa được kiểm chứng với teleport;
