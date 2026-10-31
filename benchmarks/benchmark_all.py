@@ -30,6 +30,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from gameModel.block import Direction
+from gameModel.board import FRAGILE_PENALTY
 from gameModel.problem import Problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
@@ -200,7 +201,8 @@ def main():
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--timeout", type=float, default=60.0)
     parser.add_argument("--max-expanded", type=int, default=1_000_000)
-    parser.add_argument("--cost-mode", choices=("tile", "unit"), default="unit")
+    parser.add_argument("--cost-mode", choices=("tile", "unit"), default="tile")
+    parser.add_argument("--fragile-penalty", type=float, default=FRAGILE_PENALTY)
     parser.add_argument("--levels", type=int, nargs="+", default=list(range(1, 11)))
     parser.add_argument("--configs", nargs="+", choices=tuple(CONFIGS),
                         default=list(CONFIGS))
@@ -211,6 +213,8 @@ def main():
         parser.error("repeats >= 1, max-expanded >= 0, timeout > 0 and finite are required")
     if any(level < 1 or level > 10 for level in args.levels):
         parser.error("--levels must be between 1 and 10")
+    if not isfinite(args.fragile_penalty) or args.fragile_penalty < 0:
+        parser.error("--fragile-penalty must be finite and >= 0")
     levels = sorted(set(args.levels))
     configs = list(dict.fromkeys(args.configs))
     worktree_dirty_before_run = git_dirty()
@@ -243,6 +247,7 @@ def main():
         "source_sha256": {p.relative_to(ROOT).as_posix(): sha256(p.read_bytes()).hexdigest()
                           for p in files},
         "level_sha256": {f"level{lv}.json": level_info[lv]["level_sha256"] for lv in levels},
+        "fragile_penalty": args.fragile_penalty if args.cost_mode == "tile" else None,
     }
     (outdir / "metadata.json").write_text(json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -271,7 +276,9 @@ def main():
             try:
                 board, block = loadLevelFromJson(
                     ROOT / "levels" / f"level{level}.json", isDebug=False)
-                problem = Problem(State(board, block).copy(), unit_cost=(args.cost_mode == "unit"))
+                problem = Problem(State(board, block).copy(),
+                                unit_cost=(args.cost_mode == "unit"),
+                                fragile_penalty=args.fragile_penalty)
                 snapshot = problem.initial.copy()
                 original_hash = hash(problem.initial)
                 heuristic = HEURISTICS[heuristic_name] if heuristic_name else None

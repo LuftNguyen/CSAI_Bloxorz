@@ -13,7 +13,7 @@ def main():
     from ursina import Ursina, camera, window, scene
     import view
     from gameModel.gameController import GameController
-    from gameModel.problem import Problem
+    from gameModel.problem import Problem, make_problem
     from gameModel.state import State
     from levels.levelLoader import loadLevelFromJson
 
@@ -23,7 +23,7 @@ def main():
     initial = State(b,k).copy()
     with patch.object(view, 'Ursina', side_effect=lambda: Ursina(window_type='offscreen',
                        size=(1280,800), development_mode=False)):
-        ui = view.BloxorzView(GameController(b,k),Problem(initial.copy()))
+        ui = view.BloxorzView(GameController(b,k),make_problem(initial.copy()))
     camera.ui_lens.set_film_size(camera._ui_size*.5*window.aspect_ratio,camera._ui_size*.5)
     clock = ClockObject.getGlobalClock()
     clock.setMode(ClockObject.MNonRealTime)
@@ -52,7 +52,7 @@ def main():
         ui.cancelReplay()
         b,k = (loadLevelFromJson(root/f'levels/level{number}.json',False) if campaign else load(number))
         ui.gameModel = GameController(b,k)
-        ui.problem = Problem(State(b,k).copy())
+        ui.problem = make_problem(State(b,k).copy())
         ui.levelManager.currentLevel = number
         ui.moveCount = 0
         ui.isAnimating = ui.isPaused = False

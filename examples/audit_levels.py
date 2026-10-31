@@ -26,8 +26,9 @@ def data_hash(data):
 
 class ActivationProblem(Problem):
     """A data-audit goal: activate a specific switch, not finish the stage."""
-    def __init__(self, initial, target):
-        super().__init__(initial)
+    def __init__(self, initial, target, **kwargs):
+        kwargs.setdefault('unit_cost', UNIT_COST)
+        super().__init__(initial, **kwargs)
         self.target = target
 
     def goal_test(self, state):

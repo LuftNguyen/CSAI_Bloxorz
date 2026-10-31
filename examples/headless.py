@@ -2,7 +2,7 @@
 from pathlib import Path
 from gameModel.block import Direction
 from gameModel.gameController import GameController
-from gameModel.problem import Problem
+from gameModel.problem import Problem, make_problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
 from runner import run_search
@@ -11,7 +11,7 @@ from search.contracts import SearchLimits
 
 def main():
     board, block = loadLevelFromJson(Path(__file__).resolve().parents[1] / "tests/fixtures/legacy/level1.json", isDebug=False)
-    problem = Problem(State(board, block).copy())
+    problem = make_problem(State(board, block).copy())
     print("initial:", problem.initial)
     print("actions:", [a.name for a in problem.actions(problem.initial)])
     for action in problem.actions(problem.initial):
