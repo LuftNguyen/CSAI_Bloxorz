@@ -67,12 +67,14 @@ LEVEL_SUMMARY_FIELDS = [
     "success_rate", "status_counts", "median_time_s", "median_peak_memory_mb",
     "median_expanded_nodes", "median_generated_nodes", "median_solution_length",
     "median_total_cost", "median_precompute_time_s", "median_total_time_s",
+    "median_precompute_peak_memory_mb",
 ]
 OVERALL_FIELDS = [
     "config", "algorithm", "heuristic", "levels_tested", "trials", "solved_runs",
     "success_rate", "status_counts", "median_time_s", "median_peak_memory_mb",
     "median_expanded_nodes", "median_generated_nodes", "median_solution_length",
     "median_total_cost", "note", "median_precompute_time_s", "median_total_time_s",
+    "median_precompute_peak_memory_mb",
 ]
 
 
@@ -161,12 +163,9 @@ def summarize(raw, level_info, configs):
                 "median_generated_nodes": median_from(rows, "generated_nodes"),
                 "median_solution_length": median_from(solved, "solution_length"),
                 "median_total_cost": median_from(solved, "total_cost"),
-                "median_precompute_time_s": statistics.median(
-                    r["precompute_time_s"] for r in rows
-                ),
-                "median_total_time_s": statistics.median(
-                    r["total_time_s"] for r in rows
-                ),
+                "median_precompute_time_s": median_from(rows, "precompute_time_s"),
+                "median_precompute_peak_memory_mb": median_from(rows, "precompute_peak_memory_mb"),
+                "median_total_time_s": median_from(rows, "total_time_s"),
             })
     overall = []
     for config in configs:
@@ -189,6 +188,9 @@ def summarize(raw, level_info, configs):
             "median_solution_length": median_from(per, "median_solution_length"),
             "median_total_cost": median_from(per, "median_total_cost"),
             "note": "median of per-level medians; solution metrics exclude unsolved runs",
+            "median_precompute_time_s": median_from(per, "median_precompute_time_s"),
+            "median_precompute_peak_memory_mb": median_from(per, "median_precompute_peak_memory_mb"),
+            "median_total_time_s": median_from(per, "median_total_time_s"),
         })
     return level_summaries, overall
 
@@ -276,11 +278,13 @@ def main():
                 pre_time, pre_peak = 0.0, 0
                 if algorithm == "astar" and heuristic_name in PRECOMPUTE:
                     tracemalloc.start()
-                    t0 = time.perf_counter()
-                    PRECOMPUTE[heuristic_name](problem)
-                    pre_time = time.perf_counter() - t0
-                    _, pre_peak = tracemalloc.get_traced_memory()
-                    tracemalloc.stop()
+                    try:
+                        t0 = time.perf_counter()
+                        PRECOMPUTE[heuristic_name](problem)
+                        pre_time = time.perf_counter() - t0
+                        _, pre_peak = tracemalloc.get_traced_memory()
+                    finally:
+                        tracemalloc.stop()
                 measured = run_search(problem, algorithm, limits, heuristic=heuristic)
                 result = measured.search
                 validated = False
