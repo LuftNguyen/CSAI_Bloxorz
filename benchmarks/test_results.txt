@@ -1,0 +1,397 @@
+﻿.\.venv\Scripts\python.exe : test_fixture_schema_start_and_goal 
+(test_advanced_portfolio.AdvancedPortfolioTests.test_fixture_schema_start_and_goal) ... ok
+At line:1 char:1
++ .\.venv\Scripts\python.exe -m unittest discover -s tests -v 2>&1 |
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_fixture_sc...nd_goal) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_illegal_special_action_and_fall_preserve_source 
+(test_advanced_portfolio.AdvancedPortfolioTests.test_illegal_special_action_and_fall_preserve_source) ... ok
+test_optional_switch_is_not_mislabeled_required 
+(test_advanced_portfolio.AdvancedPortfolioTests.test_optional_switch_is_not_mislabeled_required) ... ok
+test_reachable_open_bridge_is_insufficient_for_goal 
+(test_advanced_portfolio.AdvancedPortfolioTests.test_reachable_open_bridge_is_insufficient_for_goal) ... ok
+test_required_mechanics_full_solution_and_exhausted_restrictions (test_advanced_portfolio.AdvancedPortfolioTests.
+test_required_mechanics_full_solution_and_exhausted_restrictions) ... ok
+test_cheaper_path (test_astar.AStarTests.test_cheaper_path) ... ok
+test_cycle (test_astar.AStarTests.test_cycle) ... ok
+test_initial_goal (test_astar.AStarTests.test_initial_goal) ... ok
+test_invalid_heuristic (test_astar.AStarTests.test_invalid_heuristic) ... ok
+test_node_limit (test_astar.AStarTests.test_node_limit) ... ok
+test_reopening (test_astar.AStarTests.test_reopening) ... ok
+test_stale_entry_and_unsolvable (test_astar.AStarTests.test_stale_entry_and_unsolvable) ... ok
+test_timeout (test_astar.AStarTests.test_timeout) ... ok
+test_accumulated_cost_overflow_raises 
+(test_astar_review_regressions.AStarRegressionTests.test_accumulated_cost_overflow_raises) ... ok
+test_timeout_after_final_invalid_successor 
+(test_astar_review_regressions.AStarRegressionTests.test_timeout_after_final_invalid_successor) ... ok
+test_accumulated_cost_overflow_raises 
+(test_astar_review_regressions.UCSControlTests.test_accumulated_cost_overflow_raises) ... ok
+test_timeout_after_final_invalid_successor 
+(test_astar_review_regressions.UCSControlTests.test_timeout_after_final_invalid_successor) ... ok
+test_accumulated_cost_overflow_raises (test_bfs.BfsContractTests.test_accumulated_cost_overflow_raises) ... ok
+test_cycles_self_loops_and_diamond_count_duplicates_before_filtering 
+(test_bfs.BfsContractTests.test_cycles_self_loops_and_diamond_count_duplicates_before_filtering) ... ok
+test_dead_end_is_unsolvable (test_bfs.BfsContractTests.test_dead_end_is_unsolvable) ... ok
+test_dequeued_goal_precedes_node_limit (test_bfs.BfsContractTests.test_dequeued_goal_precedes_node_limit) ... ok
+test_equal_length_paths_follow_action_order_and_sum_costs 
+(test_bfs.BfsContractTests.test_equal_length_paths_follow_action_order_and_sum_costs) ... ok
+test_goal_is_checked_on_dequeue_not_generation 
+(test_bfs.BfsContractTests.test_goal_is_checked_on_dequeue_not_generation) ... ok
+test_heuristic_is_ignored (test_bfs.BfsContractTests.test_heuristic_is_ignored) ... ok
+test_initial_goal_precedes_both_limits (test_bfs.BfsContractTests.test_initial_goal_precedes_both_limits) ... ok
+test_invalid_moves_do_not_count_as_generated 
+(test_bfs.BfsContractTests.test_invalid_moves_do_not_count_as_generated) ... ok
+test_invalid_step_costs_raise (test_bfs.BfsContractTests.test_invalid_step_costs_raise) ... ok
+test_node_limit_before_expansion (test_bfs.BfsContractTests.test_node_limit_before_expansion) ... ok
+test_shortest_path_by_moves_even_when_more_expensive 
+(test_bfs.BfsContractTests.test_shortest_path_by_moves_even_when_more_expensive) ... ok
+test_slow_final_transition_goal_and_exhaustion_boundaries 
+(test_bfs.BfsContractTests.test_slow_final_transition_goal_and_exhaustion_boundaries) ... ok
+test_timeout_before_expansion (test_bfs.BfsContractTests.test_timeout_before_expansion) ... ok
+test_timeout_during_successor_generation (test_bfs.BfsContractTests.test_timeout_during_successor_generation) 
+... ok
+test_corridor_replay_cost_and_state_preservation 
+(test_bfs.BfsEngineTests.test_corridor_replay_cost_and_state_preservation) ... ok
+test_restart_mid_roll_restores_original_face_orientation 
+(test_block_surface.BlockSurfaceTests.test_restart_mid_roll_restores_original_face_orientation) ... ok
+test_successive_turns_keep_every_face_and_rim_fixed_at_landing 
+(test_block_surface.BlockSurfaceTests.test_successive_turns_keep_every_face_and_rim_fixed_at_landing) ... ok
+test_switch_keeps_both_cube_faces_and_inactive_cube_in_place 
+(test_block_surface.BlockSurfaceTests.test_switch_keeps_both_cube_faces_and_inactive_cube_in_place) ... ok
+test_declared_traps_have_real_effects_and_split_traps_are_dead_ends 
+(test_campaign.CampaignTests.test_declared_traps_have_real_effects_and_split_traps_are_dead_ends) ... ok
+test_every_advertised_mechanic_is_necessary_and_replays_live 
+(test_campaign.CampaignTests.test_every_advertised_mechanic_is_necessary_and_replays_live) ... ok
+test_exactly_ten_playable_files_and_manager_limit 
+(test_campaign.CampaignTests.test_exactly_ten_playable_files_and_manager_limit) ... ok
+test_similar_stage_pairs_have_different_floor_geometry 
+(test_campaign.CampaignTests.test_similar_stage_pairs_have_different_floor_geometry) ... ok
+test_all_assets_are_non_silent_pcm (test_classic_audio.ClassicAudioTests.test_all_assets_are_non_silent_pcm) ... 
+ok
+test_fragile_break_and_fall (test_classic_audio.ClassicAudioTests.test_fragile_break_and_fall) ... ok
+test_goal_and_trap_cues (test_classic_audio.ClassicAudioTests.test_goal_and_trap_cues) ... ok
+test_materials_and_source_unchanged (test_classic_audio.ClassicAudioTests.test_materials_and_source_unchanged) 
+... ok
+test_mute_stops_sounds_and_blocks_new_playback 
+(test_classic_audio.ClassicAudioTests.test_mute_stops_sounds_and_blocks_new_playback) ... ok
+test_switch_only_changes_selection_sound 
+(test_classic_audio.ClassicAudioTests.test_switch_only_changes_selection_sound) ... ok
+test_accumulated_cost_overflow_raises (test_dfs.DfsContractTests.test_accumulated_cost_overflow_raises) ... ok
+test_backtracks_after_dead_end (test_dfs.DfsContractTests.test_backtracks_after_dead_end) ... ok
+test_cycles_and_shared_child_count_valid_edges_before_filtering 
+(test_dfs.DfsContractTests.test_cycles_and_shared_child_count_valid_edges_before_filtering) ... ok
+test_dead_end_is_unsolvable_and_counts_one_expansion 
+(test_dfs.DfsContractTests.test_dead_end_is_unsolvable_and_counts_one_expansion) ... ok
+test_depth_first_order_and_goal_check_on_pop 
+(test_dfs.DfsContractTests.test_depth_first_order_and_goal_check_on_pop) ... ok
+test_engine_exception_is_not_converted_to_unsolvable 
+(test_dfs.DfsContractTests.test_engine_exception_is_not_converted_to_unsolvable) ... ok
+test_heuristic_is_ignored (test_dfs.DfsContractTests.test_heuristic_is_ignored) ... ok
+test_ignores_invalid_successors_and_sums_nonuniform_costs 
+(test_dfs.DfsContractTests.test_ignores_invalid_successors_and_sums_nonuniform_costs) ... ok
+test_initial_goal_precedes_expired_timeout 
+(test_dfs.DfsContractTests.test_initial_goal_precedes_expired_timeout) ... ok
+test_initial_goal_precedes_zero_node_limit 
+(test_dfs.DfsContractTests.test_initial_goal_precedes_zero_node_limit) ... ok
+test_invalid_step_cost_raises (test_dfs.DfsContractTests.test_invalid_step_cost_raises) ... ok
+test_node_limit_stops_before_next_expansion 
+(test_dfs.DfsContractTests.test_node_limit_stops_before_next_expansion) ... ok
+test_popped_goal_precedes_exhausted_node_budget 
+(test_dfs.DfsContractTests.test_popped_goal_precedes_exhausted_node_budget) ... ok
+test_same_block_with_different_bridge_status_is_not_pruned 
+(test_dfs.DfsContractTests.test_same_block_with_different_bridge_status_is_not_pruned) ... ok
+test_timeout_after_final_invalid_successor 
+(test_dfs.DfsContractTests.test_timeout_after_final_invalid_successor) ... ok
+test_timeout_before_expansion (test_dfs.DfsContractTests.test_timeout_before_expansion) ... ok
+test_timeout_is_checked_between_successor_generations 
+(test_dfs.DfsContractTests.test_timeout_is_checked_between_successor_generations) ... ok
+test_zero_node_limit_prevents_expansion (test_dfs.DfsContractTests.test_zero_node_limit_prevents_expansion) ... 
+ok
+test_fragile_corridor_uses_shared_cost_function 
+(test_dfs.DfsEngineTests.test_fragile_corridor_uses_shared_cost_function) ... ok
+test_fragile_tile_blocks_only_route_to_existing_goal 
+(test_dfs.DfsEngineTests.test_fragile_tile_blocks_only_route_to_existing_goal) ... ok
+test_heavy_switch_opens_bridge_when_standing 
+(test_dfs.DfsEngineTests.test_heavy_switch_opens_bridge_when_standing) ... ok
+test_level_one_via_runner_replays_to_goal (test_dfs.DfsEngineTests.test_level_one_via_runner_replays_to_goal) 
+... ok
+test_soft_switch_opens_bridge_for_solution (test_dfs.DfsEngineTests.test_soft_switch_opens_bridge_for_solution) 
+... ok
+test_unit_cost_corridor (test_dfs.DfsEngineTests.test_unit_cost_corridor) ... ok
+test_equality_hash_include_configuration_and_terminal_marker 
+(test_fatal_close.FatalCloseEngineTests.test_equality_hash_include_configuration_and_terminal_marker) ... ok
+test_fatal_already_closed_and_simultaneous_open_cannot_rescue 
+(test_fatal_close.FatalCloseEngineTests.test_fatal_already_closed_and_simultaneous_open_cannot_rescue) ... ok
+test_loader_validates_optional_flag (test_fatal_close.FatalCloseEngineTests.test_loader_validates_optional_flag) 
+... ok
+test_ordinary_close_and_heavy_activation_are_preserved 
+(test_fatal_close.FatalCloseEngineTests.test_ordinary_close_and_heavy_activation_are_preserved) ... ok
+test_teleport_soft_destination_can_trigger_fatal_close 
+(test_fatal_close.FatalCloseEngineTests.test_teleport_soft_destination_can_trigger_fatal_close) ... ok
+test_terminal_close_is_rejected_by_problem_and_cannot_reopen 
+(test_fatal_close.FatalCloseEngineTests.test_terminal_close_is_rejected_by_problem_and_cannot_reopen) ... ok
+test_five_seconds_then_loss_notice_and_reset_once 
+(test_fatal_close.FatalClosePresentationTests.test_five_seconds_then_loss_notice_and_reset_once) ... ok
+test_restart_and_level_change_cancel_countdown_or_old_notice 
+(test_fatal_close.FatalClosePresentationTests.test_restart_and_level_change_cancel_countdown_or_old_notice) ... 
+ok
+test_all_basic_rolls (test_foundation.EngineTests.test_all_basic_rolls) ... ok
+test_equality_hash_dynamic_bridges_and_orientation 
+(test_foundation.EngineTests.test_equality_hash_dynamic_bridges_and_orientation) ... ok
+test_invalid_moves_and_complete_goal (test_foundation.EngineTests.test_invalid_moves_and_complete_goal) ... ok
+test_keyboard_routes (test_foundation.EngineTests.test_keyboard_routes) ... ok
+test_level_files_and_end (test_foundation.EngineTests.test_level_files_and_end) ... ok
+test_loader_replay_cost_and_reset (test_foundation.EngineTests.test_loader_replay_cost_and_reset) ... ok
+test_nested_copy_and_sibling_independence 
+(test_foundation.EngineTests.test_nested_copy_and_sibling_independence) ... ok
+test_reset_restores_loaded_bridge_configuration 
+(test_foundation.EngineTests.test_reset_restores_loaded_bridge_configuration) ... ok
+test_switch_removing_support_matches_controller 
+(test_foundation.EngineTests.test_switch_removing_support_matches_controller) ... ok
+test_errors_cleanup_and_invalid_limits (test_foundation.RunnerTests.test_errors_cleanup_and_invalid_limits) ... 
+ok
+test_existing_trace_is_preserved_and_nested_run_rejected 
+(test_foundation.RunnerTests.test_existing_trace_is_preserved_and_nested_run_rejected) ... ok
+test_headless_does_not_import_ursina (test_foundation.RunnerTests.test_headless_does_not_import_ursina) ... ok
+test_registry_uses_member_solvers_without_fallback 
+(test_foundation.RunnerTests.test_registry_uses_member_solvers_without_fallback) ... ok
+test_runner_passes_contract_and_measures (test_foundation.RunnerTests.test_runner_passes_contract_and_measures) 
+... ok
+test_dispatcher_preserved_and_entity_receives_press_once 
+(test_gui_input.GuiInputTests.test_dispatcher_preserved_and_entity_receives_press_once) ... ok
+test_p_freezes_half_roll_and_resumes_same_move 
+(test_gui_pause.PauseTests.test_p_freezes_half_roll_and_resumes_same_move) ... ok
+test_replace_half_roll_searches_from_landing_without_old_next_move 
+(test_gui_pause.PauseTests.test_replace_half_roll_searches_from_landing_without_old_next_move) ... ok
+test_slow_search_is_responsive_and_replacement_discards_old_result 
+(test_gui_pause.PauseTests.test_slow_search_is_responsive_and_replacement_discards_old_result) ... ok
+test_solver_and_menu_freeze_replay_delay (test_gui_pause.PauseTests.test_solver_and_menu_freeze_replay_delay) 
+... ok
+test_bridge_disappears_with_shadow_when_closed_and_returns_when_open 
+(test_gui_rules.GuiRulesTests.test_bridge_disappears_with_shadow_when_closed_and_returns_when_open) ... ok
+test_change_level_cancels_old_calls_and_clears_split 
+(test_gui_rules.GuiRulesTests.test_change_level_cancels_old_calls_and_clears_split) ... ok
+test_goal_is_one_recessed_classic_hole_and_void_stays_empty 
+(test_gui_rules.GuiRulesTests.test_goal_is_one_recessed_classic_hole_and_void_stays_empty) ... ok
+test_replay_waits_for_roll_then_full_pause_before_next_action 
+(test_gui_rules.GuiRulesTests.test_replay_waits_for_roll_then_full_pause_before_next_action) ... ok
+test_restart_cancels_calls_and_animations_restores_split 
+(test_gui_rules.GuiRulesTests.test_restart_cancels_calls_and_animations_restores_split) ... ok
+test_snapshot_independent_and_bad_solution_not_replayed 
+(test_gui_rules.GuiRulesTests.test_snapshot_independent_and_bad_solution_not_replayed) ... ok
+test_split_marker_rendered (test_gui_rules.GuiRulesTests.test_split_marker_rendered) ... ok
+test_two_cube_visuals_and_switch_highlight 
+(test_gui_rules.GuiRulesTests.test_two_cube_visuals_and_switch_highlight) ... ok
+test_all_levels_admissible_and_consistent (test_heuristics.LevelTests.test_all_levels_admissible_and_consistent) 
+... ok
+test_relaxed_never_worse_than_manhattan_at_start 
+(test_heuristics.LevelTests.test_relaxed_never_worse_than_manhattan_at_start) ... ok
+test_admissible_on_hand_made_boards (test_heuristics.SmallBoardTests.test_admissible_on_hand_made_boards) ... ok
+test_bridge_cells_are_optimistically_open 
+(test_heuristics.SmallBoardTests.test_bridge_cells_are_optimistically_open) ... ok
+test_fragile_standing_is_respected (test_heuristics.SmallBoardTests.test_fragile_standing_is_respected) ... ok
+test_lying_on_goal_is_not_zero (test_heuristics.SmallBoardTests.test_lying_on_goal_is_not_zero) ... ok
+test_manhattan_is_loose_where_cost_is_high 
+(test_heuristics.SmallBoardTests.test_manhattan_is_loose_where_cost_is_high) ... ok
+test_state_is_not_modified (test_heuristics.SmallBoardTests.test_state_is_not_modified) ... ok
+test_straight_corridor_values (test_heuristics.SmallBoardTests.test_straight_corridor_values) ... ok
+test_unreachable_goal_is_finite_sentinel 
+(test_heuristics.SmallBoardTests.test_unreachable_goal_is_finite_sentinel) ... ok
+test_unsupported_state_falls_back_to_zero 
+(test_heuristics.SmallBoardTests.test_unsupported_state_falls_back_to_zero) ... ok
+test_zero_heuristic (test_heuristics.SmallBoardTests.test_zero_heuristic) ... ok
+test_roll_graph_ignores_switch_action (test_heuristics.SplitTests.test_roll_graph_ignores_switch_action) ... ok
+test_split_state_returns_zero (test_heuristics.SplitTests.test_split_state_returns_zero) ... ok
+test_split_switch_is_zero_target (test_heuristics.SplitTests.test_split_switch_is_zero_target) ... ok
+test_start_is_not_dead_on_split_levels (test_heuristics.SplitTests.test_start_is_not_dead_on_split_levels) ... ok
+test_all_stage_solutions_replay_and_reset 
+(test_level_links.CompletedLevelTests.test_all_stage_solutions_replay_and_reset) ... ok
+test_every_switch_has_reachable_effect_witness 
+(test_level_links.CompletedLevelTests.test_every_switch_has_reachable_effect_witness) ... ok
+test_manifest_matches_all_current_levels 
+(test_level_links.CompletedLevelTests.test_manifest_matches_all_current_levels) ... ok
+test_no_decorative_switch_or_uncontrolled_bridge 
+(test_level_links.CompletedLevelTests.test_no_decorative_switch_or_uncontrolled_bridge) ... ok
+test_all_rolls_land_with_exact_engine_bounds_in_ursina_coordinates (test_rolling_animation.RenderedGeometryTests.
+test_all_rolls_land_with_exact_engine_bounds_in_ursina_coordinates) ... ok
+test_frame_rates_reach_the_same_pose_and_cancel_stops_updates 
+(test_rolling_animation.RollingTests.test_frame_rates_reach_the_same_pose_and_cancel_stops_updates) ... ok
+test_horizontal_side_roll_rotates_and_lifts_without_stretching 
+(test_rolling_animation.RollingTests.test_horizontal_side_roll_rotates_and_lifts_without_stretching) ... ok
+test_all_levels_and_legacy_shared_bridge_fix 
+(test_rules.LoaderAndReplayTests.test_all_levels_and_legacy_shared_bridge_fix) ... ok
+test_initial_closed_and_repeated_reset (test_rules.LoaderAndReplayTests.test_initial_closed_and_repeated_reset) 
+... ok
+test_loader_rejects_invalid_data (test_rules.LoaderAndReplayTests.test_loader_rejects_invalid_data) ... ok
+test_unverified_split_heuristic_guard (test_rules.LoaderAndReplayTests.test_unverified_split_heuristic_guard) 
+... ok
+test_verified_solution_and_rejection (test_rules.LoaderAndReplayTests.test_verified_solution_and_rejection) ... 
+ok
+test_bridge_closes_under_inactive_cube (test_rules.RuleTests.test_bridge_closes_under_inactive_cube) ... ok
+test_cube_cannot_win_or_press_heavy_or_split (test_rules.RuleTests.test_cube_cannot_win_or_press_heavy_or_split) 
+... ok
+test_deepcopy_sibling_keys_and_static_rule_metadata 
+(test_rules.RuleTests.test_deepcopy_sibling_keys_and_static_rule_metadata) ... ok
+test_fragile_break_reset_and_block_hash (test_rules.RuleTests.test_fragile_break_reset_and_block_hash) ... ok
+test_fragile_full_lying_standing_and_cube (test_rules.RuleTests.test_fragile_full_lying_standing_and_cube) ... ok
+test_get_tile_all_boundaries (test_rules.RuleTests.test_get_tile_all_boundaries) ... ok
+test_multiple_bridges_shared_state_and_ordered_effects 
+(test_rules.RuleTests.test_multiple_bridges_shared_state_and_ordered_effects) ... ok
+test_no_reactivation_on_switch_or_continued_occupancy 
+(test_rules.RuleTests.test_no_reactivation_on_switch_or_continued_occupancy) ... ok
+test_rejoin_both_axes_overlap_and_bounds (test_rules.RuleTests.test_rejoin_both_axes_overlap_and_bounds) ... ok
+test_soft_heavy_and_fixed_effect_modes (test_rules.RuleTests.test_soft_heavy_and_fixed_effect_modes) ... ok
+test_split_controller_parity_reset_and_switch_cost 
+(test_rules.RuleTests.test_split_controller_parity_reset_and_switch_cost) ... ok
+test_split_requires_standing (test_rules.RuleTests.test_split_requires_standing) ... ok
+test_split_teleport_and_control_identity (test_rules.RuleTests.test_split_teleport_and_control_identity) ... ok
+test_teleport_cannot_chain_or_press_heavy_and_adjacent_rejoin 
+(test_rules.RuleTests.test_teleport_cannot_chain_or_press_heavy_and_adjacent_rejoin) ... ok
+test_teleport_special_destinations_and_invalid_support 
+(test_rules.RuleTests.test_teleport_special_destinations_and_invalid_support) ... ok
+test_all_member_solvers_replay_all_campaign_stages 
+(test_solver_integration.SolverIntegrationTests.test_all_member_solvers_replay_all_campaign_stages) ... ok
+test_astar_with_heuristics_matches_ucs_cost_on_split_levels 
+(test_solver_integration.SolverIntegrationTests.test_astar_with_heuristics_matches_ucs_cost_on_split_levels) ... 
+ok
+test_runner_accepts_the_member_zero_on_split 
+(test_solver_integration.SolverIntegrationTests.test_runner_accepts_the_member_zero_on_split) ... ok
+test_loader_flag_is_boolean_and_omission_keeps_existing_behavior 
+(test_split_trap.SplitTrapEngineTests.test_loader_flag_is_boolean_and_omission_keeps_existing_behavior) ... ok
+test_teleport_then_loss_solver_rejects_and_controller_resets 
+(test_split_trap.SplitTrapEngineTests.test_teleport_then_loss_solver_rejects_and_controller_resets) ... ok
+test_two_cubes_visible_and_same_five_second_loss_flow 
+(test_split_trap.SplitTrapPresentationTests.test_two_cubes_visible_and_same_five_second_loss_flow) ... ok
+test_every_expanded_state_is_preserved (test_ucs.UCSEngineTests.test_every_expanded_state_is_preserved) ... ok
+test_fragile_corridor_uses_shared_cost (test_ucs.UCSEngineTests.test_fragile_corridor_uses_shared_cost) ... ok
+test_heavy_switch_activates_when_standing_with_fractional_cost 
+(test_ucs.UCSEngineTests.test_heavy_switch_activates_when_standing_with_fractional_cost) ... ok
+test_heavy_switch_does_not_activate_when_lying 
+(test_ucs.UCSEngineTests.test_heavy_switch_does_not_activate_when_lying) ... ok
+test_initial_engine_goal_has_empty_solution 
+(test_ucs.UCSEngineTests.test_initial_engine_goal_has_empty_solution) ... ok
+test_level_one_loaded_solution_replays (test_ucs.UCSEngineTests.test_level_one_loaded_solution_replays) ... ok
+test_simple_corridor_exact_counters (test_ucs.UCSEngineTests.test_simple_corridor_exact_counters) ... ok
+test_soft_switch_bridge_state_prevents_position_only_pruning 
+(test_ucs.UCSEngineTests.test_soft_switch_bridge_state_prevents_position_only_pruning) ... ok
+test_switch_removing_support_is_invalid (test_ucs.UCSEngineTests.test_switch_removing_support_is_invalid) ... ok
+test_unsolvable_single_tile (test_ucs.UCSEngineTests.test_unsolvable_single_tile) ... ok
+test_weighted_board_chooses_cost_over_length_and_replays 
+(test_ucs.UCSEngineTests.test_weighted_board_chooses_cost_over_length_and_replays) ... ok
+test_accumulated_cost_overflow_raises (test_ucs.UCSGraphTests.test_accumulated_cost_overflow_raises) ... ok
+test_cycle_counts_valid_duplicate_without_reexpanding 
+(test_ucs.UCSGraphTests.test_cycle_counts_valid_duplicate_without_reexpanding) ... ok
+test_equal_priorities_and_equal_cost_duplicate 
+(test_ucs.UCSGraphTests.test_equal_priorities_and_equal_cost_duplicate) ... ok
+test_exhausted_graph_at_exact_budget_is_unsolvable 
+(test_ucs.UCSGraphTests.test_exhausted_graph_at_exact_budget_is_unsolvable) ... ok
+test_heuristic_is_ignored (test_ucs.UCSGraphTests.test_heuristic_is_ignored) ... ok
+test_initial_goal_takes_precedence_over_timeout 
+(test_ucs.UCSGraphTests.test_initial_goal_takes_precedence_over_timeout) ... ok
+test_initial_goal_with_zero_budget (test_ucs.UCSGraphTests.test_initial_goal_with_zero_budget) ... ok
+test_invalid_limits_are_rejected_on_direct_calls 
+(test_ucs.UCSGraphTests.test_invalid_limits_are_rejected_on_direct_calls) ... ok
+test_invalid_step_costs_raise_instead_of_unsolvable 
+(test_ucs.UCSGraphTests.test_invalid_step_costs_raise_instead_of_unsolvable) ... ok
+test_invalid_successor_is_neither_counted_nor_costed 
+(test_ucs.UCSGraphTests.test_invalid_successor_is_neither_counted_nor_costed) ... ok
+test_node_limit_does_not_accept_a_discovered_expensive_goal 
+(test_ucs.UCSGraphTests.test_node_limit_does_not_accept_a_discovered_expensive_goal) ... ok
+test_only_stale_entries_remaining_are_not_expanded 
+(test_ucs.UCSGraphTests.test_only_stale_entries_remaining_are_not_expanded) ... ok
+test_popped_goal_takes_precedence_after_slow_final_transition 
+(test_ucs.UCSGraphTests.test_popped_goal_takes_precedence_after_slow_final_transition) ... ok
+test_popped_goal_takes_precedence_over_node_limit 
+(test_ucs.UCSGraphTests.test_popped_goal_takes_precedence_over_node_limit) ... ok
+test_simple_solution_and_goal_not_expanded (test_ucs.UCSGraphTests.test_simple_solution_and_goal_not_expanded) 
+... ok
+test_solver_preserves_existing_external_memory_trace 
+(test_ucs.UCSGraphTests.test_solver_preserves_existing_external_memory_trace) ... ok
+test_timeout_after_final_invalid_successor_is_not_unsolvable 
+(test_ucs.UCSGraphTests.test_timeout_after_final_invalid_successor_is_not_unsolvable) ... ok
+test_timeout_before_first_expansion_precedes_node_limit 
+(test_ucs.UCSGraphTests.test_timeout_before_first_expansion_precedes_node_limit) ... ok
+test_timeout_before_first_successor_counts_started_expansion 
+(test_ucs.UCSGraphTests.test_timeout_before_first_successor_counts_started_expansion) ... ok
+test_timeout_between_generated_successors_preserves_counters 
+(test_ucs.UCSGraphTests.test_timeout_between_generated_successors_preserves_counters) ... ok
+test_unsolvable_dead_end (test_ucs.UCSGraphTests.test_unsolvable_dead_end) ... ok
+test_w1_expensive_goal_discovered_before_cheaper_longer_path 
+(test_ucs.UCSGraphTests.test_w1_expensive_goal_discovered_before_cheaper_longer_path) ... ok
+test_w2_cheaper_parent_replaces_discovered_path_and_skips_stale 
+(test_ucs.UCSGraphTests.test_w2_cheaper_parent_replaces_discovered_path_and_skips_stale) ... ok
+test_zero_node_limit_does_not_expand_initial 
+(test_ucs.UCSGraphTests.test_zero_node_limit_does_not_expand_initial) ... ok
+test_registry_and_runner_call_real_ucs (test_ucs.UCSRunnerTests.test_registry_and_runner_call_real_ucs) ... ok
+test_runner_preserves_all_real_ucs_statuses 
+(test_ucs.UCSRunnerTests.test_runner_preserves_all_real_ucs_statuses) ... ok
+test_runner_propagates_real_ucs_errors_and_cleans_up 
+(test_ucs.UCSRunnerTests.test_runner_propagates_real_ucs_errors_and_cleans_up) ... ok
+test_cancel_never_calls_completion (test_visual_sync.CompletionTests.test_cancel_never_calls_completion) ... ok
+test_waits_for_every_handle_and_final_assignment_once 
+(test_visual_sync.CompletionTests.test_waits_for_every_handle_and_final_assignment_once) ... ok
+test_real_position_and_scale_sequences_outlive_nominal_duration (test_visual_sync.InstalledUrsinaCompletionTests.
+test_real_position_and_scale_sequences_outlive_nominal_duration) ... ok
+test_consecutive_rolling_replay_keeps_switch_visuals_consistent 
+(test_visual_sync.PresentationOrderingTests.test_consecutive_rolling_replay_keeps_switch_visuals_consistent) ... 
+ok
+test_fall_restart_waits_for_all_fall_handles 
+(test_visual_sync.PresentationOrderingTests.test_fall_restart_waits_for_all_fall_handles) ... ok
+test_fragile_and_void_fall_start_from_final_pose_after_board_update 
+(test_visual_sync.PresentationOrderingTests.test_fragile_and_void_fall_start_from_final_pose_after_board_update) 
+... ok
+test_manual_open_and_heavy_close_present_effects_after_landing_once 
+(test_visual_sync.PresentationOrderingTests.test_manual_open_and_heavy_close_present_effects_after_landing_once) 
+... ok
+test_manual_win_falls_then_blackout_before_level_change_once 
+(test_visual_sync.PresentationOrderingTests.test_manual_win_falls_then_blackout_before_level_change_once) ... ok
+test_restart_and_level_change_cancel_a_half_finished_roll 
+(test_visual_sync.PresentationOrderingTests.test_restart_and_level_change_cancel_a_half_finished_roll) ... ok
+test_restart_and_level_change_reject_old_fall_completion_and_timer 
+(test_visual_sync.PresentationOrderingTests.test_restart_and_level_change_reject_old_fall_completion_and_timer) 
+... ok
+test_restart_cancels_queued_replay_without_an_extra_transition 
+(test_visual_sync.PresentationOrderingTests.test_restart_cancels_queued_replay_without_an_extra_transition) ... 
+ok
+test_split_and_merge_wait_for_landing_while_switch_stays_instant 
+(test_visual_sync.PresentationOrderingTests.test_split_and_merge_wait_for_landing_while_switch_stays_instant) 
+... ok
+test_final_level_returns_to_visible_completion_without_loading_eleven 
+(test_win_transition.WinTransitionTests.test_final_level_returns_to_visible_completion_without_loading_eleven) 
+... ok
+test_manual_and_replay_wait_for_final_setter_then_full_black_second 
+(test_win_transition.WinTransitionTests.test_manual_and_replay_wait_for_final_setter_then_full_black_second) ... 
+ok
+test_restart_or_change_during_fall_or_blackout_cancels_old_callbacks 
+(test_win_transition.WinTransitionTests.test_restart_or_change_during_fall_or_blackout_cancels_old_callbacks) 
+... ok
+
+----------------------------------------------------------------------
+Ran 207 tests in 128.699s
+
+OK
+Restarting level...
+Restarting level...
+Restarting level...
+Restarting level...
+Restarting level...
+All levels completed!
+Algorithm selected: UCS
+Solving using UCS.........
+Algorithm selected: BFS
+Solving using BFS........
+RunResult(search=SearchResult(status='solved', actions=(<Direction.RIGHT: 4>, <Direction.RIGHT: 4>, <Direction.RIGHT: 4>, <Direction.RIGHT: 4>), total_cost=4.0, expanded_nodes=15, generated_nodes=34), search_time_seconds=0.010509800000363612, peak_memory_bytes=69788)
+Restarting level...
+Restarting level...
+Restarting level...
+Finished
+Restarting level...
+Restarting level...
+Restarting level...
+All levels completed!
+Finished all levels
+Restarting level...
+Restarting level...
+Restarting level...
