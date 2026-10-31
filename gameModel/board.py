@@ -12,16 +12,7 @@ class Tile(Enum):
     BRIDGE = 6
     SPLIT_SWITCH = 7
 
-#costs for each tile type, used in uniform cost search
-TILE_COST = {
-    Tile.NORMAL: 1,
-    Tile.GOAL: 1,
-    Tile.SOFT_SWITCH: 0.75,
-    Tile.HEAVY_SWITCH: 0.75,
-    Tile.BRIDGE: 1,
-    Tile.FRAGILE: 4,
-    Tile.SPLIT_SWITCH: 0.75,
-}
+FRAGILE_PENALTY = 0.25
 
 def _clone(value):
     """Structural copy of nested list/dict/set/tuple; other objects are shared."""

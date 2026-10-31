@@ -4,7 +4,7 @@ from itertools import count
 from weakref import WeakKeyDictionary
 
 from gameModel.block import Block, Direction, Orientation
-from gameModel.board import TILE_COST, Tile
+from gameModel.board import Tile
 
 DEAD_H = 1.0e9  # finite stand-in for "goal unreachable"
 
@@ -51,15 +51,18 @@ def _build_table(problem):
         return Tile.VOID
 
     def landing_cost(block):
-        worst = 0
+        has_fragile = False
         for r, c in _occupied(block):
             tile = tile_at(r, c)
             if tile == Tile.VOID:
                 return None
             if tile == Tile.FRAGILE and block.orientation == Orientation.STANDING:
                 return None
-            worst = max(worst, TILE_COST[tile])
-        return 1.0 if problem.unit_cost else float(worst)
+            if tile == Tile.FRAGILE:
+                has_fragile = True
+        if problem.unit_cost:
+            return 1.0
+        return 1.0 + (problem.fragile_penalty if has_fragile else 0.0)
 
     def key(b):
         return (b.r, b.c, b.dr, b.dc)
@@ -158,7 +161,7 @@ def manhattan_lower_bound(problem, state) -> float:
     goals = _goal_cells(problem)
     if not goals:
         return 0.0
-    per_move = 1.0 if problem.unit_cost else min(TILE_COST.values())
+    per_move = 1.0
     cells = _occupied(block)
     standing = block.orientation == Orientation.STANDING
 

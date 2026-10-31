@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from gameModel.block import Block, Direction as D
-from gameModel.board import Board, Tile as T
+from gameModel.board import Board, Tile as T, FRAGILE_PENALTY
 from gameModel.problem import Problem
 from gameModel.state import State
 from search import bfs
@@ -161,7 +161,7 @@ class BfsContractTests(unittest.TestCase):
 
 class BfsEngineTests(unittest.TestCase):
     def test_corridor_replay_cost_and_state_preservation(self):
-        for tile, cost in ((T.NORMAL, 2.0), (T.FRAGILE, 5.0)):
+        for tile, cost in ((T.NORMAL, 2.0), (T.FRAGILE, 2.0 + FRAGILE_PENALTY)):
             with self.subTest(tile=tile):
                 board = Board(1, 4, [[T.NORMAL, tile, T.NORMAL, T.GOAL]])
                 problem = Problem(State(board, Block(0, 0)))

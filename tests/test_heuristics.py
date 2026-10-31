@@ -10,7 +10,7 @@ from math import isfinite
 from pathlib import Path
 
 from gameModel.block import Block, Direction as D, Orientation as O
-from gameModel.board import Board, Tile as T
+from gameModel.board import Board, Tile as T, FRAGILE_PENALTY
 from gameModel.problem import Problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
@@ -103,7 +103,7 @@ class SmallBoardTests(unittest.TestCase):
     def test_fragile_standing_is_respected(self):
         problem = make_problem([".F.G"], (0, 0))
         # Lying across the fragile cell is fine: RIGHT (lie on 1-2), RIGHT (stand on 3).
-        self.assertEqual(H.relaxed_distance(problem, problem.initial), 5.0)  # fragile 5 + goal 1
+        self.assertEqual(H.relaxed_distance(problem, problem.initial), 2.0 + FRAGILE_PENALTY)  # 1 + λ (lying on fragile) + 1 (goal)
         # Standing on a fragile tile is never legal, so such a block is a dead end.
         standing_on_fragile = State(problem.initial.board, Block(0, 1))
         self.assertEqual(H.relaxed_distance(problem, standing_on_fragile), H.DEAD_H)
