@@ -28,7 +28,7 @@ trích xuất gây mơ hồ; không có thay đổi nội dung hay giao diện c
 | Thành phần | Quyết định |
 | --- | --- |
 | Direction, Block và quy tắc lăn | Dùng lại, giữ tên/giá trị enum; bổ sung orientation vào equality/hash |
-| Board, bộ đọc JSON | Dùng lại; giữ chi phí TILE_COST hiện có |
+| Board, bộ đọc JSON | Dùng lại; thay TILE_COST bằng FRAGILE_PENALTY (λ) |
 | Board.reset | Khôi phục tiles và bản sao initialBridgeState đã lưu của màn; không gán mọi trạng thái cầu bằng True lúc reset |
 | State.copy | Giữ deepcopy; equality/hash có cubes/active, bridgeState, bridgeGroups, switchEffects, splitTargets và kích thước board |
 | Problem | Giữ 5 tên giao diện; kiểm tra khối đầy đủ tại đích; thêm tùy chọn unit_cost=False tương thích lời gọi cũ |

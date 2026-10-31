@@ -11,7 +11,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from gameModel.block import Block, Direction as D
-from gameModel.board import Board, Tile as T
+from gameModel.board import Board, Tile as T, FRAGILE_PENALTY
 from gameModel.gameController import GameController
 from gameModel.problem import Problem
 from gameModel.state import State
@@ -298,10 +298,15 @@ class DfsEngineTests(unittest.TestCase):
         board, block = loadLevelFromJson(ROOT / "levels/level1.json", isDebug=False)
         self.solve_and_replay(Problem(State(board, block).copy()), via_runner=True)
 
-    def test_fragile_corridor_uses_unit_cost(self):
+    def test_fragile_corridor_uses_shared_cost_function(self):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
         result = self.solve_and_replay(Problem(State(board, Block(0, 0))))
         self.assertEqual(result.actions, (D.RIGHT, D.RIGHT))
+        self.assertAlmostEqual(result.total_cost, 2.0 + FRAGILE_PENALTY)
+
+    def test_unit_cost_corridor(self):
+        board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
+        result = self.solve_and_replay(Problem(State(board, Block(0, 0)), unit_cost=True))
         self.assertAlmostEqual(result.total_cost, 2.0)
 
     def test_soft_switch_opens_bridge_for_solution(self):

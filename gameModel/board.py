@@ -12,6 +12,7 @@ class Tile(Enum):
     BRIDGE = 6
     SPLIT_SWITCH = 7
 
+FRAGILE_PENALTY = 0.25
 
 def _clone(value):
     """Structural copy of nested list/dict/set/tuple; other objects are shared."""

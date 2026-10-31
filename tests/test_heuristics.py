@@ -10,7 +10,7 @@ from math import isfinite
 from pathlib import Path
 
 from gameModel.block import Block, Direction as D, Orientation as O
-from gameModel.board import Board, Tile as T
+from gameModel.board import Board, Tile as T, FRAGILE_PENALTY
 from gameModel.problem import Problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
@@ -28,7 +28,7 @@ def make_problem(tiles, start, unit_cost=False, bridges=()):
     board = Board(rows, cols, [[cmap[ch] for ch in row] for row in tiles])
     for switch, cells in bridges:
         board.addBridge(switch, cells)
-    return Problem(State(board, Block(*start)))
+    return Problem(State(board, Block(*start)), unit_cost=unit_cost)
 
 
 def explore(problem):
@@ -103,7 +103,7 @@ class SmallBoardTests(unittest.TestCase):
     def test_fragile_standing_is_respected(self):
         problem = make_problem([".F.G"], (0, 0))
         # Lying across the fragile cell is fine: RIGHT (lie on 1-2), RIGHT (stand on 3).
-        self.assertEqual(H.relaxed_distance(problem, problem.initial), 2.0)  # fragile 2 + goal 0
+        self.assertEqual(H.relaxed_distance(problem, problem.initial), 2.0 + FRAGILE_PENALTY)  # 1 + λ (lying on fragile) + 1 (goal)
         # Standing on a fragile tile is never legal, so such a block is a dead end.
         standing_on_fragile = State(problem.initial.board, Block(0, 1))
         self.assertEqual(H.relaxed_distance(problem, standing_on_fragile), H.DEAD_H)
@@ -137,7 +137,7 @@ class SmallBoardTests(unittest.TestCase):
         H.manhattan_lower_bound(problem, problem.initial)
         self.assertEqual(problem.initial, before)
 
-    def test_relaxed_dominates_manhattan_with_fragile_wall(self):
+    def test_manhattan_is_loose_where_cost_is_high(self):
         # Relaxed distance must dominate (>=) the closed-form bound.
         problem = make_problem(["...F...", "...F..G", "......."], (0, 0))
         s = problem.initial
@@ -150,21 +150,23 @@ class SmallBoardTests(unittest.TestCase):
             (["w...", ".XX.", "..BG"], (0, 0)),
         ]
         for tiles, start in boards:
-            problem = make_problem(tiles, start)
-            for name, h in H.HEURISTICS.items():
-                with self.subTest(board=tiles, h=name):
-                    check_heuristic(self, problem, h, name)
+            for unit in (False, True):
+                problem = make_problem(tiles, start, unit)
+                for name, h in H.HEURISTICS.items():
+                    with self.subTest(board=tiles, unit=unit, h=name):
+                        check_heuristic(self, problem, h, name)
 
 
 class LevelTests(unittest.TestCase):
     def test_all_levels_admissible_and_consistent(self):
         for path in LEVELS:
-            board, block = loadLevelFromJson(path, isDebug=False)
-            problem = Problem(State(board, block).copy())
-            explored = explore(problem) 
-            for name, h in H.HEURISTICS.items():
-                with self.subTest(level=path.stem, heuristic=name):
-                    check_heuristic(self, problem, h, name, explored)
+            for unit in (False, True):
+                board, block = loadLevelFromJson(path, isDebug=False)
+                problem = Problem(State(board, block).copy(), unit_cost=unit)
+                explored = explore(problem) 
+                for name, h in H.HEURISTICS.items():
+                    with self.subTest(level=path.stem, unit_cost=unit, heuristic=name):
+                        check_heuristic(self, problem, h, name, explored)
 
     def test_relaxed_never_worse_than_manhattan_at_start(self):
         for path in LEVELS:
@@ -179,7 +181,7 @@ class LevelTests(unittest.TestCase):
 class SplitTests(unittest.TestCase):
     def _level(self, n, unit_cost=True):
         board, block = loadLevelFromJson(ROOT / "levels" / f"level{n}.json", isDebug=False)
-        return Problem(State(board, block).copy())
+        return Problem(State(board, block).copy(), unit_cost=unit_cost)
 
     def test_split_state_returns_zero(self):
         problem = self._level(8)
