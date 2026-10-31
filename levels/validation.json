@@ -1,5 +1,6 @@
 {
   "format_version": 1,
+  "cost_mode": "tile",
   "method": "existing A* with h=0; correctness audit, not benchmark",
   "levels": [
     {
@@ -27,11 +28,11 @@
       "data_sha256": "6fc9681ef5fa407ceba66ee7017e28ef4d15b0e959850b2013e43ac3db026af5",
       "solution": {
         "actions": [
-          "DOWN",
-          "DOWN",
           "RIGHT",
           "DOWN",
           "RIGHT",
+          "DOWN",
+          "DOWN",
           "RIGHT",
           "RIGHT",
           "DOWN",
@@ -64,7 +65,7 @@
           "RIGHT",
           "DOWN"
         ],
-        "total_cost": 13.0
+        "total_cost": 13.25
       },
       "activations": []
     },
@@ -97,7 +98,7 @@
           "DOWN",
           "RIGHT"
         ],
-        "total_cost": 23.0
+        "total_cost": 24.0
       },
       "activations": []
     },
@@ -520,7 +521,7 @@
           "DOWN",
           "LEFT"
         ],
-        "total_cost": 20.0
+        "total_cost": 21.25
       },
       "activations": [
         {
@@ -765,7 +766,7 @@
           "DOWN",
           "LEFT"
         ],
-        "total_cost": 26.0
+        "total_cost": 26.25
       },
       "activations": [
         {

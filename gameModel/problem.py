@@ -30,3 +30,8 @@ class Problem:
         if Tile.VOID in tiles:
             return float('inf')
         return 1.0 + (self.fragile_penalty if Tile.FRAGILE in tiles else 0.0)
+
+UNIT_COST = False   # False = tile cost (fragile penalty); True = unit cost
+def make_problem(state, **kwargs):
+    kwargs.setdefault("unit_cost", UNIT_COST)
+    return Problem(state, **kwargs)

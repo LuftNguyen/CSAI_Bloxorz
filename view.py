@@ -15,7 +15,7 @@ from levels.levelManager import LevelManager
 
 from runner import run_search
 from gui_search import SearchJob
-from gameModel.problem import Problem
+from gameModel.problem import Problem, make_problem
 from gameModel.state import State
 
 class BloxorzView:
@@ -221,7 +221,7 @@ class BloxorzView:
 
         # 5. Unlock controls for gameplay
         self.unlockControlAll()
-        self.problem = Problem(
+        self.problem = make_problem(
             State(
                 self.gameModel.board,
                 self.gameModel.block
@@ -608,7 +608,7 @@ class BloxorzView:
             return
         self.cancelReplay()
         self.isSolving = True
-        self.problem = Problem(State(self.gameModel.board, self.gameModel.block).copy())
+        self.problem = make_problem(State(self.gameModel.board, self.gameModel.block).copy())
         self._searchAlgorithm = algorithm
         self.solverMessage.text = f"{algorithm}: searching..."
         self._searchJob = SearchJob(self.problem, algorithm, run_search)
@@ -755,7 +755,7 @@ class BloxorzView:
 
         # Unlock controls
         self.unlockControlAll()
-        self.problem = Problem(
+        self.problem = make_problem(
             State(
                 self.gameModel.board,
                 self.gameModel.block

@@ -7,7 +7,7 @@ from examples.audit_levels import ActivationProblem, data_hash, replay_activatio
 from gameModel.block import Direction
 from gameModel.board import Tile
 from gameModel.gameController import GameController
-from gameModel.problem import Problem
+from gameModel.problem import make_problem, UNIT_COST
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
 from runner import validate_solution
@@ -24,7 +24,9 @@ def search_result(record):
 class CompletedLevelTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.records = json.loads((ROOT/'levels/validation.json').read_text(encoding='utf-8'))['levels']
+        payload = json.loads((ROOT/'levels/validation.json').read_text(encoding='utf-8'))
+        cls.records = payload['levels']
+        cls.cost_mode = payload.get('cost_mode')
 
     def test_manifest_matches_all_current_levels(self):
         self.assertEqual([r['level'] for r in self.records], list(range(1, 11)))
@@ -33,7 +35,9 @@ class CompletedLevelTests(unittest.TestCase):
                 data = json.loads((ROOT/f'levels/level{record["level"]}.json').read_text(encoding='utf-8'))
                 self.assertEqual(data['level_id'], record['level'])
                 self.assertEqual(data_hash(data), record['data_sha256'],
-                                 'Level changed: rerun python -m examples.audit_levels --write')
+                                'Level changed: rerun python -m examples.audit_levels --write')
+                self.assertEqual(self.cost_mode, 'unit' if UNIT_COST else 'tile',
+                                'validation.json was generated with another cost mode: rerun audit_levels --write')
 
     def test_no_decorative_switch_or_uncontrolled_bridge(self):
         for number in range(1, 11):
@@ -56,7 +60,7 @@ class CompletedLevelTests(unittest.TestCase):
             with self.subTest(level=record['level']):
                 board, block = loadLevelFromJson(ROOT/f'levels/level{record["level"]}.json', False)
                 initial = State(board, block).copy()
-                p = Problem(initial)
+                p = make_problem(initial)
                 result = search_result(record['solution'])
                 final = validate_solution(p, result)
                 controller = GameController(board, block)
