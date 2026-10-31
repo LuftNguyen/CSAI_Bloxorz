@@ -164,7 +164,7 @@ class BfsEngineTests(unittest.TestCase):
         for tile, cost in ((T.NORMAL, 2.0), (T.FRAGILE, 2.0 + FRAGILE_PENALTY)):
             with self.subTest(tile=tile):
                 board = Board(1, 4, [[T.NORMAL, tile, T.NORMAL, T.GOAL]])
-                problem = Problem(State(board, Block(0, 0)))
+                problem = Problem(State(board, Block(0, 0)), unit_cost=False)
                 before = problem.initial.copy()
                 initial_hash = hash(problem.initial)
                 result = bfs.solve(problem, SearchLimits())

@@ -410,7 +410,10 @@ class UCSEngineTests(unittest.TestCase):
 
     def test_fragile_corridor_uses_shared_cost(self):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
-        problem = Problem(State(board, Block(0, 0)))
+        problem = Problem(
+            State(board, Block(0, 0)),
+            unit_cost=False
+        )
         result = solve(problem, SearchLimits())
         self.assertEqual(result.total_cost, 2.0 + FRAGILE_PENALTY)
         self.assertEqual(len(result.actions), 2)

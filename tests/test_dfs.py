@@ -300,7 +300,9 @@ class DfsEngineTests(unittest.TestCase):
 
     def test_fragile_corridor_uses_shared_cost_function(self):
         board = Board(1, 4, [[T.NORMAL, T.FRAGILE, T.NORMAL, T.GOAL]])
-        result = self.solve_and_replay(Problem(State(board, Block(0, 0))))
+        result = self.solve_and_replay(
+            Problem(State(board, Block(0, 0)), unit_cost=False)
+        )
         self.assertEqual(result.actions, (D.RIGHT, D.RIGHT))
         self.assertAlmostEqual(result.total_cost, 2.0 + FRAGILE_PENALTY)
 
@@ -334,7 +336,10 @@ class DfsEngineTests(unittest.TestCase):
             T.NORMAL, T.NORMAL, T.NORMAL, T.FRAGILE,
             T.NORMAL, T.NORMAL, T.GOAL,
         ]])
-        result = dfs.solve(Problem(State(board, Block(0, 0))), SearchLimits())
+        result = dfs.solve(
+            Problem(State(board, Block(0, 0)), unit_cost=False),
+            SearchLimits()
+        )
         self.assertEqual(result.status, "unsolvable")
         self.assertEqual(result.actions, ())
         self.assertIsNone(result.total_cost)

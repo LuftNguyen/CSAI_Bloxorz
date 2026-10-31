@@ -4,7 +4,7 @@ from gameModel.rules import transition, winning
 
 
 class Problem:
-    def __init__(self, initialState, *, unit_cost=False, fragile_penalty=FRAGILE_PENALTY):
+    def __init__(self, initialState, *, unit_cost=True, fragile_penalty=FRAGILE_PENALTY):
         self.initial = initialState
         self.unit_cost = unit_cost
         self.fragile_penalty = fragile_penalty
