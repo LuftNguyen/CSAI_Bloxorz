@@ -1,7 +1,7 @@
 from gameModel.block import Block
 from gameModel.board import Board
 from gameModel.state import State
-from gameModel.rules import transition, supported, winning, pressed
+from gameModel.rules import transition, winning, pressed
 
 
 class GameController:
@@ -18,9 +18,6 @@ class GameController:
 
     def getOccupiedTiles(self, block):
         return block.occupied()
-
-    def isValidBlockPosition(self, block):
-        return supported(State(self.board, block))
 
     def activateSwitches(self):
         # Legacy explicit helper; executeMove uses the shared entry-based rules.
