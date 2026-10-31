@@ -71,12 +71,11 @@ def main():
         'repeats': args.repeats,
         'runs': [],
     }
-    for unit_cost in (False, True):
-        mode = 'unit' if unit_cost else 'tile'
+    for mode in ('unit',):
         for number, path in enumerate(level_paths, 1):
             for repeat in range(1, args.repeats + 1):
                 board, block = loadLevelFromJson(path, isDebug=False)
-                problem = Problem(State(board, block).copy(), unit_cost=unit_cost)
+                problem = Problem(State(board, block).copy())
                 snapshot = problem.initial.copy()
                 initial_hash = hash(problem.initial)
                 run = run_search(problem, 'dfs', limits)
