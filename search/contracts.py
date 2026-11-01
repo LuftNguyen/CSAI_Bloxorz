@@ -1,4 +1,4 @@
-"""Shared interfaces copied from CONTRACT V1; solver rules are in docs/CONTRACT.md."""
+"""Shared interfaces copied from CONTRACT V1."""
 from dataclasses import dataclass
 from typing import Literal
 

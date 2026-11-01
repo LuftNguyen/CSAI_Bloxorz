@@ -1,6 +1,5 @@
 """Deterministic, frame-independent transitions shared by search and play.
 
-See docs/GAME_RULES.md for entry activation, ordered effects and teleport policy.
 The failed successor is retained for controller fall/break visuals; search discards it.
 """
 from gameModel.block import Block, Direction, Orientation

@@ -1,91 +1,110 @@
-# Đồ án Bloxorz — nền tích hợp thuật toán
+# Bloxorz Solver — CSC14003, Đồ án 1
 
-Nhóm 5 người tự phát triển BFS, DFS/IDS, UCS, A*, heuristic và thực nghiệm.
-BFS/DFS/UCS/A* đã tích hợp từ các nhánh thành viên, không dùng solver cũ thay thế.
-Heuristic `manhattan` và `relaxed` chạy được trên cả màn split; A* với hai heuristic
-này cho chi phí bằng UCS trên màn 8 và 9. GUI vẫn dùng h=0 (`heuristic=None`).
-Chi tiết tại [INTEGRATION.md](docs/INTEGRATION.md).
-Engine hỗ trợ fragile, cầu và
-soft/heavy/split, teleport, SWITCH và ghép; xem trạng thái nghiệm thu thực tế
-trong [REQUIREMENTS_STATUS.md](docs/REQUIREMENTS_STATUS.md).
+Bản cài đặt trò chơi Bloxorz có giao diện đồ họa (Ursina) cùng các bộ giải tìm kiếm
+**BFS, DFS, UCS và A\***, kèm bộ benchmark và kiểm thử tự động.
 
-Nguồn: [24127352/Bloxorz---CS-AI](https://github.com/24127352/Bloxorz---CS-AI),
-commit [5571989db4ba9b4b8017b8c9486e955d551ff269](https://github.com/24127352/Bloxorz---CS-AI/commit/5571989db4ba9b4b8017b8c9486e955d551ff269).
-Giữ lịch sử Git nguồn, remote `upstream`, nhánh tích hợp `main`.
-Repository nhóm Public: [LuftNguyen/CSAI_Bloxorz](https://github.com/LuftNguyen/CSAI_Bloxorz).
-Remote `origin` trỏ tới repository nhóm; `upstream` giữ repository nguồn.
+- Lớp 24_22 — Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM
+- Nhóm: 24120027 Lý Ngọc Châu, 24120046 Nguyễn Hà Minh Hiền, 24120058 Nguyễn Lưu Hương,
+  24120085 Lê Nguyễn Thùy Linh, 24120423 Đỗ Ngọc Tường Quyên
 
-Dùng lại Block/Direction, Board, State, Problem, GameController, bộ đọc màn,
-GUI/menu và cơ chế phát lại; chuỗi chơi có đúng 10 màn: 2 cơ bản, 2 fragile,
-3 cầu/công tắc và 3 split với bằng chứng cơ chế bắt buộc. `search/solver.py`,
-`search/bfs/bfsa.py`, node và `search/problem.py` cũ là **mã tham khảo của
-nguồn**, không phải thuật toán nhóm tự cài. Heuristic cũ chưa được mặc định
-coi là admissible. Nhóm dùng `gameModel.problem.Problem` làm giao diện chung.
+## Tính năng
 
-Bộ 10 màn đã mở rộng thành phòng và đảo nối cầu, 10–26 bước với A* h=0;
-xem [bản đồ](docs/CAMPAIGN_MAPS.svg) và [kết quả kiểm chứng](docs/CAMPAIGN.md).
+- Trò chơi đầy đủ: ô thường, ô trống, ô đích; khối đứng/nằm ngang/nằm dọc; phát hiện nước đi
+  không hợp lệ và điều kiện thắng/thua.
+- Ô nâng cao: ô dễ vỡ, cầu đóng/mở, công tắc mềm, công tắc nặng, công tắc tách
+  (tách thành hai khối lập phương, đổi khối điều khiển bằng `Space`, tự ghép khi kề nhau).
+- Bốn bộ giải dùng chung một luật chơi và một hàm chi phí; lời giải luôn được phát lại
+  trên luật thật để kiểm chứng trước khi hiển thị.
+- Bộ 10 màn chơi dạng JSON trong `levels/`: màn 1–2 cơ bản, 3–4 ô dễ vỡ,
+  5–7 cầu/công tắc, 8–10 tách/ghép khối.
 
-Không tìm thấy LICENSE/COPYING trong cây nguồn tại commit trên; không tự gán
-MIT hay giấy phép khác. README nguồn giữ nguyên tại
-[README.upstream.md](README.upstream.md). Nhóm cần làm rõ quyền tái sử dụng/phát
-hành với chủ nguồn trước khi công bố; các nội dung nguồn khác được giữ lại.
+## Cài đặt và chạy
 
-## Chạy nhanh
+Yêu cầu Python 3.12 trở lên (nhóm đã chạy với 3.13 và 3.14).
 
-Đã kiểm tra Python **3.13.13** trên Windows. Headless/test chỉ dùng thư viện chuẩn:
-
-```powershell
-python -m unittest discover -s tests -v
-python -m examples.headless
-python -m examples.rules_headless
-python -m examples.audit_levels
-```
-
-Ví dụ tải màn 1, thử bốn hướng, phát fixture RIGHT RIGHT tới đích với cost=2.0.
-Đây là chuỗi kiểm tra kết nối, không phải solver được viết thay thành viên.
-
-Chạy game từ thư mục gốc repository:
-
-```powershell
+```bash
 python -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-.venv\Scripts\python.exe main.py
+# macOS/Linux:
+source .venv/bin/activate
+# Windows:
+.venv\Scripts\activate
+
+pip install -r requirements.txt
+python main.py
 ```
 
-Dependency giữ nguyên bản ghim nguồn. WASD/mũi tên để lăn, Space đổi cube khi
-tách, P để pause, R để restart. Nút SOLVER trên màn hình chơi mở bảng chọn
-BFS/DFS/UCS/A*; chọn BACK TO GAME hoặc nhấn P để quay lại. Cầu đóng biến mất
-hoàn toàn, chỉ hiện khi công tắc mở cầu. Khối xoay 90° quanh cạnh khi lăn
-(0,22 giây/bước); công tắc và hiệu ứng cập nhật khi tiếp đất. Có New Game/Restart. A* mặc định
-h=0; lời giải phải qua kiểm chứng trước khi phát lại. Tìm kiếm chạy nền để giao diện
-vẫn nhận nút bấm. MENU/P và SOLVER tạm dừng chuyển động, kể cả giữa cú lăn;
-BACK TO GAME/P tiếp tục replay. Chọn thuật toán khác hủy lời giải cũ và tìm từ
-trạng thái hiện tại (hoàn tất cú lăn đang dở trước khi tìm). Khi mở panel, tìm kiếm
-nền có thể hoàn tất nhưng replay chỉ chạy khi tiếp tục game. Đã kiểm tra engine, mock GUI và offscreen;
-chưa nghiệm thu GUI tương tác thủ công. Đây chưa phải kết quả benchmark.
+### Điều khiển
 
-## Tài liệu và phân công
+| Thao tác | Phím / nút |
+|---|---|
+| Lăn khối | `W A S D` hoặc phím mũi tên |
+| Đổi khối đang điều khiển (khi đã tách) | `Space` |
+| Mở/đóng menu | `P` hoặc nút `MENU` |
+| Chơi lại màn | `R` hoặc nút `RESTART` |
+| Màn mới | nút `NEW GAME` |
+| Giải tự động | nút `SOLVER` rồi chọn BFS / DFS / UCS / A\* |
 
-- **Contract gốc:** [CSAI_Project.pdf](CSAI_Project.pdf).
-- **Bản trích:** [CONTRACT.md](docs/CONTRACT.md).
-- **Hướng dẫn đọc bố cục:** [CONTRACT_LAYOUT.md](docs/CONTRACT_LAYOUT.md).
-- [Đối chiếu nguồn, sửa tối thiểu và TODO](docs/BASELINE.md).
-- [Cài đặt, test, checklist GUI, tạo remote và nhánh](docs/TESTING.md).
-- [Luật và thứ tự tương tác](docs/GAME_RULES.md), [schema màn](docs/LEVEL_SCHEMA.md).
-- [Yêu cầu và bằng chứng](docs/REQUIREMENTS_STATUS.md), [bàn giao luật mới](docs/RULES_HANDOFF.md).
-- [Các liên kết màn đã hoàn thiện và cách thử](docs/LEVEL_COMPLETION.md):
-  tài liệu lịch sử; bộ hiện hành tại [Chuỗi 10 màn](docs/CAMPAIGN.md).
-- Người 1: `search/bfs.py`; người 2: `search/dfs.py`; người 3: `search/ucs.py`;
-  người 4: `search/astar.py`; người 5: `search/heuristics.py`, kiểm chứng A*.
-- Giao diện chung: `search/contracts.py`, `search/registry.py`, `runner.py`.
-  Mọi solver có `solve(problem, limits, heuristic=None) -> SearchResult`.
-  Runner đo toàn bộ solve bằng perf_counter/tracemalloc, trả RunResult;
-  lỗi chương trình/dữ liệu truyền lên dạng exception.
+Khi chọn một solver, chương trình tìm lời giải ở luồng nền (giao diện không bị đứng), kiểm chứng
+lời giải, hiển thị trạng thái, số bước, chi phí, thời gian, bộ nhớ đỉnh và số nút mở rộng,
+rồi phát lại các nước đi. Chọn thuật toán khác sẽ hủy lời giải đang phát và tìm lại từ trạng
+thái hiện tại.
 
-`State` vẫn có thể thay đổi. Sau khi lưu trạng thái vào `set` hoặc dùng làm khóa
-`dict`, không sửa `state.block`, `state.board` hoặc các danh sách/từ điển mà
-equality/hash sử dụng, kể cả dữ liệu lồng bên trong. Sinh trạng thái con trên
-bản sao độc lập bằng `State.copy()` hoặc qua `Problem.result()`.
+## Kiểm thử
 
-Cần chỉ định người duyệt giao diện chung. DFS thường không cần giới hạn độ sâu;
-chỉ quy định thêm nếu chọn DFS giới hạn độ sâu hoặc IDS, giữ giao diện hiện tại.
+```bash
+python -m unittest discover -s tests
+```
+
+Có 208 test. Các test GUI sẽ tự bỏ qua (skip) nếu chưa cài thư viện giao diện.
+
+## Benchmark
+
+Chạy từ thư mục gốc của mã nguồn:
+
+```bash
+python benchmarks/benchmark_all.py --repeats 5 --output-dir benchmark_full
+python benchmarks/plot_benchmark.py benchmark_full
+```
+
+Tùy chọn: `--levels 1 5 8`, `--cost-mode tile|unit`, `--fragile-penalty 0.25`,
+`--timeout 60`, `--max-expanded 1000000`. Kết quả đã dùng trong báo cáo nằm ở
+`benchmarks/results/` (số liệu từng lượt: `runs.csv`, tổng hợp: `level_summary.csv`,
+`overall_summary.csv`) và `benchmarks/report_analysis/`.
+
+## Mô hình tìm kiếm
+
+- **Trạng thái:** vị trí và tư thế khối (kể cả hai khối lập phương khi tách và khối đang điều khiển),
+  địa hình và trạng thái đóng/mở của từng nhóm cầu. Hai trạng thái chỉ khác cấu hình cầu là
+  hai trạng thái khác nhau.
+- **Hành động:** `UP`, `DOWN`, `LEFT`, `RIGHT`, và `SWITCH` khi khối đang tách.
+- **Chi phí:** mỗi hành động tốn 1, cộng thêm λ = 0,25 nếu khối chạm ô dễ vỡ sau hành động đó;
+  `SWITCH` tốn 1. Đặt `UNIT_COST = True` trong `gameModel/problem.py` để dùng chi phí đơn vị.
+- **Heuristic của A\*:** giao diện dùng `relaxed_split_distance` (bài toán nới lỏng: bỏ qua
+  tác động đóng/mở cầu, giữ nguyên hình học khối, ô dễ vỡ, tách/ghép khối, `SWITCH`; tính
+  bảng khoảng cách bằng Dijkstra ngược). Có thêm `zero`, `manhattan`, `relaxed`
+  để so sánh trong benchmark (`search/heuristics.py`).
+- **Trạng thái trùng:** BFS/DFS/UCS/A\* đều lưu tập trạng thái đã gặp (băm toàn bộ khối + bản đồ + cầu).
+
+## Cấu trúc thư mục
+
+```
+main.py              điểm khởi chạy
+view.py, menu.py     giao diện Ursina, menu, phát lại lời giải
+gui_search.py        chạy tìm kiếm ở luồng nền, có thể hủy, kiểm chứng lời giải
+runner.py            đo thời gian/bộ nhớ của solve(), validate_solution()
+gameModel/           Block, Board, State, Problem, GameController, rules (luật chuyển trạng thái)
+levels/              level1.json ... level10.json, bộ đọc và quản lý màn
+search/              bfs.py, dfs.py, ucs.py, astar.py, heuristics.py, registry.py, contracts.py
+benchmarks/          benchmark_all.py, plot_benchmark.py, kết quả và phân tích đã dùng trong báo cáo
+tests/               208 test (luật chơi, solver, heuristic, chi phí, GUI)
+examples/, scripts/  ví dụ chạy không giao diện, script sinh tài nguyên đồ họa/âm thanh
+assets/              hình ảnh và âm thanh của giao diện
+```
+
+## Nguồn gốc mã
+
+Mã nền được phát triển tiếp từ repository
+[24127352/Bloxorz---CS-AI](https://github.com/24127352/Bloxorz---CS-AI)
+(commit `5571989db4ba9b4b8017b8c9486e955d551ff269`); README gốc giữ trong `README.upstream.md`.
+Các thuật toán tìm kiếm, heuristic, bộ chạy/đo/kiểm chứng, luật chuyển trạng thái mở rộng
+(tách/ghép khối, công tắc), benchmark và test do nhóm tự viết. Chi tiết xem mục 3.2 của báo cáo.

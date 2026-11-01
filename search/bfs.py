@@ -1,4 +1,4 @@
-"""Person 1: implement BFS with discovery on enqueue. See docs/CONTRACT.md.
+"""Person 1: implement BFS with discovery on enqueue.
 
 Count valid successors before duplicate filtering; check goal on dequeue before
 limits; compute path cost with step_cost. Never mutate stored states.

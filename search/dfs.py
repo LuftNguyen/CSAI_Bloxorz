@@ -1,6 +1,6 @@
 """Person 2: DFS with cycle prevention; reverse successors when pushing a stack.
 
-See docs/CONTRACT.md for goal/limit order, counters and path cost. Ordinary DFS
+See the report for goal/limit order, counters and path cost. Ordinary DFS
 with repeated-state handling needs no depth limit on a finite state space.
 Only depth-limited DFS or IDS would need further policy. Keep the shared solve
 interface unchanged. No GUI or tracemalloc.
