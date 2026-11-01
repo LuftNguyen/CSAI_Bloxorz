@@ -1,5 +1,6 @@
 {
   "format_version": 1,
+  "cost_mode": "tile",
   "method": "existing A* with h=0; correctness audit, not benchmark",
   "levels": [
     {

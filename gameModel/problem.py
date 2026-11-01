@@ -4,7 +4,7 @@ from gameModel.rules import transition, winning
 
 
 class Problem:
-    def __init__(self, initialState, *, unit_cost=False, fragile_penalty=FRAGILE_PENALTY):
+    def __init__(self, initialState, *, unit_cost=True, fragile_penalty=FRAGILE_PENALTY):
         self.initial = initialState
         self.unit_cost = unit_cost
         self.fragile_penalty = fragile_penalty
@@ -30,3 +30,8 @@ class Problem:
         if Tile.VOID in tiles:
             return float('inf')
         return 1.0 + (self.fragile_penalty if Tile.FRAGILE in tiles else 0.0)
+
+UNIT_COST = False   # False = tile cost (fragile penalty); True = unit cost
+def make_problem(state, **kwargs):
+    kwargs.setdefault("unit_cost", UNIT_COST)
+    return Problem(state, **kwargs)

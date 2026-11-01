@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from gameModel.gameController import GameController
-from gameModel.problem import Problem
+from gameModel.problem import Problem, make_problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
 from runner import run_search, validate_solution
@@ -20,7 +20,7 @@ def main():
     root = Path(__file__).resolve().parents[1]
     for number in args.levels:
         board, block = loadLevelFromJson(root/f'levels/level{number}.json', False)
-        p = Problem(State(board, block).copy())
+        p = make_problem(State(board, block).copy())
         run = run_search(p, 'astar', SearchLimits(timeout_seconds=60, max_expanded_nodes=100000), heuristic=None)
         print(f'level={number} status={run.search.status} moves={len(run.search.actions)} cost={run.search.total_cost}')
         if run.search.status != 'solved':

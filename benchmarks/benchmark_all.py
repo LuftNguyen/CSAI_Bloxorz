@@ -30,13 +30,17 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from gameModel.block import Direction
+from gameModel.board import FRAGILE_PENALTY
 from gameModel.problem import Problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
 from runner import run_search, validate_solution
 from search.contracts import SearchLimits
-from search.heuristics import HEURISTICS
+from search.heuristics import HEURISTICS, precompute, precompute_split
+import time
+import tracemalloc
 
+PRECOMPUTE = {"relaxed": precompute, "relaxed_split": precompute_split}
 ROOT = REPO_ROOT
 CONFIGS = {
     "bfs": ("bfs", None),
@@ -45,11 +49,12 @@ CONFIGS = {
     "astar_zero": ("astar", "zero"),
     "astar_manhattan": ("astar", "manhattan"),
     "astar_relaxed": ("astar", "relaxed"),
+    "astar_relaxed_split": ("astar", "relaxed_split"),
 }
 FIELDS = [
     "level", "group", "config", "algorithm", "heuristic", "trial", "cost_mode",
     "status", "search_time_s", "peak_memory_bytes", "peak_memory_mb",
-    "expanded_nodes", "generated_nodes", "solution_length", "roll_count",
+    "expanded_nodes", "generated_nodes", "solution_length", "roll_count", "precompute_time_s", "precompute_peak_memory_mb", "total_time_s",
     "total_cost", "replay_verified", "initial_state_preserved", "error",
 ]
 LEVEL_FIELDS = [
@@ -62,13 +67,15 @@ LEVEL_SUMMARY_FIELDS = [
     "level", "group", "config", "algorithm", "heuristic", "trials", "solved_runs",
     "success_rate", "status_counts", "median_time_s", "median_peak_memory_mb",
     "median_expanded_nodes", "median_generated_nodes", "median_solution_length",
-    "median_total_cost",
+    "median_total_cost", "median_precompute_time_s", "median_total_time_s",
+    "median_precompute_peak_memory_mb",
 ]
 OVERALL_FIELDS = [
     "config", "algorithm", "heuristic", "levels_tested", "trials", "solved_runs",
     "success_rate", "status_counts", "median_time_s", "median_peak_memory_mb",
     "median_expanded_nodes", "median_generated_nodes", "median_solution_length",
-    "median_total_cost", "note",
+    "median_total_cost", "note", "median_precompute_time_s", "median_total_time_s",
+    "median_precompute_peak_memory_mb",
 ]
 
 
@@ -157,6 +164,9 @@ def summarize(raw, level_info, configs):
                 "median_generated_nodes": median_from(rows, "generated_nodes"),
                 "median_solution_length": median_from(solved, "solution_length"),
                 "median_total_cost": median_from(solved, "total_cost"),
+                "median_precompute_time_s": median_from(rows, "precompute_time_s"),
+                "median_precompute_peak_memory_mb": median_from(rows, "precompute_peak_memory_mb"),
+                "median_total_time_s": median_from(rows, "total_time_s"),
             })
     overall = []
     for config in configs:
@@ -179,6 +189,9 @@ def summarize(raw, level_info, configs):
             "median_solution_length": median_from(per, "median_solution_length"),
             "median_total_cost": median_from(per, "median_total_cost"),
             "note": "median of per-level medians; solution metrics exclude unsolved runs",
+            "median_precompute_time_s": median_from(per, "median_precompute_time_s"),
+            "median_precompute_peak_memory_mb": median_from(per, "median_precompute_peak_memory_mb"),
+            "median_total_time_s": median_from(per, "median_total_time_s"),
         })
     return level_summaries, overall
 
@@ -189,6 +202,7 @@ def main():
     parser.add_argument("--timeout", type=float, default=60.0)
     parser.add_argument("--max-expanded", type=int, default=1_000_000)
     parser.add_argument("--cost-mode", choices=("tile", "unit"), default="tile")
+    parser.add_argument("--fragile-penalty", type=float, default=FRAGILE_PENALTY)
     parser.add_argument("--levels", type=int, nargs="+", default=list(range(1, 11)))
     parser.add_argument("--configs", nargs="+", choices=tuple(CONFIGS),
                         default=list(CONFIGS))
@@ -199,6 +213,8 @@ def main():
         parser.error("repeats >= 1, max-expanded >= 0, timeout > 0 and finite are required")
     if any(level < 1 or level > 10 for level in args.levels):
         parser.error("--levels must be between 1 and 10")
+    if not isfinite(args.fragile_penalty) or args.fragile_penalty < 0:
+        parser.error("--fragile-penalty must be finite and >= 0")
     levels = sorted(set(args.levels))
     configs = list(dict.fromkeys(args.configs))
     worktree_dirty_before_run = git_dirty()
@@ -231,6 +247,7 @@ def main():
         "source_sha256": {p.relative_to(ROOT).as_posix(): sha256(p.read_bytes()).hexdigest()
                           for p in files},
         "level_sha256": {f"level{lv}.json": level_info[lv]["level_sha256"] for lv in levels},
+        "fragile_penalty": args.fragile_penalty if args.cost_mode == "tile" else None,
     }
     (outdir / "metadata.json").write_text(json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -254,14 +271,27 @@ def main():
                 "expanded_nodes": "", "generated_nodes": "",
                 "solution_length": "", "roll_count": "", "total_cost": "",
                 "replay_verified": "", "initial_state_preserved": "", "error": "",
+                "precompute_time_s": "", "precompute_peak_memory_mb": "", "total_time_s": "",
             }
             try:
                 board, block = loadLevelFromJson(
                     ROOT / "levels" / f"level{level}.json", isDebug=False)
-                problem = Problem(State(board, block).copy(), unit_cost=(args.cost_mode == "unit"))
+                problem = Problem(State(board, block).copy(),
+                                unit_cost=(args.cost_mode == "unit"),
+                                fragile_penalty=args.fragile_penalty)
                 snapshot = problem.initial.copy()
                 original_hash = hash(problem.initial)
                 heuristic = HEURISTICS[heuristic_name] if heuristic_name else None
+                pre_time, pre_peak = 0.0, 0
+                if algorithm == "astar" and heuristic_name in PRECOMPUTE:
+                    tracemalloc.start()
+                    try:
+                        t0 = time.perf_counter()
+                        PRECOMPUTE[heuristic_name](problem)
+                        pre_time = time.perf_counter() - t0
+                        _, pre_peak = tracemalloc.get_traced_memory()
+                    finally:
+                        tracemalloc.stop()
                 measured = run_search(problem, algorithm, limits, heuristic=heuristic)
                 result = measured.search
                 validated = False
@@ -283,6 +313,9 @@ def main():
                     "total_cost": result.total_cost if validated else "",
                     "replay_verified": validated if validated else "",
                     "initial_state_preserved": True,
+                    "precompute_time_s": round(pre_time, 9),
+                    "precompute_peak_memory_mb": round(pre_peak / 1_000_000, 9),
+                    "total_time_s": round(pre_time + measured.search_time_seconds, 9),
                 })
             except Exception as exc:
                 row["status"] = "error"

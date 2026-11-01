@@ -9,7 +9,7 @@ from pathlib import Path
 
 from gameModel.block import Direction, Orientation
 from gameModel.gameController import GameController
-from gameModel.problem import Problem
+from gameModel.problem import Problem, make_problem, UNIT_COST
 from gameModel.rules import pressed, winning, transition
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
@@ -26,8 +26,9 @@ def data_hash(data):
 
 class ActivationProblem(Problem):
     """A data-audit goal: activate a specific switch, not finish the stage."""
-    def __init__(self, initial, target):
-        super().__init__(initial)
+    def __init__(self, initial, target, **kwargs):
+        kwargs.setdefault('unit_cost', UNIT_COST)
+        super().__init__(initial, **kwargs)
         self.target = target
 
     def goal_test(self, state):
@@ -93,7 +94,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--write', action='store_true', help='refresh levels/validation.json')
     args = parser.parse_args()
-    report = {'format_version': 1, 'method': 'existing A* with h=0; correctness audit, not benchmark', 'levels': []}
+    report = {'format_version': 1, 'cost_mode': 'unit' if UNIT_COST else 'tile', 'method': 'existing A* with h=0; correctness audit, not benchmark', 'levels': []}
     limits = SearchLimits(timeout_seconds=60, max_expanded_nodes=100000)
     count = 0
     for number in range(1, 11):
@@ -101,7 +102,7 @@ def main():
         data = json.loads(path.read_text(encoding='utf-8'))
         board, block = loadLevelFromJson(path, False)
         initial = State(board, block).copy()
-        problem = Problem(initial)
+        problem = make_problem(initial)
         # This script proves correctness, not performance. Use the same
         # registered solver without repeated tracemalloc overhead.
         result = get_solver('astar')(problem, limits, heuristic=None)

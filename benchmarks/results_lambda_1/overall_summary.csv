@@ -1,0 +1,4 @@
+﻿config,algorithm,heuristic,levels_tested,trials,solved_runs,success_rate,status_counts,median_time_s,median_peak_memory_mb,median_expanded_nodes,median_generated_nodes,median_solution_length,median_total_cost,note,median_precompute_time_s,median_total_time_s,median_precompute_peak_memory_mb
+ucs,ucs,none,10,30,30,1.0,"{""solved"": 30}",0.14044817,2.415528,282.5,781.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.0,0.14044817,0.0
+astar_relaxed,astar,relaxed,10,30,30,1.0,"{""solved"": 30}",0.03120605,0.617268,58.0,161.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.00247604,0.034301,0.051028
+astar_relaxed_split,astar,relaxed_split,10,30,30,1.0,"{""solved"": 30}",0.02202333,0.481468,31.0,106.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.00464937,0.03646316,0.08128

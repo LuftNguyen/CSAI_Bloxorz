@@ -91,7 +91,7 @@ class EngineTests(unittest.TestCase):
     def test_loader_replay_cost_and_reset(self):
         board, block = loadLevelFromJson(ROOT / 'tests/fixtures/legacy/level1.json', isDebug=False)
         game = GameController(board, block)
-        problem = Problem(State(board, block).copy())
+        problem = Problem(State(board, block).copy(), unit_cost=True)
         state, cost = problem.initial, 0
         self.assertEqual(problem.actions(state), [D.UP, D.DOWN, D.LEFT, D.RIGHT])
         for action in (D.RIGHT, D.RIGHT):

@@ -2,7 +2,7 @@ from math import isclose
 from pathlib import Path
 
 from gameModel.gameController import GameController
-from gameModel.problem import Problem
+from gameModel.problem import Problem, make_problem
 from gameModel.state import State
 from levels.levelLoader import loadLevelFromJson
 from runner import run_search
@@ -20,7 +20,7 @@ def main():
     )
 
     board, block = loadLevelFromJson(level_path, isDebug=False)
-    problem = Problem(State(board, block).copy())
+    problem = make_problem(State(board, block).copy())
     initial_snapshot = problem.initial.copy()
 
     run = run_search(

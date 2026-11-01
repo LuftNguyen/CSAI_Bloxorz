@@ -16,7 +16,7 @@ def main():
     import view
     from gameModel.block import Block, Orientation
     from gameModel.gameController import GameController
-    from gameModel.problem import Problem
+    from gameModel.problem import Problem, make_problem
     from gameModel.state import State
     from levels.levelLoader import loadLevelFromJson
 
@@ -24,7 +24,7 @@ def main():
     load = lambda n: loadLevelFromJson(root/f'tests/fixtures/legacy/level{n}.json', False)
     board, block = load(1)
     with patch.object(view, 'Ursina', side_effect=lambda: Ursina(window_type='offscreen', development_mode=False)):
-        ui = view.BloxorzView(GameController(board,block), Problem(State(board,block).copy()))
+        ui = view.BloxorzView(GameController(board,block), make_problem(State(board,block).copy()))
     # Offscreen windows do not emit the onscreen resize event that sizes the
     # UI lens. Match Window.update_aspect_ratio so captures include real HUDs.
     from ursina import camera, window
