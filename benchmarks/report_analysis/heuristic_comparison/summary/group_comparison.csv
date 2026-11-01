@@ -1,0 +1,9 @@
+﻿group,config,levels,median_expanded_nodes,median_search_time_s,median_total_time_s,median_precompute_time_s
+basic,astar_relaxed,"[1, 2]",20.0,0.010160645,0.013291795,0.00310431
+basic,astar_relaxed_split,"[1, 2]",20.0,0.01014777,0.015095105000000001,0.00496646
+fragile,astar_relaxed,"[3, 4]",21.0,0.010633665,0.01304075,0.00235744
+fragile,astar_relaxed_split,"[3, 4]",21.0,0.01065471,0.014373750000000001,0.003592855
+bridge_switch,astar_relaxed,"[5, 6, 7]",84.0,0.04374404,0.04683521,0.00298442
+bridge_switch,astar_relaxed_split,"[5, 6, 7]",84.0,0.04364887,0.0484125,0.00441792
+split,astar_relaxed,"[8, 9, 10]",1737.0,1.55436788,1.55673133,0.00249846
+split,astar_relaxed_split,"[8, 9, 10]",35.0,0.03151338,0.08275292,0.05119862

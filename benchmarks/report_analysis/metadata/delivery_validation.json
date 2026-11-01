@@ -1,0 +1,27 @@
+{
+  "status": "READY WITH CAVEATS",
+  "preservation_archive_hashes": "PASS",
+  "untracked_old_audit_unchanged": "PASS",
+  "integrated_core_matches_origin_main": "PASS",
+  "merge_conflicts_resolved": "PASS",
+  "unit_tests": {
+    "tests_run": 208,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "elapsed_s": 97.84528870001668,
+    "successful": true
+  },
+  "charts_manifest": "PASS",
+  "source_snapshot": "PASS",
+  "cross_replays_valid": 3,
+  "caveats": [
+    "Merge intentionally not committed; exact source snapshot and two-parent provenance supplied.",
+    "Historical macOS CPU model/dependency freeze unavailable.",
+    "Separate phase tracemalloc peaks are not combined memory or RSS.",
+    "Observed deadline policy differs across solvers; no failure in campaign runs.",
+    "Survey one repetition; cases three; no exact global lambda threshold claim."
+  ]
+}

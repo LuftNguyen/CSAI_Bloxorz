@@ -1,0 +1,32 @@
+{
+  "default_check_exit": 2,
+  "inherited_CRLF_csv_warnings": 1419,
+  "warning_paths": [
+    "benchmarks/results/level_summary.csv",
+    "benchmarks/results/overall_summary.csv",
+    "benchmarks/results/runs.csv",
+    "benchmarks/results_lambda_0.25/level_summary.csv",
+    "benchmarks/results_lambda_0.25/levels.csv",
+    "benchmarks/results_lambda_0.25/overall_summary.csv",
+    "benchmarks/results_lambda_0.25/runs.csv",
+    "benchmarks/results_lambda_0.5/level_summary.csv",
+    "benchmarks/results_lambda_0.5/levels.csv",
+    "benchmarks/results_lambda_0.5/overall_summary.csv",
+    "benchmarks/results_lambda_0.5/runs.csv",
+    "benchmarks/results_lambda_0/level_summary.csv",
+    "benchmarks/results_lambda_0/levels.csv",
+    "benchmarks/results_lambda_0/overall_summary.csv",
+    "benchmarks/results_lambda_0/runs.csv",
+    "benchmarks/results_lambda_1/level_summary.csv",
+    "benchmarks/results_lambda_1/levels.csv",
+    "benchmarks/results_lambda_1/overall_summary.csv",
+    "benchmarks/results_lambda_1/runs.csv",
+    "benchmarks/results_unit/level_summary.csv",
+    "benchmarks/results_unit/levels.csv",
+    "benchmarks/results_unit/overall_summary.csv",
+    "benchmarks/results_unit/runs.csv"
+  ],
+  "check_treating_CR_as_line_ending_exit": 0,
+  "remaining_output": "",
+  "policy": "Preserve historical CSV bytes; command-only whitespace option, no repository config changes."
+}

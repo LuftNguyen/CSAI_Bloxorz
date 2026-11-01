@@ -1,0 +1,11 @@
+﻿level,name,group,rows,cols,fragile_tiles,soft_switches,heavy_switches,split_switches,bridge_groups,bridges_initially_open,bridges_initially_closed,fatal_close_switches,fatal_split_switches,level_sha256
+1,1: Courtyard,basic,9,11,0,0,0,0,0,0,0,0,0,9123561bb8f67f6567c088961a3a485a73393dcbd327d01ba6735dda0bdd7d00
+2,2: Crosswind galleries,basic,15,17,2,0,0,0,0,0,0,0,0,55b017ad6fd12f563ed738af648e477f92b11f7ecdb3aca4340bde5a0b482448
+3,3: Fragile causeway,fragile,10,15,4,0,0,0,0,0,0,0,0,c46f35a4b2d3534dc8598aab53a99f0aa299cb6a505978515b10f7b9584a6ad6
+4,4: Two fragile turns,fragile,14,14,6,0,0,0,0,0,0,0,0,38162a53cbffb5c20fa683bf132fcaa1fb3bc0e114548651fdd3f813e790b9dc
+5,5: Soft island crossing,bridge_switch,10,16,0,3,2,0,1,0,1,1,0,13be422510ddf750c59f90f827bf001ebfa5fd73a4a8757d28123b8c3678c8e3
+6,6: Heavy island crossing,bridge_switch,11,17,0,2,3,0,1,0,1,1,0,346ee2696fbacccd93d7a68a4b28d2e29d924953a183cf88acf3c699746c149b
+7,7: Three islands,bridge_switch,11,23,0,3,4,0,2,0,2,1,0,819b5729635957e4963e2617396dc49b076e0a3a1404ae8e04e93423095960bd
+8,8: Split across the fragile channel,split,10,24,5,2,0,2,1,0,1,1,1,d11a8479e5707e17fbd644bbfba9c79f8ab7ddaff9ac550ba06be94a26179d49
+9,9: Split and the island gate,split,17,17,0,5,0,2,1,0,1,1,1,6b90bb88c879445014add27e981238dd3e66d0837adc07e5507b53034f8c20fc
+10,10: Twin gates expedition,split,13,26,1,7,0,2,2,0,2,1,1,15cfa0b24e7c21574fd4c5ce207a4df13f3e2891f87335fd737ab5c063fabb92

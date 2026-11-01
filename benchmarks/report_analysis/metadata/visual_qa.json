@@ -1,0 +1,28 @@
+{
+  "checked_charts": [
+    "cost_sensitivity/case_studies/level2.png",
+    "cost_sensitivity/case_studies/level4.png",
+    "cost_sensitivity/charts/change_heatmap.png",
+    "cost_sensitivity/charts/expanded_nodes.png",
+    "cost_sensitivity/charts/fragile_penalty_count.png",
+    "cost_sensitivity/charts/solution_length.png",
+    "cost_sensitivity/charts/total_cost.png",
+    "heuristic_comparison/charts/expanded_nodes.png",
+    "heuristic_comparison/charts/group_comparison.png",
+    "heuristic_comparison/charts/time.png",
+    "main_comparison/charts/expanded_nodes.png",
+    "main_comparison/charts/generated_nodes.png",
+    "main_comparison/charts/memory.png",
+    "main_comparison/charts/solution_length.png",
+    "main_comparison/charts/time.png",
+    "main_comparison/charts/total_cost.png"
+  ],
+  "count": 16,
+  "result": "PASS",
+  "checks": [
+    "Titles, axes, units, legends, cohort/measurement phase captions readable",
+    "No blank/corrupt plots",
+    "DFS included in all main plots",
+    "Overlapping case curves disclosed; sampled lines do not claim exact thresholds"
+  ]
+}

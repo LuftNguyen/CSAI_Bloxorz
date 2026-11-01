@@ -1,0 +1,42 @@
+{
+  "selected_levels": [
+    2,
+    4
+  ],
+  "N_or_F_changes": [
+    2,
+    4
+  ],
+  "pairs": [
+    [
+      2,
+      0.25
+    ],
+    [
+      2,
+      3.0
+    ],
+    [
+      4,
+      0.25
+    ],
+    [
+      4,
+      1.0
+    ],
+    [
+      4,
+      1.5
+    ],
+    [
+      4,
+      2.0
+    ],
+    [
+      4,
+      3.0
+    ]
+  ],
+  "selection_rule": "Mandatory L2,L4 plus every level with a UCS (N,F) change across surveyed lambdas. L4 bracket includes 1,1.5,2,3.",
+  "threshold_policy": "Discrete grid observations are brackets, never an exact global optimum threshold."
+}
