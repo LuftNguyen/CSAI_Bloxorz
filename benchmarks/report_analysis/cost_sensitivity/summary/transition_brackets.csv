@@ -1,0 +1,4 @@
+﻿level,lambda_left,lambda_right,left_N,left_F,right_N,right_F,same_N_F,left_path_cost_at_right,right_optimal_cost,interpretation
+2,0.0,0.25,13,1,13,0,False,13.25,13.0,Observed bracket; sequence change alone does not establish a unique optimum transition.
+4,1.0,1.5,23,4,24,3,False,29.0,28.5,Observed bracket; sequence change alone does not establish a unique optimum transition.
+4,2.0,3.0,24,3,26,2,False,33.0,32.0,Observed bracket; sequence change alone does not establish a unique optimum transition.

@@ -1,0 +1,11 @@
+﻿level,median_expanded_nodes_best_value,median_expanded_nodes_winners,median_time_s_best_value,median_time_s_winners,median_total_time_s_best_value,median_total_time_s_winners
+1,14.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.00460304,"[""astar_relaxed""]",0.00661867,"[""astar_relaxed""]"
+2,26.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.01562946,"[""astar_relaxed_split""]",0.01996492,"[""astar_relaxed""]"
+3,13.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.00571608,"[""astar_relaxed""]",0.00792271,"[""astar_relaxed""]"
+4,29.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.0154235,"[""astar_relaxed_split""]",0.01815879,"[""astar_relaxed""]"
+5,21.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.01123283,"[""astar_relaxed""]",0.01340996,"[""astar_relaxed""]"
+6,84.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.04364887,"[""astar_relaxed_split""]",0.04683521,"[""astar_relaxed""]"
+7,85.0,"[""astar_relaxed"", ""astar_relaxed_split""]",0.05783567,"[""astar_relaxed""]",0.06090471,"[""astar_relaxed""]"
+8,35.0,"[""astar_relaxed_split""]",0.02622463,"[""astar_relaxed_split""]",0.07185196,"[""astar_relaxed_split""]"
+9,30.0,"[""astar_relaxed_split""]",0.03151338,"[""astar_relaxed_split""]",0.08275292,"[""astar_relaxed_split""]"
+10,67.0,"[""astar_relaxed_split""]",0.08029708,"[""astar_relaxed_split""]",0.18127204,"[""astar_relaxed_split""]"

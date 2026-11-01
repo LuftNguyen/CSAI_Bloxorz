@@ -1,0 +1,15 @@
+{
+  "branch": "experiment/cost-analysis",
+  "HEAD": "7cf74634f855aff9d033edabb2a827fa15bc3d17",
+  "origin_main": "c4cc318349acdce1f5bb7512dd2ff22740816982",
+  "merge_head": "c4cc318349acdce1f5bb7512dd2ff22740816982",
+  "unmerged_entries": "",
+  "integration_status": "Merged working tree and staged conflict resolution; merge commit intentionally not created.",
+  "conflict_resolution": "test_loader_replay_cost_and_reset uses the actual Problem with unit_cost=True explicitly.",
+  "new_local_core_edits": false,
+  "pushed": false,
+  "committed": false,
+  "old_files_preserved": 35,
+  "restoration": "Read metadata/preservation/manifest.json and restore selected paths from ZIP into a NEW directory. Do not overwrite current source.",
+  "git_status": "M  benchmarks/benchmark_all.py\nM  benchmarks/results/charts/01_search_time.png\nM  benchmarks/results/charts/02_peak_memory.png\nM  benchmarks/results/charts/03_expanded_nodes.png\nM  benchmarks/results/charts/04_solution_length.png\nM  benchmarks/results/charts/05_total_cost.png\nM  benchmarks/results/level_summary.csv\nM  benchmarks/results/metadata.json\nM  benchmarks/results/overall_summary.csv\nM  benchmarks/results/runs.csv\nA  benchmarks/results_lambda_0.25/errors.txt\nA  benchmarks/results_lambda_0.25/level_summary.csv\nA  benchmarks/results_lambda_0.25/levels.csv\nA  benchmarks/results_lambda_0.25/metadata.json\nA  benchmarks/results_lambda_0.25/overall_summary.csv\nA  benchmarks/results_lambda_0.25/runs.csv\nA  benchmarks/results_lambda_0.5/errors.txt\nA  benchmarks/results_lambda_0.5/level_summary.csv\nA  benchmarks/results_lambda_0.5/levels.csv\nA  benchmarks/results_lambda_0.5/metadata.json\nA  benchmarks/results_lambda_0.5/overall_summary.csv\nA  benchmarks/results_lambda_0.5/runs.csv\nA  benchmarks/results_lambda_0/errors.txt\nA  benchmarks/results_lambda_0/level_summary.csv\nA  benchmarks/results_lambda_0/levels.csv\nA  benchmarks/results_lambda_0/metadata.json\nA  benchmarks/results_lambda_0/overall_summary.csv\nA  benchmarks/results_lambda_0/runs.csv\nA  benchmarks/results_lambda_1/errors.txt\nA  benchmarks/results_lambda_1/level_summary.csv\nA  benchmarks/results_lambda_1/levels.csv\nA  benchmarks/results_lambda_1/metadata.json\nA  benchmarks/results_lambda_1/overall_summary.csv\nA  benchmarks/results_lambda_1/runs.csv\nA  benchmarks/results_unit/errors.txt\nA  benchmarks/results_unit/level_summary.csv\nA  benchmarks/results_unit/levels.csv\nA  benchmarks/results_unit/metadata.json\nA  benchmarks/results_unit/overall_summary.csv\nA  benchmarks/results_unit/runs.csv\nM  examples/audit_levels.py\nM  examples/check_astar_game.py\nM  examples/classic_preview.py\nM  examples/gui_smoke.py\nM  examples/headless.py\nM  examples/rules_headless.py\nD  examples/sweep_lambda.py\nM  gameModel/gameController.py\nM  gameModel/problem.py\nM  gui_search.py\nM  levels/validation.json\nM  main.py\nD  sweep_lambda.csv\nM  tests/test_bfs.py\nM  tests/test_dfs.py\nM  tests/test_foundation.py\nA  tests/test_lambda_sweep.py\nM  tests/test_level_links.py\nM  tests/test_ucs.py\nM  view.py\n?? benchmarks/audit_20261031_7cf7463/\n?? benchmarks/report_analysis/"
+}

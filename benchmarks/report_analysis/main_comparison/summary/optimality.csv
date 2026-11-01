@@ -1,0 +1,8 @@
+﻿config,levels_matching_ucs_cost,maximum_absolute_cost_gap,median_relative_cost_gap
+bfs,9,0.25,0.0
+dfs,0,424.5,7.4875
+ucs,10,0.0,0.0
+astar_zero,10,0.0,0.0
+astar_manhattan,10,0.0,0.0
+astar_relaxed,10,0.0,0.0
+astar_relaxed_split,10,0.0,0.0

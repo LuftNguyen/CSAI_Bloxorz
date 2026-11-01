@@ -1,0 +1,8 @@
+﻿config,algorithm,heuristic,levels_tested,trials,solved_runs,success_rate,status_counts,median_time_s,median_peak_memory_mb,median_expanded_nodes,median_generated_nodes,median_solution_length,median_total_cost,note,median_precompute_time_s,median_total_time_s,median_precompute_peak_memory_mb
+bfs,bfs,none,10,50,50,1.0,"{""solved"": 50}",0.11231121,2.400408,282.0,780.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.0,0.11231121,0.0
+dfs,dfs,none,10,50,50,1.0,"{""solved"": 50}",0.09882167,2.775076,191.5,609.5,141.5,142.125,median of per-level medians; solution metrics exclude unsolved runs,0.0,0.09882167,0.0
+ucs,ucs,none,10,50,50,1.0,"{""solved"": 50}",0.13881461,2.414888,282.5,781.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.0,0.13881461,0.0
+astar_zero,astar,zero,10,50,50,1.0,"{""solved"": 50}",0.13960116,2.416764,282.5,781.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.0,0.13960116,0.0
+astar_manhattan,astar,manhattan,10,50,50,1.0,"{""solved"": 50}",0.09078836,1.83576,170.5,484.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.0,0.09078836,0.0
+astar_relaxed,astar,relaxed,10,50,50,1.0,"{""solved"": 50}",0.02973115,0.610288,56.5,156.5,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.00253471,0.03340006,0.07114
+astar_relaxed_split,astar,relaxed_split,10,50,50,1.0,"{""solved"": 50}",0.02092704,0.474528,29.5,102.0,19.5,19.5,median of per-level medians; solution metrics exclude unsolved runs,0.00467462,0.03537211,0.08492

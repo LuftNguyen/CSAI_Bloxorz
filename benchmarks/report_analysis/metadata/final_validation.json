@@ -1,0 +1,15 @@
+{
+  "historical_rows": 1060,
+  "historical_main_rows": 350,
+  "survey_rows": 140,
+  "case_additional_rows": 70,
+  "untimed_historical_verification_solves": 46,
+  "direct_rows_replayed_from_disk": 256,
+  "all_replays_valid": true,
+  "all_astar_case_costs_match_ucs": true,
+  "charts_generated": 16,
+  "DFS_in_main_tables_and_charts": true,
+  "time_cohorts_separate": true,
+  "historical_time_rerun": false,
+  "validation_note": "Assertions fail closed; original historical replay is a recorded claim, with deterministic structural reproduction saved separately."
+}
